@@ -68,5 +68,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void navigateToHomeScreen() {
         Toast.makeText(this, "Navigating to home screen...", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+        startActivity(intent);
     }
 }

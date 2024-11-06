@@ -103,31 +103,31 @@
 
                 <androidx.fragment.app.FragmentContainerView
                     android:id="@+id/fragmentContainerView6"
-                    android:name="com.example.eventplanner.fragments.EventCompactFragment"
+                    android:name="com.example.eventplanner.fragments.ServiceProductCompactFragment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
                 <androidx.fragment.app.FragmentContainerView
                     android:id="@+id/fragmentContainerView7"
-                    android:name="com.example.eventplanner.fragments.EventCompactFragment"
+                    android:name="com.example.eventplanner.fragments.ServiceProductCompactFragment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
                 <androidx.fragment.app.FragmentContainerView
                     android:id="@+id/fragmentContainerView8"
-                    android:name="com.example.eventplanner.fragments.EventCompactFragment"
+                    android:name="com.example.eventplanner.fragments.ServiceProductCompactFragment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
                 <androidx.fragment.app.FragmentContainerView
                     android:id="@+id/fragmentContainerView9"
-                    android:name="com.example.eventplanner.fragments.EventCompactFragment"
+                    android:name="com.example.eventplanner.fragments.ServiceProductCompactFragment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
                 <androidx.fragment.app.FragmentContainerView
                     android:id="@+id/fragmentContainerView10"
-                    android:name="com.example.eventplanner.fragments.EventCompactFragment"
+                    android:name="com.example.eventplanner.fragments.ServiceProductCompactFragment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
             </LinearLayout>

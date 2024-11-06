@@ -5,7 +5,7 @@
     android:id="@+id/constraintLayout"
     android:layout_width="match_parent"
     android:layout_height="330dp"
-    tools:context=".fragments.EventCompactFragment">
+    tools:context=".fragments.ServiceProductCompactFragment">
 
     <ImageView
         android:id="@+id/profilePicture"
@@ -16,8 +16,8 @@
         android:cropToPadding="false"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/profile_picture"
-        tools:src="@drawable/profile_picture" />
+        app:srcCompat="@drawable/monogram_c"
+        tools:src="@drawable/monogram_c" />
 
     <TextView
         android:id="@+id/username"
@@ -26,7 +26,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="16dp"
         android:ems="10"
-        android:text="Petar Jović"
+        android:text="Catering Peric"
         android:textSize="24sp"
         app:layout_constraintStart_toEndOf="@+id/profilePicture"
         app:layout_constraintTop_toTopOf="parent" />
@@ -37,7 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="22dp"
         android:layout_marginTop="7dp"
-        android:text="petar.jovic@gmail.com"
+        android:text="marko.peric@cperic.rs"
         app:layout_constraintStart_toEndOf="@+id/profilePicture"
         app:layout_constraintTop_toBottomOf="@+id/username" />
 
@@ -47,7 +47,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:text="Perin rođendan"
+        android:text="Catering for all occasions"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profilePicture" />
@@ -58,7 +58,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:text="7th of February, 2025"
+        android:text="Contact"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/serviceProductName" />
 
