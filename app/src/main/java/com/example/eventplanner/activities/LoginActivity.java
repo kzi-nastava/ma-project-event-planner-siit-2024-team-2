@@ -30,7 +30,7 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.setOnClickListener(v -> {
             if (validateInputs()) {
                 loginUser();
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                 startActivity(intent);
             }
         });
@@ -68,7 +68,5 @@ public class LoginActivity extends AppCompatActivity {
 
     private void navigateToHomeScreen() {
         Toast.makeText(this, "Navigating to home screen...", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-        startActivity(intent);
     }
 }
