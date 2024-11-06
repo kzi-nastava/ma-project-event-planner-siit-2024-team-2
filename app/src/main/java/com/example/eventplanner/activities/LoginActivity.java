@@ -1,4 +1,4 @@
-package com.example.eventplanner;
+package com.example.eventplanner.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,13 +7,10 @@ import android.util.Patterns;
 import android.widget.Button;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
+import com.example.eventplanner.R;
 import com.google.android.material.textfield.TextInputEditText;
 
 public class LoginActivity extends AppCompatActivity {
@@ -71,5 +68,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void navigateToHomeScreen() {
         Toast.makeText(this, "Navigating to home screen...", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+        startActivity(intent);
     }
 }
