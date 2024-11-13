@@ -19,6 +19,26 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <Button
+        android:id="@+id/eventsButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="3dp"
+        android:layout_marginTop="3dp"
+        android:text="Events"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/SPButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="3dp"
+        android:text="SP"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="680dp"
@@ -41,45 +61,51 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <LinearLayout
-                android:id="@+id/topEventsLayout"
+            <HorizontalScrollView
+                android:id="@+id/topEventsScroll"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:orientation="vertical"
+                android:layout_height="match_parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/topEventsText">
 
-                <androidx.fragment.app.FragmentContainerView
-                    android:id="@+id/fragmentContainerView1"
-                    android:name="com.example.eventplanner.fragments.EventCompactFragment"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                <LinearLayout
+                    android:id="@+id/topEventsLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="16dp"
+                    android:orientation="horizontal">
 
-                <androidx.fragment.app.FragmentContainerView
-                    android:id="@+id/fragmentContainerView2"
-                    android:name="com.example.eventplanner.fragments.EventCompactFragment"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    <androidx.fragment.app.FragmentContainerView
+                        android:id="@+id/fragmentContainerView1"
+                        android:name="com.example.eventplanner.fragments.EventCompactFragment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
 
-                <androidx.fragment.app.FragmentContainerView
-                    android:id="@+id/fragmentContainerView3"
-                    android:name="com.example.eventplanner.fragments.EventCompactFragment"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    <androidx.fragment.app.FragmentContainerView
+                        android:id="@+id/fragmentContainerView2"
+                        android:name="com.example.eventplanner.fragments.EventCompactFragment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
 
-                <androidx.fragment.app.FragmentContainerView
-                    android:id="@+id/fragmentContainerView4"
-                    android:name="com.example.eventplanner.fragments.EventCompactFragment"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    <androidx.fragment.app.FragmentContainerView
+                        android:id="@+id/fragmentContainerView3"
+                        android:name="com.example.eventplanner.fragments.EventCompactFragment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
 
-                <androidx.fragment.app.FragmentContainerView
-                    android:id="@+id/fragmentContainerView5"
-                    android:name="com.example.eventplanner.fragments.EventCompactFragment"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
+                    <androidx.fragment.app.FragmentContainerView
+                        android:id="@+id/fragmentContainerView4"
+                        android:name="com.example.eventplanner.fragments.EventCompactFragment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <androidx.fragment.app.FragmentContainerView
+                        android:id="@+id/fragmentContainerView5"
+                        android:name="com.example.eventplanner.fragments.EventCompactFragment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+            </HorizontalScrollView>
 
             <TextView
                 android:id="@+id/topSPText"
@@ -90,47 +116,53 @@
                 android:text="Top 5 services or products"
                 android:textSize="22sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/topEventsLayout" />
+                app:layout_constraintTop_toBottomOf="@id/topEventsScroll" />
 
-            <LinearLayout
-                android:id="@+id/topSPLayout"
+            <HorizontalScrollView
+                android:id="@+id/topSPScroll"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:orientation="vertical"
+                android:layout_height="match_parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/topSPText">
 
-                <androidx.fragment.app.FragmentContainerView
-                    android:id="@+id/fragmentContainerView6"
-                    android:name="com.example.eventplanner.fragments.ServiceProductCompactFragment"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                <LinearLayout
+                    android:id="@+id/topSPLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="16dp"
+                    android:orientation="horizontal">
 
-                <androidx.fragment.app.FragmentContainerView
-                    android:id="@+id/fragmentContainerView7"
-                    android:name="com.example.eventplanner.fragments.ServiceProductCompactFragment"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    <androidx.fragment.app.FragmentContainerView
+                        android:id="@+id/fragmentContainerView6"
+                        android:name="com.example.eventplanner.fragments.ServiceProductCompactFragment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
 
-                <androidx.fragment.app.FragmentContainerView
-                    android:id="@+id/fragmentContainerView8"
-                    android:name="com.example.eventplanner.fragments.ServiceProductCompactFragment"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    <androidx.fragment.app.FragmentContainerView
+                        android:id="@+id/fragmentContainerView7"
+                        android:name="com.example.eventplanner.fragments.ServiceProductCompactFragment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
 
-                <androidx.fragment.app.FragmentContainerView
-                    android:id="@+id/fragmentContainerView9"
-                    android:name="com.example.eventplanner.fragments.ServiceProductCompactFragment"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    <androidx.fragment.app.FragmentContainerView
+                        android:id="@+id/fragmentContainerView8"
+                        android:name="com.example.eventplanner.fragments.ServiceProductCompactFragment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
 
-                <androidx.fragment.app.FragmentContainerView
-                    android:id="@+id/fragmentContainerView10"
-                    android:name="com.example.eventplanner.fragments.ServiceProductCompactFragment"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
+                    <androidx.fragment.app.FragmentContainerView
+                        android:id="@+id/fragmentContainerView9"
+                        android:name="com.example.eventplanner.fragments.ServiceProductCompactFragment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <androidx.fragment.app.FragmentContainerView
+                        android:id="@+id/fragmentContainerView10"
+                        android:name="com.example.eventplanner.fragments.ServiceProductCompactFragment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+            </HorizontalScrollView>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
