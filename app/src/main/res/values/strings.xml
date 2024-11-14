@@ -15,4 +15,5 @@
     <string name="login">Login</string>
     <string name="register">Register</string>
     <string name="top_5_services_or_products">Top 5 services or products</string>
+    <string name="profile">Profile</string>
 </resources>
