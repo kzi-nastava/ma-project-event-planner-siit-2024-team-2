@@ -29,7 +29,6 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <include layout="@layout/fragment_home"/>
     <include layout="@layout/activity_home_content"/>
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigation_view"
