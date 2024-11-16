@@ -29,7 +29,13 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <include layout="@layout/activity_home_content"/>
+
+        <include
+            android:id="@+id/activity_home_content"
+            layout="@layout/activity_home_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigation_view"
         android:layout_width="wrap_content"
