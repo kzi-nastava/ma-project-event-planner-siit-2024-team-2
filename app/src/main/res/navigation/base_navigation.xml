@@ -41,4 +41,13 @@
         app:popUpToInclusive="true"
         />
 
+    <fragment
+        android:id="@+id/nav_edit_service"
+        android:name="com.example.eventplanner.fragments.services.EditServiceFragment"
+        android:label="New service"
+        tools:layout="@layout/fragment_edit_service"
+        app:popUpTo="@+id/nav_home"
+        app:popUpToInclusive="true"
+        />
+
 </navigation>

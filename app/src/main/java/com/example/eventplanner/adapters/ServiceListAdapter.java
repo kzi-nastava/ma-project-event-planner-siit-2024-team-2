@@ -1,8 +1,6 @@
 package com.example.eventplanner.adapters;
 
 import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,14 +13,11 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.eventplanner.R;
-import com.example.eventplanner.activities.ServiceEditActivity;
 import com.example.eventplanner.model.Service;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class ServiceListAdapter extends ArrayAdapter<Service> {
     private ArrayList<Service> aServices;

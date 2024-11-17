@@ -6,6 +6,8 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+
 import com.example.eventplanner.R;
 import com.example.eventplanner.databinding.FragmentServicesPageBinding;
 import com.example.eventplanner.model.Service;
@@ -40,8 +42,8 @@ public class ServicesPageFragment extends Fragment {
 
     private void prepareProductList(ArrayList<Service> services){
         services.clear();
-        services.add(new Service(1L, "Your catering", "Description 1", R.drawable.catering));
-        services.add(new Service(1L, "Your catering", "Description 2", R.drawable.catering));
-        services.add(new Service(1L, "Your catering", "Description 3", R.drawable.catering));
+        services.add(new Service(1L, "Your catering", "We offer a brilliant service of catering. Don't worry because we're coming while your meal is still hot! Lorem ipsum  tra la la...", R.drawable.catering));
+        services.add(new Service(2L, "Our catering", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor", R.drawable.catering));
+        services.add(new Service(3L, "My catering", "We offer a brilliant service of catering. Don't worry because we're coming while your meal is still hot! Lorem ipsum  tra la la...", R.drawable.catering));
     }
 }
