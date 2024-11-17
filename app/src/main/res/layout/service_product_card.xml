@@ -8,11 +8,11 @@
     android:background="@android:color/white"
     android:elevation="4dp"
     android:layout_margin="8dp"
-    android:id="@+id/service_card_item">
+    android:id="@+id/service_product_card_item">
 
 
     <TextView
-        android:id="@+id/service_title"
+        android:id="@+id/service_product_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
@@ -22,7 +22,7 @@
         android:textStyle="bold" />
 
     <ImageView
-        android:id="@+id/service_image"
+        android:id="@+id/service_product_image"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:contentDescription="catering picture"
@@ -35,7 +35,7 @@
         android:layout_marginTop="8dp">
 
         <TextView
-            android:id="@+id/service_description"
+            android:id="@+id/service_product_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
@@ -47,12 +47,12 @@
             android:gravity="start" />
 
         <Button
-            android:id="@+id/service_button"
+            android:id="@+id/service_product_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
-            android:text="Edit service"
+            android:text="Edit"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:layout_marginTop="8dp" />

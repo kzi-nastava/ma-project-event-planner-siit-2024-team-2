@@ -16,8 +16,8 @@
         android:title="@string/profile" />
 
     <item
-        android:id="@+id/nav_services"
-        android:title="Services" />
+        android:id="@+id/nav_service_products"
+        android:title="Services and products" />
 
     <item
         android:id="@+id/nav_edit_service"
