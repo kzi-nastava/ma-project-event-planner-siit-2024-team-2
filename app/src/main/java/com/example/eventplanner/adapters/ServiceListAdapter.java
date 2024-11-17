@@ -60,7 +60,7 @@ public class ServiceListAdapter extends ArrayAdapter<Service> {
         ImageView imageView = convertView.findViewById(R.id.service_image);
         TextView serviceTitle = convertView.findViewById(R.id.service_title);
         TextView serviceDescription = convertView.findViewById(R.id.service_description);
-        Button serviceMoreInfoButton = convertView.findViewById(R.id.service_button);
+        Button serviceEditButton = convertView.findViewById(R.id.service_button);
 
         if(service != null){
             imageView.setImageResource(service.getImage());
@@ -72,7 +72,7 @@ public class ServiceListAdapter extends ArrayAdapter<Service> {
                         ", id: " + service.getId().toString(), Toast.LENGTH_SHORT).show();
             });
 
-            serviceMoreInfoButton.setOnClickListener(v -> {
+            serviceEditButton.setOnClickListener(v -> {
                 Toast.makeText(getContext(), "Pressed button: " + service.getTitle()  +
                         ", id: " + service.getId().toString(), Toast.LENGTH_SHORT).show();
             });
