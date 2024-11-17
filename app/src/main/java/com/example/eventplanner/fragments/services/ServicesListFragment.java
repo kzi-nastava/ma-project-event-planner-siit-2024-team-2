@@ -11,20 +11,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.eventplanner.adapters.ServiceProductsListAdapter;
-import com.example.eventplanner.databinding.FragmentServiceProductsListBinding;
-import com.example.eventplanner.model.ServiceProduct;
+import com.example.eventplanner.adapters.ServiceListAdapter;
+import com.example.eventplanner.databinding.FragmentServicesListBinding;
+import com.example.eventplanner.model.Service;
 
 import java.util.ArrayList;
 
-public class ServiceProductsListFragment extends ListFragment {
-    private ServiceProductsListAdapter adapter;
+public class ServicesListFragment extends ListFragment {
+    private ServiceListAdapter adapter;
     private static final String ARG_PARAM = "param";
-    private ArrayList<ServiceProduct> mServiceProducts;
-    private FragmentServiceProductsListBinding binding;
+    private ArrayList<Service> mServices;
+    private FragmentServicesListBinding binding;
 
-    public static ServiceProductsListFragment newInstance(ArrayList<ServiceProduct> services){
-        ServiceProductsListFragment fragment = new ServiceProductsListFragment();
+    public static ServicesListFragment newInstance(ArrayList<Service> services){
+        ServicesListFragment fragment = new ServicesListFragment();
         Bundle args = new Bundle();
         args.putParcelableArrayList(ARG_PARAM, services);
         fragment.setArguments(args);
@@ -36,8 +36,8 @@ public class ServiceProductsListFragment extends ListFragment {
         super.onCreate(savedInstanceState);
         Log.i("ShopApp", "onCreate Services List Fragment");
         if (getArguments() != null) {
-            mServiceProducts = getArguments().getParcelableArrayList(ARG_PARAM);
-            adapter = new ServiceProductsListAdapter(getActivity(), mServiceProducts);
+            mServices = getArguments().getParcelableArrayList(ARG_PARAM);
+            adapter = new ServiceListAdapter(getActivity(), mServices);
             setListAdapter(adapter);
         }
     }
@@ -45,7 +45,7 @@ public class ServiceProductsListFragment extends ListFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Log.i("ShopApp", "onCreateView Services List Fragment");
-        binding = FragmentServiceProductsListBinding.inflate(inflater, container, false);
+        binding = FragmentServicesListBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
         return root;
     }

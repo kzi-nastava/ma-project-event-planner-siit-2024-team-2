@@ -5,23 +5,23 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
-public class ServiceProduct implements Parcelable {
+public class Service implements Parcelable {
     private Long id;
     private String title;
     private String description;
     private int image;
 
-    public ServiceProduct(Long id, String title, String description, int image) {
+    public Service(Long id, String title, String description, int image) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.image = image;
     }
 
-    public ServiceProduct() {}
+    public Service() {}
 
     // Parcel constructor
-    protected ServiceProduct(Parcel in) {
+    protected Service(Parcel in) {
         if (in.readByte() == 0) {
             id = null;
         } else {
@@ -32,15 +32,15 @@ public class ServiceProduct implements Parcelable {
         image = in.readInt();
     }
 
-    public static final Creator<ServiceProduct> CREATOR = new Creator<ServiceProduct>() {
+    public static final Creator<Service> CREATOR = new Creator<Service>() {
         @Override
-        public ServiceProduct createFromParcel(Parcel in) {
-            return new ServiceProduct(in);
+        public Service createFromParcel(Parcel in) {
+            return new Service(in);
         }
 
         @Override
-        public ServiceProduct[] newArray(int size) {
-            return new ServiceProduct[size];
+        public Service[] newArray(int size) {
+            return new Service[size];
         }
     };
 
