@@ -4,6 +4,14 @@
         android:title="@string/home" />
 
     <item
+        android:id="@+id/nav_events"
+        android:title="@string/events" />
+
+    <item
+        android:id="@+id/nav_service_products"
+        android:title="@string/services_and_products" />
+
+    <item
         android:id="@+id/nav_settings"
         android:title="@string/settings" />
 

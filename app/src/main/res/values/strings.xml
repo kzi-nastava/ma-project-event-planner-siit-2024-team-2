@@ -17,4 +17,6 @@
     <string name="top_5_services_or_products">Top 5 services or products</string>
     <string name="profile">Profile</string>
     <string name="select_category">Select a category</string>
+    <string name="events">Events</string>
+    <string name="services_and_products">Services and products</string>
 </resources>

@@ -15,6 +15,22 @@
         />
 
     <fragment
+        android:id="@+id/nav_events"
+        android:name="com.example.eventplanner.fragments.home.EventsFragment"
+        android:label="@string/events"
+        tools:layout="@layout/fragment_events"
+        app:popUpToInclusive="true"
+        />
+
+    <fragment
+        android:id="@+id/nav_service_products"
+        android:name="com.example.eventplanner.fragments.home.ServiceProductsFragment"
+        android:label="@string/services_and_products"
+        tools:layout="@layout/fragment_service_products"
+        app:popUpToInclusive="true"
+        />
+
+    <fragment
         android:id="@+id/nav_logout"
         android:name="com.example.eventplanner.fragments.login.LoginFragment"
         android:label="Login"

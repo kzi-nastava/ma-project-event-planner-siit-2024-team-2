@@ -16,6 +16,12 @@
             android:name=".activities.HomeActivity"
             android:exported="false" />
         <activity
+            android:name=".fragments.home.ServiceProductsFragment"
+            android:exported="false" />
+        <activity
+            android:name=".fragments.home.EventsFragment"
+            android:exported="false" />
+        <activity
             android:name=".activities.SplashScreenActivity"
             android:exported="true" >
             <intent-filter>
