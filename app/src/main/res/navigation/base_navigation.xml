@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/base_navigation"
+    app:startDestination="@id/nav_home">
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="com.example.eventplanner.fragments.home.HomeFragment"
+        android:label="Home"
+        tools:layout="@layout/fragment_home"
+        app:popUpToInclusive="true"
+        />
+
+    <fragment
+        android:id="@+id/nav_logout"
+        android:name="com.example.eventplanner.fragments.login.LoginFragment"
+        android:label="Login"
+        tools:layout="@layout/fragment_login"
+        app:popUpTo="@+id/nav_home"
+        app:popUpToInclusive="true"
+        />
+
+    <fragment
+        android:id="@+id/nav_profile"
+        android:name="com.example.eventplanner.fragments.profile.ProfileFragment"
+        android:label="Profile"
+        tools:layout="@layout/fragment_profile"
+        app:popUpTo="@+id/nav_home"
+        app:popUpToInclusive="true"
+        />
+
+    <fragment
+        android:id="@+id/nav_services"
+        android:name="com.example.eventplanner.fragments.services.ServicesPageFragment"
+        android:label="Services"
+        tools:layout="@layout/fragment_services_page"
+        app:popUpTo="@+id/nav_home"
+        app:popUpToInclusive="true"
+        />
+
+    <fragment
+        android:id="@+id/nav_edit_service"
+        android:name="com.example.eventplanner.fragments.services.EditServiceFragment"
+        android:label="New service"
+        tools:layout="@layout/fragment_edit_service"
+        app:popUpTo="@+id/nav_home"
+        app:popUpToInclusive="true"
+        />
+
+</navigation>

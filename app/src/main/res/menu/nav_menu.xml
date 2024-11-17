@@ -1,0 +1,25 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_home"
+        android:title="@string/home" />
+
+    <item
+        android:id="@+id/nav_settings"
+        android:title="@string/settings" />
+
+    <item
+        android:id="@+id/nav_logout"
+        android:title="@string/logout" />
+
+    <item
+        android:id="@+id/nav_profile"
+        android:title="@string/profile" />
+
+    <item
+        android:id="@+id/nav_services"
+        android:title="Services" />
+
+    <item
+        android:id="@+id/nav_edit_service"
+        android:title="New service" />
+</menu>
