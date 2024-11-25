@@ -4,8 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Patterns;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,6 +21,12 @@ public class RegisterActivity extends AppCompatActivity {
     private TextInputEditText firstNameEditText, lastNameEditText, emailEditText, passwordEditText, confirmPasswordEditText, addressEditText, phoneEditText;
     private ImageView profileImageView;
     private Button uploadProfilePicButton, registerButton;
+    private LinearLayout eventOrganizerForm;
+    private LinearLayout serviceProviderForm;
+    private RadioGroup userTypeRadioGroup;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +41,9 @@ public class RegisterActivity extends AppCompatActivity {
         addressEditText = findViewById(R.id.addressEditText);
         phoneEditText = findViewById(R.id.phoneEditText);
         registerButton = findViewById(R.id.registerButton);
+        eventOrganizerForm = findViewById(R.id.eventOrganizerForm);
+        serviceProviderForm = findViewById(R.id.serviceProviderForm);
+        userTypeRadioGroup = findViewById(R.id.userTypeRadioGroup);
         uploadProfilePicButton.setOnClickListener(v -> {
             Toast.makeText(RegisterActivity.this, "Profile picture upload feature coming soon!", Toast.LENGTH_SHORT).show();
         });
@@ -41,6 +53,19 @@ public class RegisterActivity extends AppCompatActivity {
                 createUser();
                 Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
                 startActivity(intent);
+            }
+        });
+
+        userTypeRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (checkedId == R.id.eventOrganizerRadioButton) {
+                    eventOrganizerForm.setVisibility(View.VISIBLE);
+                    serviceProviderForm.setVisibility(View.GONE);
+                } else if (checkedId == R.id.serviceProviderRadioButton) {
+                    eventOrganizerForm.setVisibility(View.GONE);
+                    serviceProviderForm.setVisibility(View.VISIBLE);
+                }
             }
         });
     }

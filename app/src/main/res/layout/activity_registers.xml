@@ -10,118 +10,229 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Profile Picture -->
-        <ImageView
-            android:id="@+id/profileImageView"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_gravity="center"
-            android:contentDescription="Profile Picture"
-            />
-
-        <Button
-            android:id="@+id/uploadProfilePicButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Upload Profile Picture"
-            app:cornerRadius="8dp"
-            style="@style/Widget.MaterialComponents.Button.TextButton" />
-
-        <!-- First Name -->
-        <com.google.android.material.textfield.TextInputLayout
+        <!-- Radio Buttons to Choose User Type -->
+        <RadioGroup
+            android:id="@+id/userTypeRadioGroup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="First Name">
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/firstNameEditText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </com.google.android.material.textfield.TextInputLayout>
+            <RadioButton
+                android:id="@+id/eventOrganizerRadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Event Organizer"
+                android:checked="true" />
 
-        <!-- Last Name -->
-        <com.google.android.material.textfield.TextInputLayout
+            <RadioButton
+                android:id="@+id/serviceProviderRadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Service/Product Provider" />
+        </RadioGroup>
+
+        <!-- Event Organizer Form -->
+        <LinearLayout
+            android:id="@+id/eventOrganizerForm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Last Name">
+            android:orientation="vertical">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/lastNameEditText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </com.google.android.material.textfield.TextInputLayout>
+            <!-- Include Event Organizer Fields Here -->
+            <!-- Profile Picture -->
+            <ImageView
+                android:id="@+id/profileImageView"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                android:contentDescription="Profile Picture" />
 
-        <!-- Email Address -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Email Address"
-            app:endIconMode="clear_text">
+            <Button
+                android:id="@+id/uploadProfilePicButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Upload Profile Picture"
+                app:cornerRadius="8dp"
+                style="@style/Widget.MaterialComponents.Button.TextButton" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/emailEditText"
+            <!-- First Name -->
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textEmailAddress" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:hint="First Name">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/firstNameEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Password -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Password"
-            app:endIconMode="password_toggle">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/passwordEditText"
+            <!-- Last Name -->
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPassword" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:hint="Last Name">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/lastNameEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Confirm Password -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Confirm Password"
-            app:endIconMode="password_toggle">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/confirmPasswordEditText"
+            <!-- Email Address -->
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPassword" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Address -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Address">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/addressEditText"
+                android:hint="Email Address"
+                app:endIconMode="clear_text">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/emailEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textEmailAddress" />
+            </com.google.android.material.textfield.TextInputLayout>
+            <!-- Password -->
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPostalAddress" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:hint="Password"
+                app:endIconMode="password_toggle">
 
-        <!-- Phone Number -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Phone Number"
-            app:endIconMode="clear_text">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/passwordEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/phoneEditText"
+            <!-- Confirm Password -->
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="phone" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:hint="Confirm Password"
+                app:endIconMode="password_toggle">
 
-        <!-- Register Button -->
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/confirmPasswordEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Address -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Address">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/addressEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPostalAddress" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Phone Number -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Phone Number"
+                app:endIconMode="clear_text">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/phoneEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="phone" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Additional Fields for Event Organizer... -->
+
+        </LinearLayout>
+
+        <!-- Service/Product Provider Form -->
+        <LinearLayout
+            android:id="@+id/serviceProviderForm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <!-- Company Name -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Company Name">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/companyNameEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Email Address -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Email Address"
+                app:endIconMode="clear_text">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/companyEmailEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textEmailAddress" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Password -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Password"
+                app:endIconMode="password_toggle">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/companyPasswordEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Confirm Password -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Confirm Password"
+                app:endIconMode="password_toggle">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/companyConfirmPasswordEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Contact Name -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Contact Name">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/contactNameEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Company Description -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Company Description">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/companyDescriptionEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Additional Fields for Service Provider... -->
+
+        </LinearLayout>
         <Button
             android:id="@+id/registerButton"
             android:layout_width="match_parent"
