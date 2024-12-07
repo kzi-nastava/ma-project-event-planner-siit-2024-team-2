@@ -16,13 +16,13 @@ public class ClientUtils {
     //EXAMPLE: http://192.168.43.73:8080/api/
     public static final String SERVICE_API_PATH = "http://"+ BuildConfig.IP_ADDR +":8080/api/";
 
-    public static Interceptor getLoggingInterceptor() {
+    private static Interceptor getLoggingInterceptor() {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         return interceptor;
     }
 
-    public static OkHttpClient getClient(){
+    private static OkHttpClient getClient(){
         return new OkHttpClient.Builder()
                 .connectTimeout(120, TimeUnit.SECONDS)
                 .readTimeout(120, TimeUnit.SECONDS)
