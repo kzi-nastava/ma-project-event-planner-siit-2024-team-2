@@ -15,38 +15,23 @@ import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 public interface BookingService {
-    @Headers({
-            "User-Agent: Mobile-Android",
-            "Content-Type:application/json"
-    })
+    @Headers({"Content-Type:application/json"})
     @GET("bookings")
     Call<ArrayList<Booking>> getAll();
 
-    @Headers({
-            "User-Agent: Mobile-Android",
-            "Content-Type:application/json"
-    })
+    @Headers({"Content-Type:application/json"})
     @GET("bookings/{id}")
     Call<Booking> getById(@Path("id") Long id);
 
-    @Headers({
-            "User-Agent: Mobile-Android",
-            "Content-Type:application/json"
-    })
+    @Headers({"Content-Type:application/json"})
     @POST("bookings")
     Call<Booking> create(@Body Booking booking);
 
-    @Headers({
-            "User-Agent: Mobile-Android",
-            "Content-Type:application/json"
-    })
+    @Headers({"Content-Type:application/json"})
     @PUT("bookings/{id}")
     Call<Booking> update(@Path("id") Long id, @Body Booking booking);
 
-    @Headers({
-            "User-Agent: Mobile-Android",
-            "Content-Type:application/json"
-    })
+    @Headers({"Content-Type:application/json"})
     @DELETE("bookings/{id}")
     Call<ResponseBody> delete(@Path("id") Long id);
 }
