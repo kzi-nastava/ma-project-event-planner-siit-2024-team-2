@@ -1,13 +1,12 @@
-package com.example.eventplanner.model;
+package com.example.eventplanner.model.order;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
-import com.google.gson.Gson;
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
+import com.example.eventplanner.model.event.Event;
+import com.example.eventplanner.model.serviceproduct.Service;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -22,58 +21,23 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Booking implements Parcelable, Serializable {
-    @SerializedName("id")
-    @Expose
     private Long id;
-
-    @SerializedName("event")
-    @Expose
     private Event event;
-
-    @SerializedName("service")
-    @Expose
     private Service service;
-
-    @SerializedName("price")
-    @Expose
     private double price;
-
-    @SerializedName("date")
-    @Expose
     private Date date;
-
-    @SerializedName("duration")
-    @Expose
     private double duration;
 
     protected Booking(Parcel in) {
-        id = in.readLong();
+        if (in.readByte() == 0) {
+            id = null;
+        } else {
+            id = in.readLong();
+        }
         event = in.readParcelable(Event.class.getClassLoader());
         service = in.readParcelable(Service.class.getClassLoader());
         price = in.readDouble();
-        date = new Date(in.readLong());
         duration = in.readDouble();
-    }
-
-    @Override
-    public String toString() {
-        Gson gson = new Gson();
-        return gson.toJson(this);
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(@NonNull Parcel dest, int flags) {
-        dest.writeLong(id);
-        dest.writeParcelable((Parcelable) event, flags);
-        dest.writeParcelable(service, flags);
-        dest.writeDouble(price);
-        dest.writeLong(date.getTime());
-        dest.writeDouble(duration);
     }
 
     public static final Creator<Booking> CREATOR = new Creator<Booking>() {
@@ -87,4 +51,23 @@ public class Booking implements Parcelable, Serializable {
             return new Booking[size];
         }
     };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
+        if (id == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(id);
+        }
+        dest.writeParcelable(event, flags);
+        dest.writeParcelable(service, flags);
+        dest.writeDouble(price);
+        dest.writeDouble(duration);
+    }
 }

@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 
 import com.example.eventplanner.adapters.ServiceListAdapter;
 import com.example.eventplanner.databinding.FragmentServicesListBinding;
-import com.example.eventplanner.model.Service;
+import com.example.eventplanner.model.serviceproduct.Service;
 
 import java.util.ArrayList;
 

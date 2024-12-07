@@ -1,6 +1,6 @@
 package com.example.eventplanner.clients;
 
-import com.example.eventplanner.model.Booking;
+import com.example.eventplanner.model.order.Booking;
 
 import java.util.ArrayList;
 

@@ -1,7 +1,6 @@
 package com.example.eventplanner.activities;
 
 import android.os.Bundle;
-import android.os.Debug;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,7 +20,7 @@ import androidx.navigation.ui.NavigationUI;
 import com.example.eventplanner.R;
 import com.example.eventplanner.clients.ClientUtils;
 import com.example.eventplanner.databinding.ActivityHomeBinding;
-import com.example.eventplanner.model.Booking;
+import com.example.eventplanner.model.order.Booking;
 import com.google.android.material.navigation.NavigationView;
 
 
