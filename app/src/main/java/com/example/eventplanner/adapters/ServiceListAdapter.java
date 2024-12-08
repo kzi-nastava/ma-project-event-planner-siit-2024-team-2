@@ -15,7 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.eventplanner.R;
-import com.example.eventplanner.model.Service;
+import com.example.eventplanner.model.serviceproduct.Service;
 
 import java.util.ArrayList;
 
@@ -58,19 +58,19 @@ public class ServiceListAdapter extends ArrayAdapter<Service> {
         Button serviceEditButton = convertView.findViewById(R.id.service_button);
 
         if(service != null){
-            imageView.setImageResource(service.getImage());
-            serviceTitle.setText(service.getTitle());
+//            imageView.setImageResource(service.getImage());
+//            serviceTitle.setText(service.getTitle());
             serviceDescription.setText(service.getDescription());
 
-            serviceCard.setOnClickListener(v -> {
-                Toast.makeText(getContext(), "Clicked: " + service.getTitle()  +
-                        ", id: " + service.getId().toString(), Toast.LENGTH_SHORT).show();
-            });
-
-            serviceEditButton.setOnClickListener(v -> {
-                Toast.makeText(getContext(), "Pressed button: " + service.getTitle()  +
-                        ", id: " + service.getId().toString(), Toast.LENGTH_SHORT).show();
-            });
+//            serviceCard.setOnClickListener(v -> {
+//                Toast.makeText(getContext(), "Clicked: " + service.getTitle()  +
+//                        ", id: " + service.getId().toString(), Toast.LENGTH_SHORT).show();
+//            });
+//
+//            serviceEditButton.setOnClickListener(v -> {
+//                Toast.makeText(getContext(), "Pressed button: " + service.getTitle()  +
+//                        ", id: " + service.getId().toString(), Toast.LENGTH_SHORT).show();
+//            });
         }
         return convertView;
     }
