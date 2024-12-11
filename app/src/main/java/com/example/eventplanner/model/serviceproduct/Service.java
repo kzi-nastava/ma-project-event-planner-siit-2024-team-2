@@ -29,7 +29,7 @@ public class Service extends ServiceProduct implements Parcelable, Serializable 
     private int cancellationDaysDeadline;
     private boolean hasAutomaticReservation;
 
-    protected Service(Parcel in) {
+    public Service(Parcel in) {
         if (in.readByte() == 0) {
             id = null;
         } else {
