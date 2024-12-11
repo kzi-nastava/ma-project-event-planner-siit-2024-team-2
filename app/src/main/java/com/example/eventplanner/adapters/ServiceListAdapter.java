@@ -13,8 +13,18 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.eventplanner.R;
+import com.example.eventplanner.fragments.services.EditServiceFragment;
+import com.example.eventplanner.fragments.services.FragmentTransition;
+import com.example.eventplanner.fragments.services.ServicesListFragment;
+import com.example.eventplanner.fragments.services.ServicesPageFragment;
 import com.example.eventplanner.model.serviceproduct.Service;
 
 import java.util.ArrayList;
@@ -58,19 +68,31 @@ public class ServiceListAdapter extends ArrayAdapter<Service> {
         Button serviceEditButton = convertView.findViewById(R.id.service_button);
 
         if(service != null){
-//            imageView.setImageResource(service.getImage());
-//            serviceTitle.setText(service.getTitle());
+            //imageView.setImageResource(position);
+            serviceTitle.setText(service.getName());
             serviceDescription.setText(service.getDescription());
 
-//            serviceCard.setOnClickListener(v -> {
-//                Toast.makeText(getContext(), "Clicked: " + service.getTitle()  +
-//                        ", id: " + service.getId().toString(), Toast.LENGTH_SHORT).show();
-//            });
-//
-//            serviceEditButton.setOnClickListener(v -> {
-//                Toast.makeText(getContext(), "Pressed button: " + service.getTitle()  +
-//                        ", id: " + service.getId().toString(), Toast.LENGTH_SHORT).show();
-//            });
+            serviceCard.setOnClickListener(v -> {
+                Toast.makeText(getContext(), "Clicked: " + service.getName()  +
+                        ", id: " + service.getId().toString(), Toast.LENGTH_SHORT).show();
+            });
+
+            serviceEditButton.setOnClickListener(v -> {
+                if (getContext() instanceof FragmentActivity) {
+                    FragmentActivity activity = (FragmentActivity) getContext();
+                    EditServiceFragment editServiceFragment = EditServiceFragment.newInstance("", "");
+                    FragmentManager fragmentManager = activity.getSupportFragmentManager();
+                    FragmentTransaction transaction = fragmentManager.beginTransaction();
+                    transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+
+                    transaction.replace(R.id.all_services_page, editServiceFragment);
+                    transaction.addToBackStack(null);
+                    transaction.commit();
+                } else {
+                    Toast.makeText(getContext(), "Error: Unable to open fragment", Toast.LENGTH_SHORT).show();
+                }
+            });
+
         }
         return convertView;
     }
