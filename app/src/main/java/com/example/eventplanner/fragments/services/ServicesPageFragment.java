@@ -13,6 +13,8 @@ import android.widget.Button;
 import com.example.eventplanner.R;
 import com.example.eventplanner.databinding.FragmentServicesPageBinding;
 import com.example.eventplanner.model.serviceproduct.Service;
+import com.example.eventplanner.model.serviceproduct.ServiceProductCategory;
+
 import java.util.ArrayList;
 
 public class ServicesPageFragment extends Fragment {
@@ -52,7 +54,10 @@ public class ServicesPageFragment extends Fragment {
         // Write data to the Parcel in the same order as the constructor reads it
         parcel.writeByte((byte) 1); // Indicates that `id` is not null
         parcel.writeLong(12345L); // Example ID
-        parcel.writeParcelable(null, 0); // Example for `category`
+
+        ServiceProductCategory serviceProductCategory = new ServiceProductCategory(1L, "catering");
+        parcel.writeParcelable(serviceProductCategory, 0); // Example for `category`
+
         parcel.writeByte((byte) 1); // `available` as true
         parcel.writeByte((byte) 0); // `visible` as false
         parcel.writeDouble(99.99); // Example price

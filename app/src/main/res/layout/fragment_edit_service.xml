@@ -184,7 +184,8 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/reservationDeadlineEditText"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:inputType="number"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -195,7 +196,8 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/cancellationDeadlineEditText"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:inputType="number"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Save and Delete Buttons -->
@@ -217,8 +219,9 @@
                 android:id="@+id/btn_delete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@android:color/holo_red_dark"
-                android:text="Delete" />
+                android:backgroundTint="@color/secondary_color"
+                android:textColor="@color/black"
+                android:text="Cancel" />
         </LinearLayout>
 
     </LinearLayout>

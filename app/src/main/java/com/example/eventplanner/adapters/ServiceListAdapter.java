@@ -80,7 +80,7 @@ public class ServiceListAdapter extends ArrayAdapter<Service> {
             serviceEditButton.setOnClickListener(v -> {
                 if (getContext() instanceof FragmentActivity) {
                     FragmentActivity activity = (FragmentActivity) getContext();
-                    EditServiceFragment editServiceFragment = EditServiceFragment.newInstance("", "");
+                    EditServiceFragment editServiceFragment = EditServiceFragment.newInstance(service);
                     FragmentManager fragmentManager = activity.getSupportFragmentManager();
                     FragmentTransaction transaction = fragmentManager.beginTransaction();
                     transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);

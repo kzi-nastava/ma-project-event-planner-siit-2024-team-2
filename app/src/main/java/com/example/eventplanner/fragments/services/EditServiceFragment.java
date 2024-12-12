@@ -2,13 +2,21 @@ package com.example.eventplanner.fragments.services;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RadioButton;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.example.eventplanner.R;
+import com.example.eventplanner.databinding.FragmentEditServiceBinding;
+import com.example.eventplanner.databinding.FragmentServicesPageBinding;
+import com.example.eventplanner.model.serviceproduct.Service;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -17,33 +25,15 @@ import com.example.eventplanner.R;
  */
 public class EditServiceFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private Service service;
+    private FragmentEditServiceBinding binding;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    public EditServiceFragment() {}
 
-    public EditServiceFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment EditServiceFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static EditServiceFragment newInstance(String param1, String param2) {
+    public static EditServiceFragment newInstance(Service service) {
         EditServiceFragment fragment = new EditServiceFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putParcelable("service", service);
         fragment.setArguments(args);
         return fragment;
     }
@@ -52,15 +42,65 @@ public class EditServiceFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            service = getArguments().getParcelable("service");
         }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_edit_service, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        binding = FragmentEditServiceBinding.inflate(inflater, container, false);
+        View root = binding.getRoot();
+        return root;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        Spinner serviceCategory = view.findViewById(R.id.spinner_service_categories);
+
+        TextView serviceName = view.findViewById(R.id.nameEditText);
+        TextView serviceDescription = view.findViewById(R.id.descriptionEditText);
+        TextView serviceSpecifies = view.findViewById(R.id.specifiesEditText);
+
+        TextView servicePrice = view.findViewById(R.id.priceEditText);
+        TextView serviceDiscount = view.findViewById(R.id.discountEditText);
+        // Check boxes for event types (dynamically)
+
+        RadioButton serviceRadioVisibility = view.findViewById(R.id.radio_visibility);
+        RadioButton serviceRadioAvailability = view.findViewById(R.id.radio_availability);
+        TextView serviceDuration = view.findViewById(R.id.durationEditText);
+        TextView serviceCancellationDeadline = view.findViewById(R.id.cancellationDeadlineEditText);
+        TextView serviceReservationDeadline = view.findViewById(R.id.reservationDeadlineEditText);
+
+
+        if (service != null) {
+            int categoryPosition = -1;
+
+            String[] serviceCategories = getContext().getResources().getStringArray(R.array.service_categories);
+            String targetService = service.getCategory().getName();
+
+            for (int i = 0; i < serviceCategories.length; i++) {
+                if (serviceCategories[i].equals(targetService)) {
+                    categoryPosition = i;
+                    break;
+                }
+            }
+            serviceCategory.setSelection(categoryPosition);
+
+            serviceName.setText(service.getName());
+            serviceDescription.setText(service.getDescription());
+            serviceSpecifies.setText(service.getSpecifies());
+            servicePrice.setText(String.valueOf(service.getPrice()));
+            serviceDiscount.setText(String.valueOf(service.getDiscount()));
+
+            serviceRadioVisibility.setChecked(service.isVisible());
+            serviceRadioAvailability.setChecked(service.isAvailable());
+            serviceDuration.setText(String.valueOf(service.getDuration()));
+            serviceReservationDeadline.setText(String.valueOf(service.getReservationDaysDeadline()));
+            serviceCancellationDeadline.setText(String.valueOf(service.getCancellationDaysDeadline()));
+
+        }
+
     }
 }
