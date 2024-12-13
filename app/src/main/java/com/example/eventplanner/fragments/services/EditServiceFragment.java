@@ -5,24 +5,24 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.eventplanner.R;
 import com.example.eventplanner.databinding.FragmentEditServiceBinding;
-import com.example.eventplanner.databinding.FragmentServicesPageBinding;
 import com.example.eventplanner.model.serviceproduct.Service;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link EditServiceFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class EditServiceFragment extends Fragment {
 
     private Service service;
@@ -101,6 +101,19 @@ public class EditServiceFragment extends Fragment {
             serviceCancellationDeadline.setText(String.valueOf(service.getCancellationDaysDeadline()));
 
         }
+
+        Button saveBtn = view.findViewById(R.id.btn_save);
+        Button cancelBtn = view.findViewById(R.id.btn_cancel);
+
+        saveBtn.setOnClickListener(view1 -> {
+            FragmentTransition.to(ServicesPageFragment.newInstance(), (FragmentActivity) getContext(), true, R.id.all_services_page);
+            Toast.makeText(getContext(), "The service successfully saved.", Toast.LENGTH_SHORT).show();
+
+        });
+
+        cancelBtn.setOnClickListener(view1 -> {
+            FragmentTransition.to(ServicesPageFragment.newInstance(), (FragmentActivity) getContext(), true, R.id.all_services_page);
+        });
 
     }
 }
