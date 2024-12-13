@@ -13,18 +13,11 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.navigation.NavController;
-import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.eventplanner.R;
 import com.example.eventplanner.fragments.services.EditServiceFragment;
 import com.example.eventplanner.fragments.services.FragmentTransition;
-import com.example.eventplanner.fragments.services.ServicesListFragment;
-import com.example.eventplanner.fragments.services.ServicesPageFragment;
 import com.example.eventplanner.model.serviceproduct.Service;
 
 import java.util.ArrayList;
@@ -79,15 +72,7 @@ public class ServiceListAdapter extends ArrayAdapter<Service> {
 
             serviceEditButton.setOnClickListener(v -> {
                 if (getContext() instanceof FragmentActivity) {
-                    FragmentActivity activity = (FragmentActivity) getContext();
-                    EditServiceFragment editServiceFragment = EditServiceFragment.newInstance(service);
-                    FragmentManager fragmentManager = activity.getSupportFragmentManager();
-                    FragmentTransaction transaction = fragmentManager.beginTransaction();
-                    transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-
-                    transaction.replace(R.id.all_services_page, editServiceFragment);
-                    transaction.addToBackStack(null);
-                    transaction.commit();
+                    FragmentTransition.to(EditServiceFragment.newInstance(service), (FragmentActivity) getContext(), true, R.id.all_services_page);
                 } else {
                     Toast.makeText(getContext(), "Error: Unable to open fragment", Toast.LENGTH_SHORT).show();
                 }
