@@ -1,24 +1,47 @@
 package com.example.eventplanner.fragments.event;
 
+import static androidx.fragment.app.FragmentKt.setFragmentResult;
 import static java.lang.Integer.parseInt;
 import static java.lang.Long.parseLong;
 
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+
+import org.osmdroid.api.IMapController;
+import org.osmdroid.config.Configuration;
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.MapView;
+import org.osmdroid.api.IGeoPoint;
+import org.osmdroid.views.overlay.Marker;
 
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.eventplanner.R;
+import com.example.eventplanner.fragments.SelectLocationFragment;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.textfield.TextInputEditText;
@@ -38,9 +61,12 @@ public class CreateEventFragment extends Fragment {
     private long selectedDateMillis = -1;
     private MaterialCheckBox cbIsOpen;
     private MaterialButton btnSubmit, btnSelectDate, btnSelectLocation;
-    private static final int REQUEST_LOCATION = 1;
     private double latitude = 0, longitude = 0;
 
+    private MapView mapView;
+    private LocationManager locationManager;
+    private LocationListener locationListener;
+    private final int PERMISSION_CODE = 100;
 
 
 
@@ -64,7 +90,25 @@ public class CreateEventFragment extends Fragment {
         });
     }
 
+    private void updateMapLocation(Location location) {
+        // Dobavljanje trenutne lokacije na osnovu geografske širine i dužine
+        GeoPoint currentLocation = new GeoPoint(location.getLatitude(), location.getLongitude());
 
+        // Inicijalizacija kontrolera mape koji služi za manipulisanje mapom (zum, boje, iscrtavanja...)
+        // Mapa se centrira na prethodno dobavljenu poziciju
+        IMapController mapController = mapView.getController();
+        mapController.setZoom(18.0);
+        mapController.setCenter(currentLocation);
+
+        // Iscrtavanje markera na mapi korišćenjem prethodno dobavljene pozicije
+        Marker marker = new Marker(mapView);
+        marker.setPosition(currentLocation);
+        marker.setTitle("You are here");
+        mapView.getOverlays().add(marker);
+
+        // Ažuriranje prikaza mape
+        mapView.invalidate();
+    }
 
     @Nullable
     @Override
@@ -72,6 +116,21 @@ public class CreateEventFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_create_event, container, false);
 
+        // Inicijalizacija OSMDroid-a. Postavljamo prikaz mape unutar layout-a fragmenta i omogućavamo multitouch.
+        Configuration.getInstance().setUserAgentValue(requireContext().getPackageName());
+        mapView = view.findViewById(R.id.map);
+        mapView.setMultiTouchControls(true);
+
+        // Inicijalizacija lokacionog menagera putem kog ćemo dobijati informacije o lokaciji
+        locationManager = (LocationManager) requireActivity().getSystemService(Context.LOCATION_SERVICE);
+
+        // Postavljanje listener-a za praćenje promena lokacije
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(@NonNull Location location) {
+                updateMapLocation(location);
+            }
+        };
         viewModel = new ViewModelProvider(this).get(CreateEventViewModel.class);
         // Initialize views
         etName = view.findViewById(R.id.et_event_name);
@@ -100,22 +159,16 @@ public class CreateEventFragment extends Fragment {
         });
 
         btnSelectLocation.setOnClickListener(v -> {
+            // Get the NavController associated with the current fragment
+            NavController navController = Navigation.findNavController(getActivity(), R.id.nav_create_event);  // R.id.nav_host_fragment is the ID of your NavHostFragment
 
+            // Navigate to the new fragment (use the ID defined in nav_graph.xml)
+            navController.navigate(R.id.select_location_fragment);  // This ID should match the fragment ID in your nav_graph.xml
         });
 
+
+
         return view;
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == REQUEST_LOCATION && data != null) {
-            latitude = data.getDoubleExtra("latitude", 0);
-            longitude = data.getDoubleExtra("longitude", 0);
-
-            Toast.makeText(getContext(), "Location Selected: " + latitude + ", " + longitude, Toast.LENGTH_LONG).show();
-        }
     }
 
 

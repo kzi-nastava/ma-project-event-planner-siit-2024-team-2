@@ -75,4 +75,10 @@
         app:popUpToInclusive="true"
         />
 
+    <fragment
+        android:id="@+id/select_location_fragment"
+        android:name="com.example.eventplanner.fragments.SelectLocationFragment"
+        android:label="Select Location" />
+
+
 </navigation>
