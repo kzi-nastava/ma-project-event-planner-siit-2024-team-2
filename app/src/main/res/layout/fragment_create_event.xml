@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Event Name -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Event Name">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_event_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Description -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Description">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_event_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine"
+                android:lines="3" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Type ID -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Type ID">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_event_type_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Max Attendances -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Max Attendances">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_event_max_attendances"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Is Open -->
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/cb_is_open"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Is Open" />
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_select_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Select Date"/>
+
+        <!-- Select Location -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_select_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Select location" />
+
+        <!-- Submit Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_submit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Create Event" />
+
+    </LinearLayout>
+</ScrollView>

@@ -66,4 +66,13 @@
         app:popUpToInclusive="true"
         />
 
+    <fragment
+        android:id="@+id/nav_create_event"
+        android:name="com.example.eventplanner.fragments.event.CreateEventFragment"
+        android:label="Create Event"
+        tools:layout="@layout/fragment_create_event"
+        app:popUpTo="@+id/nav_home"
+        app:popUpToInclusive="true"
+        />
+
 </navigation>
