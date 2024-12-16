@@ -5,9 +5,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,17 +22,15 @@ import com.example.eventplanner.databinding.FragmentEditServiceBinding;
 import com.example.eventplanner.model.serviceproduct.Service;
 
 
-public class EditServiceFragment extends Fragment {
+public class EditServiceFragment extends Fragment{
 
-    private Service service;
     private FragmentEditServiceBinding binding;
 
     public EditServiceFragment() {}
 
-    public static EditServiceFragment newInstance(Service service) {
+    public static EditServiceFragment newInstance() {
         EditServiceFragment fragment = new EditServiceFragment();
         Bundle args = new Bundle();
-        args.putParcelable("service", service);
         fragment.setArguments(args);
         return fragment;
     }
@@ -41,9 +38,6 @@ public class EditServiceFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            service = getArguments().getParcelable("service");
-        }
     }
 
     @Override
@@ -73,47 +67,51 @@ public class EditServiceFragment extends Fragment {
         TextView serviceCancellationDeadline = view.findViewById(R.id.cancellationDeadlineEditText);
         TextView serviceReservationDeadline = view.findViewById(R.id.reservationDeadlineEditText);
 
+        if (getArguments() != null) {
+            Service service = getArguments().getParcelable("selectedService");
 
-        if (service != null) {
-            int categoryPosition = -1;
+            if (service != null) {
+                int categoryPosition = -1;
 
-            String[] serviceCategories = getContext().getResources().getStringArray(R.array.service_categories);
-            String targetService = service.getCategory().getName();
+                String[] serviceCategories = getContext().getResources().getStringArray(R.array.service_categories);
+                String targetService = service.getCategory().getName();
 
-            for (int i = 0; i < serviceCategories.length; i++) {
-                if (serviceCategories[i].equals(targetService)) {
-                    categoryPosition = i;
-                    break;
+                for (int i = 0; i < serviceCategories.length; i++) {
+                    if (serviceCategories[i].equals(targetService)) {
+                        categoryPosition = i;
+                        break;
+                    }
                 }
+                serviceCategory.setSelection(categoryPosition);
+
+                serviceName.setText(service.getName());
+                serviceDescription.setText(service.getDescription());
+                serviceSpecifies.setText(service.getSpecifies());
+                servicePrice.setText(String.valueOf(service.getPrice()));
+                serviceDiscount.setText(String.valueOf(service.getDiscount()));
+
+                serviceRadioVisibility.setChecked(service.isVisible());
+                serviceRadioAvailability.setChecked(service.isAvailable());
+                serviceDuration.setText(String.valueOf(service.getDuration()));
+                serviceReservationDeadline.setText(String.valueOf(service.getReservationDaysDeadline()));
+                serviceCancellationDeadline.setText(String.valueOf(service.getCancellationDaysDeadline()));
+
             }
-            serviceCategory.setSelection(categoryPosition);
 
-            serviceName.setText(service.getName());
-            serviceDescription.setText(service.getDescription());
-            serviceSpecifies.setText(service.getSpecifies());
-            servicePrice.setText(String.valueOf(service.getPrice()));
-            serviceDiscount.setText(String.valueOf(service.getDiscount()));
+            Button saveBtn = view.findViewById(R.id.btn_save);
+            Button cancelBtn = view.findViewById(R.id.btn_cancel);
 
-            serviceRadioVisibility.setChecked(service.isVisible());
-            serviceRadioAvailability.setChecked(service.isAvailable());
-            serviceDuration.setText(String.valueOf(service.getDuration()));
-            serviceReservationDeadline.setText(String.valueOf(service.getReservationDaysDeadline()));
-            serviceCancellationDeadline.setText(String.valueOf(service.getCancellationDaysDeadline()));
+            saveBtn.setOnClickListener(view1 -> {
+                NavController navController = Navigation.findNavController(view);
+                navController.navigate(R.id.nav_services);
+                Toast.makeText(getContext(), "The service successfully saved.", Toast.LENGTH_SHORT).show();
 
+            });
+
+            cancelBtn.setOnClickListener(view1 -> {
+                NavController navController = Navigation.findNavController(view);
+                navController.navigate(R.id.nav_services);
+            });
         }
-
-        Button saveBtn = view.findViewById(R.id.btn_save);
-        Button cancelBtn = view.findViewById(R.id.btn_cancel);
-
-        saveBtn.setOnClickListener(view1 -> {
-            FragmentTransition.to(ServicesPageFragment.newInstance(), (FragmentActivity) getContext(), true, R.id.all_services_page);
-            Toast.makeText(getContext(), "The service successfully saved.", Toast.LENGTH_SHORT).show();
-
-        });
-
-        cancelBtn.setOnClickListener(view1 -> {
-            FragmentTransition.to(ServicesPageFragment.newInstance(), (FragmentActivity) getContext(), true, R.id.all_services_page);
-        });
-
     }
 }

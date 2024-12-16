@@ -1,6 +1,7 @@
 package com.example.eventplanner.adapters;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,11 +14,10 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentActivity;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import com.example.eventplanner.R;
-import com.example.eventplanner.fragments.services.EditServiceFragment;
-import com.example.eventplanner.fragments.services.FragmentTransition;
 import com.example.eventplanner.model.serviceproduct.Service;
 
 import java.util.ArrayList;
@@ -58,7 +58,7 @@ public class ServiceListAdapter extends ArrayAdapter<Service> {
         ImageView imageView = convertView.findViewById(R.id.service_image);
         TextView serviceTitle = convertView.findViewById(R.id.service_title);
         TextView serviceDescription = convertView.findViewById(R.id.service_description);
-        Button serviceEditButton = convertView.findViewById(R.id.service_button);
+        Button serviceEditButton = convertView.findViewById(R.id.save_service_button);
 
         if(service != null){
             //imageView.setImageResource(position);
@@ -70,12 +70,12 @@ public class ServiceListAdapter extends ArrayAdapter<Service> {
                         ", id: " + service.getId().toString(), Toast.LENGTH_SHORT).show();
             });
 
+            View finalConvertView = convertView;
             serviceEditButton.setOnClickListener(v -> {
-                if (getContext() instanceof FragmentActivity) {
-                    FragmentTransition.to(EditServiceFragment.newInstance(service), (FragmentActivity) getContext(), true, R.id.all_services_page);
-                } else {
-                    Toast.makeText(getContext(), "Error: Unable to open fragment", Toast.LENGTH_SHORT).show();
-                }
+                NavController navController = Navigation.findNavController(finalConvertView);
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("selectedService", service);
+                navController.navigate(R.id.nav_edit_service, bundle);
             });
 
         }

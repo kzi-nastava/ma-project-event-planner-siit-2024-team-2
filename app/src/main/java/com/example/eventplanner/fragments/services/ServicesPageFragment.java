@@ -8,7 +8,6 @@ import android.os.Parcel;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import com.example.eventplanner.R;
 import com.example.eventplanner.databinding.FragmentServicesPageBinding;
@@ -64,7 +63,6 @@ public class ServicesPageFragment extends Fragment {
         parcel.writeDouble(10.0); // Example discount
         parcel.writeString("Service Name"); // Example name
         parcel.writeString("Service Description"); // Example description
-        parcel.writeStringList(new ArrayList<>()); // Example images list
         parcel.writeTypedList(new ArrayList<>()); // Example event types
         parcel.writeParcelable(null, 0); // Example for `serviceProductProvider`
         parcel.writeString("Some specifications"); // Example specifies
