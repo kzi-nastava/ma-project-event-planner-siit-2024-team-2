@@ -56,5 +56,13 @@
             android:text="Register"
             style="@style/Widget.MaterialComponents.Button.TextButton" />
 
+        <Button
+            android:id="@+id/continueWithoutAccount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Continue without account"
+            style="@style/Widget.MaterialComponents.Button.TextButton" />
+
     </LinearLayout>
 </ScrollView>

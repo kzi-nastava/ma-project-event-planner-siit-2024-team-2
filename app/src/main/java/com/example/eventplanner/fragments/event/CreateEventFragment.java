@@ -4,6 +4,8 @@ import static androidx.fragment.app.FragmentKt.setFragmentResult;
 import static java.lang.Integer.parseInt;
 import static java.lang.Long.parseLong;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -11,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -91,25 +94,14 @@ public class CreateEventFragment extends Fragment {
         });
     }
 
-    private void updateMapLocation(Location location) {
-        // Dobavljanje trenutne lokacije na osnovu geografske širine i dužine
-        GeoPoint currentLocation = new GeoPoint(location.getLatitude(), location.getLongitude());
-
-        // Inicijalizacija kontrolera mape koji služi za manipulisanje mapom (zum, boje, iscrtavanja...)
-        // Mapa se centrira na prethodno dobavljenu poziciju
-        IMapController mapController = mapView.getController();
-        mapController.setZoom(18.0);
-        mapController.setCenter(currentLocation);
-
-        // Iscrtavanje markera na mapi korišćenjem prethodno dobavljene pozicije
-        Marker marker = new Marker(mapView);
-        marker.setPosition(currentLocation);
-        marker.setTitle("You are here");
-        mapView.getOverlays().add(marker);
-
-        // Ažuriranje prikaza mape
-        mapView.invalidate();
-    }
+    private final ActivityResultLauncher<Intent> locationLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                    latitude = result.getData().getDoubleExtra("latitude", 0.0);
+                    longitude = result.getData().getDoubleExtra("longitude", 0.0);
+                    Toast.makeText(getContext(), "Lat: " + latitude + ", Lon: " + longitude, Toast.LENGTH_LONG).show();
+                }
+            });
 
     @Nullable
     @Override
@@ -119,7 +111,6 @@ public class CreateEventFragment extends Fragment {
 
 
         viewModel = new ViewModelProvider(this).get(CreateEventViewModel.class);
-        // Initialize views
         etName = view.findViewById(R.id.et_event_name);
         etDescription = view.findViewById(R.id.et_event_description);
         etTypeId = view.findViewById(R.id.et_event_type_id);
@@ -147,7 +138,7 @@ public class CreateEventFragment extends Fragment {
 
         btnSelectLocation.setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), SelectLocationActivity.class);
-            startActivity(intent);
+            locationLauncher.launch(intent);
         });
 
 
