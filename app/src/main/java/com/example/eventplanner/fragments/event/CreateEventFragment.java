@@ -41,6 +41,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.eventplanner.R;
+import com.example.eventplanner.activities.SelectLocationActivity;
 import com.example.eventplanner.fragments.SelectLocationFragment;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.checkbox.MaterialCheckBox;
@@ -116,21 +117,7 @@ public class CreateEventFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_create_event, container, false);
 
-        // Inicijalizacija OSMDroid-a. Postavljamo prikaz mape unutar layout-a fragmenta i omogućavamo multitouch.
-        Configuration.getInstance().setUserAgentValue(requireContext().getPackageName());
-        mapView = view.findViewById(R.id.map);
-        mapView.setMultiTouchControls(true);
 
-        // Inicijalizacija lokacionog menagera putem kog ćemo dobijati informacije o lokaciji
-        locationManager = (LocationManager) requireActivity().getSystemService(Context.LOCATION_SERVICE);
-
-        // Postavljanje listener-a za praćenje promena lokacije
-        locationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(@NonNull Location location) {
-                updateMapLocation(location);
-            }
-        };
         viewModel = new ViewModelProvider(this).get(CreateEventViewModel.class);
         // Initialize views
         etName = view.findViewById(R.id.et_event_name);
@@ -159,11 +146,8 @@ public class CreateEventFragment extends Fragment {
         });
 
         btnSelectLocation.setOnClickListener(v -> {
-            // Get the NavController associated with the current fragment
-            NavController navController = Navigation.findNavController(getActivity(), R.id.nav_create_event);  // R.id.nav_host_fragment is the ID of your NavHostFragment
-
-            // Navigate to the new fragment (use the ID defined in nav_graph.xml)
-            navController.navigate(R.id.select_location_fragment);  // This ID should match the fragment ID in your nav_graph.xml
+            Intent intent = new Intent(getContext(), SelectLocationActivity.class);
+            startActivity(intent);
         });
 
 
