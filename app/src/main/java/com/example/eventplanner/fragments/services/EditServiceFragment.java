@@ -80,6 +80,24 @@ public class EditServiceFragment extends Fragment{
         TextView serviceCancellationDeadline = view.findViewById(R.id.cancellationDeadlineEditText);
         TextView serviceReservationDeadline = view.findViewById(R.id.reservationDeadlineEditText);
 
+        Button saveBtn = view.findViewById(R.id.btn_save);
+        Button cancelBtn = view.findViewById(R.id.btn_cancel);
+        Button attachPhotoBtn = view.findViewById(R.id.btn_attach_photo);
+
+        saveBtn.setOnClickListener(view1 -> {
+            NavController navController = Navigation.findNavController(view);
+            navController.navigateUp();
+            Toast.makeText(getContext(), "The service successfully saved.", Toast.LENGTH_SHORT).show();
+
+        });
+
+        cancelBtn.setOnClickListener(view1 -> {
+            NavController navController = Navigation.findNavController(view);
+            navController.navigateUp();
+        });
+        
+        attachPhotoBtn.setOnClickListener(view1 -> openGallery());
+
         if (getArguments() != null) {
             service = getArguments().getParcelable("selectedService");
 
@@ -121,24 +139,6 @@ public class EditServiceFragment extends Fragment{
                 photosRecyclerView.setLayoutManager(gridLayoutManager);
 
             }
-
-            Button saveBtn = view.findViewById(R.id.btn_save);
-            Button cancelBtn = view.findViewById(R.id.btn_cancel);
-            Button attachPhotoBtn = view.findViewById(R.id.btn_attach_photo);
-
-            saveBtn.setOnClickListener(view1 -> {
-                NavController navController = Navigation.findNavController(view);
-                navController.navigate(R.id.nav_services);
-                Toast.makeText(getContext(), "The service successfully saved.", Toast.LENGTH_SHORT).show();
-
-            });
-
-            cancelBtn.setOnClickListener(view1 -> {
-                NavController navController = Navigation.findNavController(view);
-                navController.navigate(R.id.nav_services);
-            });
-
-            attachPhotoBtn.setOnClickListener(view1 -> openGallery());
         }
     }
 
