@@ -26,8 +26,8 @@
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:contentDescription="catering picture"
-        android:scaleType="centerCrop"/>
-<!--        android:src="@drawable/catering" />-->
+        android:scaleType="centerCrop"
+        android:src="@drawable/catering" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -46,32 +46,28 @@
             android:lineSpacingExtra="4dp"
             android:gravity="start" />
 
-        <Button
-            android:id="@+id/save_service_button"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="202dp"
-            android:layout_marginBottom="2dp"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:text="Edit" />
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_gravity="bottom"
+            android:layout_marginTop="70dp">
 
-        <Button
-            android:id="@+id/delete_service_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="76dp"
-            android:layout_marginBottom="1dp"
-            android:backgroundTint="@android:color/holo_red_dark"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:text="Delete" />
+            <Button
+                android:id="@+id/save_service_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Edit"
+                android:layout_marginEnd="16dp" />
+
+            <Button
+                android:id="@+id/delete_service_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@android:color/holo_red_dark"
+                android:text="Delete" />
+        </LinearLayout>
 
     </RelativeLayout>
 
