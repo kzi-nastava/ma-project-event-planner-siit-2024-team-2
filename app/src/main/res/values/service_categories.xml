@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="service_categories">
-        <item>Music</item>
-        <item>Catering</item>
-        <item>Waiter service</item>
+        <item>music</item>
+        <item>catering</item>
+        <item>waiter service</item>
     </string-array>
 </resources>

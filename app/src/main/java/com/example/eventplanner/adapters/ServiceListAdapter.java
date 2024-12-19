@@ -1,18 +1,22 @@
 package com.example.eventplanner.adapters;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.net.Uri;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import com.example.eventplanner.R;
 import com.example.eventplanner.model.serviceproduct.Service;
@@ -47,31 +51,59 @@ public class ServiceListAdapter extends ArrayAdapter<Service> {
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         Service service = getItem(position);
-        if(convertView == null){
+
+        if(convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.service_card,
                     parent, false);
         }
-        LinearLayout serviceCard = convertView.findViewById(R.id.service_card_item);
+
+        if(service != null){
+            fillServiceCard(position, convertView, service);
+        }
+        return convertView;
+    }
+
+    private void fillServiceCard(int position, View convertView, Service service) {
         ImageView imageView = convertView.findViewById(R.id.service_image);
         TextView serviceTitle = convertView.findViewById(R.id.service_title);
         TextView serviceDescription = convertView.findViewById(R.id.service_description);
-        Button serviceEditButton = convertView.findViewById(R.id.service_button);
+        Button serviceEditButton = convertView.findViewById(R.id.save_service_button);
+        Button serviceDeleteButton = convertView.findViewById(R.id.delete_service_button);
 
-        if(service != null){
-//            imageView.setImageResource(service.getImage());
-//            serviceTitle.setText(service.getTitle());
-            serviceDescription.setText(service.getDescription());
-
-//            serviceCard.setOnClickListener(v -> {
-//                Toast.makeText(getContext(), "Clicked: " + service.getTitle()  +
-//                        ", id: " + service.getId().toString(), Toast.LENGTH_SHORT).show();
-//            });
-//
-//            serviceEditButton.setOnClickListener(v -> {
-//                Toast.makeText(getContext(), "Pressed button: " + service.getTitle()  +
-//                        ", id: " + service.getId().toString(), Toast.LENGTH_SHORT).show();
-//            });
+        if (!service.getImages().isEmpty()) {
+            String imagePath = service.getImages().get(0); // Assume this returns the image path string
+            imageView.setImageURI(Uri.parse(imagePath));
         }
-        return convertView;
+
+        serviceTitle.setText(service.getName());
+        serviceDescription.setText(service.getDescription());
+
+        View finalConvertView = convertView;
+        editService(serviceEditButton, finalConvertView, service);
+        deleteService(position, serviceDeleteButton);
+    }
+
+    private static void editService(Button serviceEditButton, View finalConvertView, Service service) {
+        serviceEditButton.setOnClickListener(v -> {
+            NavController navController = Navigation.findNavController(finalConvertView);
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("selectedService", service);
+            navController.navigate(R.id.nav_edit_service, bundle);
+        });
+    }
+
+    private void deleteService(int position, Button serviceDeleteButton) {
+        serviceDeleteButton.setOnClickListener(v -> {
+            new AlertDialog.Builder(v.getContext())
+                    .setTitle("Delete Service")
+                    .setMessage("Are you sure you want to delete this service?")
+                    .setPositiveButton("Yes", (dialog, which) -> {
+                        aServices.remove(position);
+                        notifyDataSetChanged();  // Refresh the RecyclerView
+                        Toast.makeText(v.getContext(), "Service deleted", Toast.LENGTH_SHORT).show();
+                    })
+                    .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
+                    .show();
+        });
     }
 }
