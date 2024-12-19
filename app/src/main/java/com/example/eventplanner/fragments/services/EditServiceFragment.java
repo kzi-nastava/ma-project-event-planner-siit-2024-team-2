@@ -84,62 +84,75 @@ public class EditServiceFragment extends Fragment{
         Button cancelBtn = view.findViewById(R.id.btn_cancel);
         Button attachPhotoBtn = view.findViewById(R.id.btn_attach_photo);
 
-        saveBtn.setOnClickListener(view1 -> {
-            NavController navController = Navigation.findNavController(view);
-            navController.navigateUp();
-            Toast.makeText(getContext(), "The service successfully saved.", Toast.LENGTH_SHORT).show();
-
-        });
-
-        cancelBtn.setOnClickListener(view1 -> {
-            NavController navController = Navigation.findNavController(view);
-            navController.navigateUp();
-        });
-        
+        navigateBack(view, saveBtn, true);
+        navigateBack(view, cancelBtn, false);
         attachPhotoBtn.setOnClickListener(view1 -> openGallery());
 
         if (getArguments() != null) {
             service = getArguments().getParcelable("selectedService");
 
             if (service != null) {
-                int categoryPosition = -1;
-
-                String[] serviceCategories = getContext().getResources().getStringArray(R.array.service_categories);
-                String targetService = service.getCategory().getName();
-
-                for (int i = 0; i < serviceCategories.length; i++) {
-                    if (serviceCategories[i].equals(targetService)) {
-                        categoryPosition = i;
-                        break;
-                    }
-                }
-                serviceCategory.setSelection(categoryPosition);
-
-                serviceName.setText(service.getName());
-                serviceDescription.setText(service.getDescription());
-                serviceSpecifies.setText(service.getSpecifies());
-                servicePrice.setText(String.valueOf(service.getPrice()));
-                serviceDiscount.setText(String.valueOf(service.getDiscount()));
-
-                serviceRadioVisibility.setChecked(service.isVisible());
-                serviceRadioAvailability.setChecked(service.isAvailable());
-                serviceDuration.setText(String.valueOf(service.getDuration()));
-                serviceReservationDeadline.setText(String.valueOf(service.getReservationDaysDeadline()));
-                serviceCancellationDeadline.setText(String.valueOf(service.getCancellationDaysDeadline()));
-
-                RecyclerView photosRecyclerView = binding.photosRecyclerView;
-                List<Uri> photoList = new ArrayList<>();
-                photoList.add(Uri.parse("android.resource://" + getContext().getPackageName() + "/" + R.drawable.catering));
-
-                PhotosAdapter photosAdapter = new PhotosAdapter(photoList);
-                photosRecyclerView.setAdapter(photosAdapter);
-
-                // Set up RecyclerView with GridLayoutManager
-                GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 3);
-                photosRecyclerView.setLayoutManager(gridLayoutManager);
-
+                setServiceAttributes(serviceCategory, serviceName, serviceDescription, serviceSpecifies, servicePrice, serviceDiscount,
+                        serviceRadioVisibility, serviceRadioAvailability, serviceDuration, serviceReservationDeadline, serviceCancellationDeadline);
             }
         }
+    }
+
+    private void setServiceAttributes(Spinner serviceCategory, TextView serviceName, TextView serviceDescription, TextView serviceSpecifies,
+                                      TextView servicePrice, TextView serviceDiscount, RadioButton serviceRadioVisibility, RadioButton serviceRadioAvailability,
+                                      TextView serviceDuration, TextView serviceReservationDeadline, TextView serviceCancellationDeadline) {
+        setServiceCategory(serviceCategory);
+
+        serviceName.setText(service.getName());
+        serviceDescription.setText(service.getDescription());
+        serviceSpecifies.setText(service.getSpecifies());
+        servicePrice.setText(String.valueOf(service.getPrice()));
+        serviceDiscount.setText(String.valueOf(service.getDiscount()));
+
+        serviceRadioVisibility.setChecked(service.isVisible());
+        serviceRadioAvailability.setChecked(service.isAvailable());
+        serviceDuration.setText(String.valueOf(service.getDuration()));
+        serviceReservationDeadline.setText(String.valueOf(service.getReservationDaysDeadline()));
+        serviceCancellationDeadline.setText(String.valueOf(service.getCancellationDaysDeadline()));
+
+        setServicePhotos();
+    }
+
+    private void setServiceCategory(Spinner serviceCategory) {
+        int categoryPosition = -1;
+
+        String[] serviceCategories = getContext().getResources().getStringArray(R.array.service_categories);
+        String targetService = service.getCategory().getName();
+
+        for (int i = 0; i < serviceCategories.length; i++) {
+            if (serviceCategories[i].equals(targetService)) {
+                categoryPosition = i;
+                break;
+            }
+        }
+        serviceCategory.setSelection(categoryPosition);
+    }
+
+    private void setServicePhotos() {
+        RecyclerView photosRecyclerView = binding.photosRecyclerView;
+        List<Uri> photoList = new ArrayList<>();
+        photoList.add(Uri.parse("android.resource://" + getContext().getPackageName() + "/" + R.drawable.catering));
+
+        PhotosAdapter photosAdapter = new PhotosAdapter(photoList);
+        photosRecyclerView.setAdapter(photosAdapter);
+
+        // Set up RecyclerView with GridLayoutManager
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 3);
+        photosRecyclerView.setLayoutManager(gridLayoutManager);
+    }
+
+    private static void navigateBack(@NonNull View view, Button cancelBtn, boolean showSaveToast) {
+        cancelBtn.setOnClickListener(view1 -> {
+            NavController navController = Navigation.findNavController(view);
+            navController.navigateUp();
+            if (showSaveToast)
+                Toast.makeText(view.getContext(), "The service successfully saved.", Toast.LENGTH_SHORT).show();
+        });
     }
 
     public void openGallery() {

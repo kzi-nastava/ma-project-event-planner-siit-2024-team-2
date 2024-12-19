@@ -52,30 +52,35 @@ public class ServiceListAdapter extends ArrayAdapter<Service> {
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         Service service = getItem(position);
 
-        if(convertView == null){
+        if(convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.service_card,
                     parent, false);
         }
+
+        if(service != null){
+            fillServiceCard(position, convertView, service);
+        }
+        return convertView;
+    }
+
+    private void fillServiceCard(int position, View convertView, Service service) {
         ImageView imageView = convertView.findViewById(R.id.service_image);
         TextView serviceTitle = convertView.findViewById(R.id.service_title);
         TextView serviceDescription = convertView.findViewById(R.id.service_description);
         Button serviceEditButton = convertView.findViewById(R.id.save_service_button);
         Button serviceDeleteButton = convertView.findViewById(R.id.delete_service_button);
 
-        if(service != null){
-            if (!service.getImages().isEmpty()) {
-                String imagePath = service.getImages().get(0); // Assume this returns the image path string
-                imageView.setImageURI(Uri.parse(imagePath));
-            }
-
-            serviceTitle.setText(service.getName());
-            serviceDescription.setText(service.getDescription());
-
-            View finalConvertView = convertView;
-            editService(serviceEditButton, finalConvertView, service);
-            deleteService(position, serviceDeleteButton);
+        if (!service.getImages().isEmpty()) {
+            String imagePath = service.getImages().get(0); // Assume this returns the image path string
+            imageView.setImageURI(Uri.parse(imagePath));
         }
-        return convertView;
+
+        serviceTitle.setText(service.getName());
+        serviceDescription.setText(service.getDescription());
+
+        View finalConvertView = convertView;
+        editService(serviceEditButton, finalConvertView, service);
+        deleteService(position, serviceDeleteButton);
     }
 
     private static void editService(Button serviceEditButton, View finalConvertView, Service service) {

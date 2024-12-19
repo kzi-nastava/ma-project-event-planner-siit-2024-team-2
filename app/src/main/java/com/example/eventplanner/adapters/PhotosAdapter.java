@@ -34,6 +34,27 @@ public class PhotosAdapter extends RecyclerView.Adapter<PhotosAdapter.PhotoViewH
         Uri photoUri = photoList.get(position);
         holder.imageView.setImageURI(photoUri);
 
+        deleteOnLongClick(holder, position);
+        showBiggerPhotoOnCLick(holder, position);
+    }
+
+    private void showBiggerPhotoOnCLick(PhotoViewHolder holder, int position) {
+        holder.itemView.setOnClickListener(v -> {
+            Dialog dialog = new Dialog(v.getContext());
+            dialog.setContentView(R.layout.dialog_full_screen_photo);
+
+            ImageView imageView = dialog.findViewById(R.id.dialog_image_view);
+            ImageView closeButton = dialog.findViewById(R.id.close_button);
+            Uri photoDialogUri = photoList.get(position);
+
+            imageView.setImageURI(photoDialogUri); // Replace with your image loading logic
+            closeButton.setOnClickListener(view -> dialog.dismiss());
+
+            dialog.show();
+        });
+    }
+
+    private void deleteOnLongClick(PhotoViewHolder holder, int position) {
         holder.itemView.setOnLongClickListener(v -> {
             new AlertDialog.Builder(v.getContext())
                     .setTitle("Delete Photo")
@@ -47,20 +68,6 @@ public class PhotosAdapter extends RecyclerView.Adapter<PhotosAdapter.PhotoViewH
                     .show();
 
             return true;
-        });
-
-        holder.itemView.setOnClickListener(v -> {
-            Dialog dialog = new Dialog(v.getContext());
-            dialog.setContentView(R.layout.dialog_full_screen_photo);
-
-            ImageView imageView = dialog.findViewById(R.id.dialog_image_view);
-            ImageView closeButton = dialog.findViewById(R.id.close_button);
-            Uri photoDialogUri = photoList.get(position);
-
-            imageView.setImageURI(photoDialogUri); // Replace with your image loading logic
-            closeButton.setOnClickListener(view -> dialog.dismiss());
-
-            dialog.show();
         });
     }
 
