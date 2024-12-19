@@ -2,6 +2,7 @@ package com.example.eventplanner.adapters;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -62,6 +63,11 @@ public class ServiceListAdapter extends ArrayAdapter<Service> {
         Button serviceDeleteButton = convertView.findViewById(R.id.delete_service_button);
 
         if(service != null){
+            if (!service.getImages().isEmpty()) {
+                String imagePath = service.getImages().get(0); // Assume this returns the image path string
+                imageView.setImageURI(Uri.parse(imagePath));
+            }
+
             serviceTitle.setText(service.getName());
             serviceDescription.setText(service.getDescription());
 

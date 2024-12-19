@@ -1,5 +1,8 @@
 package com.example.eventplanner.fragments.services;
 
+import static android.app.Activity.RESULT_OK;
+
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -11,6 +14,7 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -120,6 +124,7 @@ public class EditServiceFragment extends Fragment{
 
             Button saveBtn = view.findViewById(R.id.btn_save);
             Button cancelBtn = view.findViewById(R.id.btn_cancel);
+            Button attachPhotoBtn = view.findViewById(R.id.btn_attach_photo);
 
             saveBtn.setOnClickListener(view1 -> {
                 NavController navController = Navigation.findNavController(view);
@@ -132,6 +137,27 @@ public class EditServiceFragment extends Fragment{
                 NavController navController = Navigation.findNavController(view);
                 navController.navigate(R.id.nav_services);
             });
+
+            attachPhotoBtn.setOnClickListener(view1 -> openGallery());
+        }
+    }
+
+    public void openGallery() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/*"); // Filter for images only
+        startActivityForResult(intent, PICK_IMAGE_REQUEST);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
+            Uri imageUri = data.getData();
+            List<String> images = service.getImages();
+            images.add(imageUri.toString());
+            service.setImages(images);
+            Toast.makeText(getContext(), "The photo successfully chosen.", Toast.LENGTH_SHORT).show();
         }
     }
 }
