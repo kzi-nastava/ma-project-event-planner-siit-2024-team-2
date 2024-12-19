@@ -9,6 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:gravity="center"
         android:padding="16dp"
         android:id="@+id/fragment_edit_service">
 
@@ -89,6 +90,24 @@
                 android:inputType="number" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <Button
+            android:id="@+id/btn_attach_photo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Attach the photo" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="To delete a photo, long press on it."
+            android:layout_marginTop="16dp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/photos_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+
         <!-- Checkbox List for Available Event Categories -->
         <TextView
             android:layout_width="wrap_content"
@@ -138,12 +157,6 @@
         </LinearLayout>
 
         <!-- Radio Buttons -->
-        <Button
-            android:id="@+id/btn_attach_photo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Attach the photo" />
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -200,7 +213,7 @@
                 android:inputType="number"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Save and Delete Buttons -->
+                <!-- Save and Delete Buttons -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

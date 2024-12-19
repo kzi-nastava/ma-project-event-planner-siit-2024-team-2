@@ -1,5 +1,6 @@
 package com.example.eventplanner.fragments.services;
 
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -7,6 +8,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,13 +21,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.eventplanner.R;
+import com.example.eventplanner.adapters.PhotosAdapter;
 import com.example.eventplanner.databinding.FragmentEditServiceBinding;
 import com.example.eventplanner.model.serviceproduct.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class EditServiceFragment extends Fragment{
 
     private FragmentEditServiceBinding binding;
+    private Service service;
+    private static final int PICK_IMAGE_REQUEST = 1;
 
     public EditServiceFragment() {}
 
@@ -68,7 +77,7 @@ public class EditServiceFragment extends Fragment{
         TextView serviceReservationDeadline = view.findViewById(R.id.reservationDeadlineEditText);
 
         if (getArguments() != null) {
-            Service service = getArguments().getParcelable("selectedService");
+            service = getArguments().getParcelable("selectedService");
 
             if (service != null) {
                 int categoryPosition = -1;
@@ -95,6 +104,17 @@ public class EditServiceFragment extends Fragment{
                 serviceDuration.setText(String.valueOf(service.getDuration()));
                 serviceReservationDeadline.setText(String.valueOf(service.getReservationDaysDeadline()));
                 serviceCancellationDeadline.setText(String.valueOf(service.getCancellationDaysDeadline()));
+
+                RecyclerView photosRecyclerView = binding.photosRecyclerView;
+                List<Uri> photoList = new ArrayList<>();
+                photoList.add(Uri.parse("android.resource://" + getContext().getPackageName() + "/" + R.drawable.catering));
+
+                PhotosAdapter photosAdapter = new PhotosAdapter(photoList);
+                photosRecyclerView.setAdapter(photosAdapter);
+
+                // Set up RecyclerView with GridLayoutManager
+                GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 3);
+                photosRecyclerView.setLayoutManager(gridLayoutManager);
 
             }
 

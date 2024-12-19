@@ -9,7 +9,6 @@ import com.example.eventplanner.model.event.EventType;
 import com.example.eventplanner.model.user.ServiceProductProvider;
 
 import java.io.Serializable;
-import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -63,6 +63,7 @@ public class ServicesPageFragment extends Fragment {
         parcel.writeDouble(10.0); // Example discount
         parcel.writeString("Service Name"); // Example name
         parcel.writeString("Service Description"); // Example description
+        parcel.writeStringList(new ArrayList<>()); // Example images list
         parcel.writeTypedList(new ArrayList<>()); // Example event types
         parcel.writeParcelable(null, 0); // Example for `serviceProductProvider`
         parcel.writeString("Some specifications"); // Example specifies
