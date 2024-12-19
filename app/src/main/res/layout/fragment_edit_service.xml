@@ -97,6 +97,7 @@
             android:text="Attach the photo" />
 
         <TextView
+            android:id="@+id/delete_instruction_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="To delete a photo, long press on it."

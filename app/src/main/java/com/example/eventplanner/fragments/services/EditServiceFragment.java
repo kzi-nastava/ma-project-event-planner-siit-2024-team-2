@@ -69,6 +69,7 @@ public class EditServiceFragment extends Fragment{
         TextView serviceName = view.findViewById(R.id.nameEditText);
         TextView serviceDescription = view.findViewById(R.id.descriptionEditText);
         TextView serviceSpecifies = view.findViewById(R.id.specifiesEditText);
+        TextView deleteInstruction = view.findViewById(R.id.delete_instruction_text);
 
         TextView servicePrice = view.findViewById(R.id.priceEditText);
         TextView serviceDiscount = view.findViewById(R.id.discountEditText);
@@ -92,13 +93,13 @@ public class EditServiceFragment extends Fragment{
             service = getArguments().getParcelable("selectedService");
 
             if (service != null) {
-                setServiceAttributes(serviceCategory, serviceName, serviceDescription, serviceSpecifies, servicePrice, serviceDiscount,
+                setServiceAttributes(serviceCategory, serviceName, serviceDescription, serviceSpecifies, deleteInstruction, servicePrice, serviceDiscount,
                         serviceRadioVisibility, serviceRadioAvailability, serviceDuration, serviceReservationDeadline, serviceCancellationDeadline);
             }
         }
     }
 
-    private void setServiceAttributes(Spinner serviceCategory, TextView serviceName, TextView serviceDescription, TextView serviceSpecifies,
+    private void setServiceAttributes(Spinner serviceCategory, TextView serviceName, TextView serviceDescription, TextView serviceSpecifies, TextView deleteInstruction,
                                       TextView servicePrice, TextView serviceDiscount, RadioButton serviceRadioVisibility, RadioButton serviceRadioAvailability,
                                       TextView serviceDuration, TextView serviceReservationDeadline, TextView serviceCancellationDeadline) {
         setServiceCategory(serviceCategory);
@@ -115,7 +116,7 @@ public class EditServiceFragment extends Fragment{
         serviceReservationDeadline.setText(String.valueOf(service.getReservationDaysDeadline()));
         serviceCancellationDeadline.setText(String.valueOf(service.getCancellationDaysDeadline()));
 
-        setServicePhotos();
+        setServicePhotos(deleteInstruction);
     }
 
     private void setServiceCategory(Spinner serviceCategory) {
@@ -133,10 +134,13 @@ public class EditServiceFragment extends Fragment{
         serviceCategory.setSelection(categoryPosition);
     }
 
-    private void setServicePhotos() {
+    private void setServicePhotos(TextView deleteInstruction) {
         RecyclerView photosRecyclerView = binding.photosRecyclerView;
         List<Uri> photoList = new ArrayList<>();
         photoList.add(Uri.parse("android.resource://" + getContext().getPackageName() + "/" + R.drawable.catering));
+
+        if (photoList.isEmpty())
+            deleteInstruction.setText("There aren't any photos of the service yet.");
 
         PhotosAdapter photosAdapter = new PhotosAdapter(photoList);
         photosRecyclerView.setAdapter(photosAdapter);
