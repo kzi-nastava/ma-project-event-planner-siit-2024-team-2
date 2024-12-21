@@ -26,6 +26,7 @@ import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import retrofit2.Call;
@@ -92,10 +93,10 @@ public class HomeActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
 
 
-        Call<ArrayList<Booking>> call = ClientUtils.bookingService.getAll();
-        call.enqueue(new Callback<ArrayList<Booking>>() {
+        Call<List<Booking>> call = ClientUtils.bookingService.getBookings();
+        call.enqueue(new Callback<List<Booking>>() {
             @Override
-            public void onResponse(Call<ArrayList<Booking>> call, Response<ArrayList<Booking>> response) {
+            public void onResponse(Call<List<Booking>> call, Response<List<Booking>> response) {
                 if (response.isSuccessful()) {
                     Toast.makeText(HomeActivity.this, response.message(), Toast.LENGTH_LONG).show();
                     Log.e("Home", response.message());
@@ -113,7 +114,7 @@ public class HomeActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<ArrayList<Booking>> call, Throwable t) {
+            public void onFailure(Call<List<Booking>> call, Throwable t) {
                 Toast.makeText(HomeActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
                 Log.w("error", t.getMessage());
                 //errorMessage.postValue(t.getMessage());

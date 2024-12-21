@@ -1,6 +1,8 @@
 package com.example.eventplanner.clients;
 
 import com.example.eventplanner.BuildConfig;
+import com.example.eventplanner.clients.event.EventService;
+import com.example.eventplanner.clients.order.BookingService;
 
 import java.util.concurrent.TimeUnit;
 
@@ -43,5 +45,15 @@ public class ClientUtils {
             .client(getClient())
             .build();
 
+    // Event
+    public static EventService eventService = retrofit.create(EventService.class);
+
+    // Order
     public static BookingService bookingService = retrofit.create(BookingService.class);
+
+    // ServiceProduct
+
+    // User
+
+    // Auth
 }

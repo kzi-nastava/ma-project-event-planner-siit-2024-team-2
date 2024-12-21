@@ -1,8 +1,10 @@
-package com.example.eventplanner.clients;
+package com.example.eventplanner.clients.order;
 
+import com.example.eventplanner.dto.order.BookingDto;
 import com.example.eventplanner.model.order.Booking;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -17,21 +19,21 @@ import retrofit2.http.Path;
 public interface BookingService {
     @Headers({"Content-Type:application/json"})
     @GET("bookings")
-    Call<ArrayList<Booking>> getAll();
+    Call<List<Booking>> getBookings();
 
     @Headers({"Content-Type:application/json"})
     @GET("bookings/{id}")
-    Call<Booking> getById(@Path("id") Long id);
+    Call<Booking> getBookingById(@Path("id") Long id);
 
     @Headers({"Content-Type:application/json"})
     @POST("bookings")
-    Call<Booking> create(@Body Booking booking);
+    Call<Booking> createBooking(@Body BookingDto bookingDto);
 
     @Headers({"Content-Type:application/json"})
     @PUT("bookings/{id}")
-    Call<Booking> update(@Path("id") Long id, @Body Booking booking);
+    Call<Booking> updateBooking(@Path("id") Long id, @Body BookingDto bookingDto);
 
     @Headers({"Content-Type:application/json"})
     @DELETE("bookings/{id}")
-    Call<ResponseBody> delete(@Path("id") Long id);
+    Call<ResponseBody> deleteBooking(@Path("id") Long id);
 }
