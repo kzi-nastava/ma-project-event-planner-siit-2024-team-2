@@ -1,8 +1,5 @@
 package com.example.eventplanner.dto.order;
 
-import com.example.eventplanner.dto.event.EventDto;
-import com.example.eventplanner.dto.serviceproduct.ProductDto;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
