@@ -15,7 +15,7 @@ import lombok.Setter;
 public class EventReviewDto {
     private int grade;
     private String comment;
-    private BaseUserDto user;
-    private EventDto eventId;
+    private long userId;
+    private long eventId;
     private ReviewStatus reviewStatus;
 }
