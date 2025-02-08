@@ -8,7 +8,7 @@
     tools:context=".fragments.ServiceProductCompactFragment">
 
     <ImageView
-        android:id="@+id/profilePicture"
+        android:id="@+id/image_spp_profile_picture"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_marginStart="16dp"
@@ -20,7 +20,7 @@
         tools:src="@drawable/monogram_c" />
 
     <TextView
-        android:id="@+id/username"
+        android:id="@+id/text_spp_username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
@@ -28,21 +28,21 @@
         android:ems="10"
         android:text="Catering Peric"
         android:textSize="24sp"
-        app:layout_constraintStart_toEndOf="@+id/profilePicture"
+        app:layout_constraintStart_toEndOf="@+id/image_spp_profile_picture"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/email"
+        android:id="@+id/text_spp_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="22dp"
         android:layout_marginTop="7dp"
         android:text="marko.peric@cperic.rs"
-        app:layout_constraintStart_toEndOf="@+id/profilePicture"
-        app:layout_constraintTop_toBottomOf="@+id/username" />
+        app:layout_constraintStart_toEndOf="@+id/image_spp_profile_picture"
+        app:layout_constraintTop_toBottomOf="@+id/text_spp_username" />
 
     <TextView
-        android:id="@+id/serviceProductName"
+        android:id="@+id/text_serviceproduct_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -50,20 +50,20 @@
         android:text="Catering for all occasions"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profilePicture" />
+        app:layout_constraintTop_toBottomOf="@+id/image_spp_profile_picture" />
 
     <TextView
-        android:id="@+id/price"
+        android:id="@+id/text_service_product_price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:text="Contact"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/serviceProductName" />
+        app:layout_constraintTop_toBottomOf="@+id/text_serviceproduct_name" />
 
     <TextView
-        android:id="@+id/serviceProductDescription"
+        android:id="@+id/text_service_product_description"
         android:layout_width="239dp"
         android:layout_height="72dp"
         android:layout_marginStart="16dp"
@@ -72,10 +72,10 @@
         android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/price" />
+        app:layout_constraintTop_toBottomOf="@+id/text_service_product_price" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/btn_service_product_more_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -85,7 +85,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageButton
-        android:id="@+id/imageButton"
+        android:id="@+id/btn_service_product_heart"
         android:layout_width="36dp"
         android:layout_height="36dp"
         android:layout_marginEnd="16dp"
