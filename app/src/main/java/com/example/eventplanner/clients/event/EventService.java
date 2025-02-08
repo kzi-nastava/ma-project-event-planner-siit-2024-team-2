@@ -41,6 +41,25 @@ public interface EventService {
             @Query("endDate") Long endDate);
 
     @Headers({"Content-Type:application/json"})
+    @GET("events/summaries")
+    Call<PagedModel<EventSummaryDto>> getEventSummaries(
+            @Query("page") Integer page,
+            @Query("size") Integer size,
+            @Query("sortBy") String sortBy,
+            @Query("sortDirection") SortDirection sortDirection,
+            @Query("name") String name,
+            @Query("description") String description,
+            @Query("types") List<Long> types,
+            @Query("minMaxAttendances") Integer minMaxAttendances,
+            @Query("maxMaxAttendances") Integer maxMaxAttendances,
+            @Query("open") Boolean open,
+            @Query("latitudes") List<Double> latitudes,
+            @Query("longitudes") List<Double> longitudes,
+            @Query("maxDistance") Double maxDistance,
+            @Query("startDate") Long startDate,
+            @Query("endDate") Long endDate);
+
+    @Headers({"Content-Type:application/json"})
     @GET("events/{id}")
     Call<Event> getEventById(@Path("id") Long id);
 
