@@ -5,5 +5,7 @@
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
         <item name="colorPrimary">@color/primary_color</item>
         <item name="backgroundColor">@color/dark_gray</item>
+        <item name="empty_heart_outline_color">@color/white</item>
+        <item name="filled_heart_outline_color">@color/red</item>
     </style>
 </resources>

@@ -2,9 +2,11 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="red">#FFFF0000</color>
     <color name="primary_color">#FF7C96FF</color>
     <color name="secondary_color">#FFEEF2FF</color>
-    <color name="Selection">#FFC2CFFF</color>
+    <color name="selection">#FFC2CFFF</color>
     <color name="dark_gray">#FF2B3352</color>
     <color name="placeholder_text">#B549454F</color>
+    <color name="cod_gray">#1E1E1E</color>
 </resources>

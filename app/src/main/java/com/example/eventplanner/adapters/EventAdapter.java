@@ -1,5 +1,6 @@
 package com.example.eventplanner.adapters;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,9 +14,12 @@ import com.example.eventplanner.R;
 import com.example.eventplanner.dto.event.EventSummaryDto;
 import com.example.eventplanner.model.event.Event;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -38,6 +42,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
         private final TextView eventDescription;
         private final Button moreInfo;
         private final ImageButton heart;
+        private boolean favorite;
 
         public ViewHolder(View view) {
             super(view);
@@ -50,6 +55,11 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
             eventDescription = (TextView) view.findViewById(R.id.text_event_description);
             moreInfo = (Button) view.findViewById(R.id.btn_event_more_info);
             heart = (ImageButton) view.findViewById(R.id.btn_event_heart);
+
+            heart.setOnClickListener(v -> {
+                v.setBackgroundResource(favorite ? R.drawable.heart_empty : R.drawable.heart_filled);
+                favorite = !favorite;
+            });
         }
 
     }
@@ -80,14 +90,16 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
 
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
-//        viewHolder.getEoUsername().setText(localDataSet[position].getCreatorUsername());
-//        viewHolder.getEoEmail().setText(localDataSet[position].getCreatorEmail());
-        viewHolder.getEventName().setText(localDataSet.get(position).getName());
+        EventSummaryDto dto = localDataSet.get(position);
+        viewHolder.getEoUsername().setText(dto.getCreatorName());
+        viewHolder.getEoEmail().setText(dto.getCreatorEmail());
+        viewHolder.getEventName().setText(dto.getName());
+        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.LONG);
         viewHolder.getEventDate().setText(
-                LocalDateTime.ofInstant(Instant.ofEpochMilli(localDataSet.get(position).getDate()),
-                                        ZoneId.systemDefault()).toString());
-        viewHolder.getEventDescription().setText(localDataSet.get(position).getDescription());
-        viewHolder.getEventDescription().setText(localDataSet.get(position).getDescription());
+                dateFormat.format(new Date(dto.getDate())));
+//                LocalDateTime.ofInstant(Instant.ofEpochMilli(localDataSet.get(position).getDate()),
+//                                        ZoneId.systemDefault()).toString());
+        viewHolder.getEventDescription().setText(dto.getDescription());
 
     }
 
