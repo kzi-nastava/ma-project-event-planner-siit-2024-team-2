@@ -5,12 +5,20 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 public class AllEventsViewModel extends ViewModel {
+    private final MutableLiveData<String> queryHint;
     private final MutableLiveData<String> searchText;
     public AllEventsViewModel(){
         searchText = new MutableLiveData<>();
-        searchText.setValue("Search...");
+        queryHint = new MutableLiveData<>();
+        queryHint.setValue("Search...");
     }
-    public LiveData<String> getText(){
+    public LiveData<String> getHint(){
+        return queryHint;
+    }
+    public void setSearchText(String value){
+        searchText.setValue(value);
+    }
+    public LiveData<String> getSearchText(){
         return searchText;
     }
 }

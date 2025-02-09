@@ -1,42 +1,26 @@
 package com.example.eventplanner.fragments.home;
 
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.eventplanner.R;
-import com.example.eventplanner.activities.HomeActivity;
 import com.example.eventplanner.adapters.EventAdapter;
 import com.example.eventplanner.clients.ClientUtils;
 import com.example.eventplanner.databinding.FragmentAllEventsPageBinding;
 import com.example.eventplanner.dto.event.EventSummaryDto;
-import com.example.eventplanner.dto.event.EventTypeDto;
-import com.example.eventplanner.fragments.services.FragmentTransition;
-import com.example.eventplanner.model.order.Booking;
-import com.example.eventplanner.model.serviceproduct.Product;
 import com.example.eventplanner.model.utils.PageMetadata;
 import com.example.eventplanner.model.utils.PagedModel;
-import com.example.eventplanner.model.utils.SortDirection;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,15 +51,34 @@ public class AllEventsPageFragment extends Fragment {
         binding = FragmentAllEventsPageBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        fetchData();
+        fetchData(null);
 
         SearchView searchView = binding.searchText;
-        viewModel.getText().observe(getViewLifecycleOwner(), searchView::setQueryHint);
+        viewModel.getHint().observe(getViewLifecycleOwner(), searchView::setQueryHint);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                viewModel.setSearchText(query);
+                return true;
+            }
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (newText.isBlank()) {
+                    viewModel.setSearchText(newText);
+                    return true;
+                }
+                return false;
+            }
+        });
+        viewModel.getSearchText().observe(getViewLifecycleOwner(), this::fetchData);
 
-        recyclerView = (RecyclerView) root.findViewById(R.id.recycle_view_events);
+
+        recyclerView = binding.recycleViewEvents;
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
         adapter = new EventAdapter(events);
         recyclerView.setAdapter(adapter);
+
+
 //        Button btnFilters = binding.btnFilters;
 //        btnFilters.setOnClickListener(v -> {
 //            Log.i("ShopApp", "Bottom Sheet Dialog");
@@ -147,12 +150,13 @@ public class AllEventsPageFragment extends Fragment {
         binding = null;
     }
 
-    private void fetchData(){
+    private void fetchData(String name){
         Call<PagedModel<EventSummaryDto>> call = ClientUtils.eventService.getEventSummaries(
-                null, null, null, null, null, null,
+                null, null, null, null, name, null,
                 null, null, null, null, null,
                 null, null, null ,null);
-        call.enqueue(new Callback<PagedModel<EventSummaryDto>>() {
+
+        call.enqueue(new Callback<>() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onResponse(@NonNull Call<PagedModel<EventSummaryDto>> call, @NonNull Response<PagedModel<EventSummaryDto>> response) {
