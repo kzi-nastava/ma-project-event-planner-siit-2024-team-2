@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="event_sort_array">
+        <item>Date descending</item>
+        <item>Date ascending</item>
+        <item>Name descending</item>
+        <item>Name ascending</item>
+    </string-array>
+</resources>
