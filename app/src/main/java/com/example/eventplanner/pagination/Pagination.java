@@ -95,7 +95,7 @@ public class Pagination {
     private void toNext() {
         toPage(currentPage + 1);
     }
-    private void toPage(int page) {
+    public void toPage(int page) {
         if (currentPage != page && page >= 1 && page <= totalPages) {
             if (onPaginateListener != null) {
                 onPaginateListener.OnPaginate(page);

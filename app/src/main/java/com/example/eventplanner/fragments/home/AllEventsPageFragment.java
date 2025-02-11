@@ -110,28 +110,10 @@ public class AllEventsPageFragment extends Fragment {
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(arrayAdapter);
 
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                currentSelectedIndex = spinner.getSelectedItemPosition();
-                if (currentSelectedIndex != lastSpinnerSelection) {
-                    Log.v("EventPlanner", (String) parent.getItemAtPosition(position));
-//                    ((TextView) parent.getChildAt(0)).setTextColor(Color.BLUE);
-                    lastSpinnerSelection = currentSelectedIndex;
-                    currentSelectedIndex = position;
-                    fetchData();
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // No action needed
-            }
-        });
-
         pagination = new Pagination(getContext(), 0, binding.paginationEvents);
         pagination.setOnPaginateListener(newPage -> {
             currentPage = newPage;
+            viewModel.setCurrentPage(currentPage);
             fetchData();
         });
 
@@ -142,13 +124,41 @@ public class AllEventsPageFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
+        Log.i("Resume","Resume");
+
         spinner.setSelection(spinner.getSelectedItemPosition(), false);
-        int totalPages = pageMetadata == null ? 0 : pageMetadata.getTotalPages();
-        pagination = new Pagination(getContext(), totalPages, binding.paginationEvents);
-        pagination.setOnPaginateListener(newPage -> {
-            currentPage = newPage;
-            fetchData();
-        });
+        if (spinner.getOnItemSelectedListener() == null) {
+            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    currentSelectedIndex = spinner.getSelectedItemPosition();
+                    if (currentSelectedIndex != lastSpinnerSelection) {
+                        Log.v("EventPlanner", (String) parent.getItemAtPosition(position));
+//                    ((TextView) parent.getChildAt(0)).setTextColor(Color.BLUE);
+                        lastSpinnerSelection = currentSelectedIndex;
+                        currentSelectedIndex = position;
+                        fetchData();
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                    // No action needed
+                }
+            });
+        }
+
+        if (binding.paginationEvents.getChildCount() == 0) {
+            int totalPages = pageMetadata == null ? 0 : pageMetadata.getTotalPages();
+            pagination = new Pagination(getContext(), totalPages, binding.paginationEvents);
+            pagination.setOnPaginateListener(newPage -> {
+                currentPage = newPage;
+                fetchData();
+            });
+
+            currentPage = viewModel.getCurrentPage();
+            pagination.toPage(currentPage);
+        }
 
         //FragmentTransition.to(AllEventsListFragment.newInstance(events), requireActivity(), false, R.id.scroll_products_list);
 

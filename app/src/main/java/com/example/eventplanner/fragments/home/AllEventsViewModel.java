@@ -4,9 +4,15 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import lombok.Getter;
+import lombok.Setter;
+
 public class AllEventsViewModel extends ViewModel {
     private final MutableLiveData<String> queryHint;
     private final MutableLiveData<String> searchText;
+    @Getter
+    @Setter
+    private int currentPage;
     public AllEventsViewModel(){
         searchText = new MutableLiveData<>();
         queryHint = new MutableLiveData<>();
