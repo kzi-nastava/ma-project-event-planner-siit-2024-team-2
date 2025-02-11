@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="empty_heart_outline_color" format="color" />
+    <attr name="filled_heart_outline_color" format="color" />
+    <attr name="text_color" format="color" />
+    <attr name="pagination_background" format="color" />
+</resources>

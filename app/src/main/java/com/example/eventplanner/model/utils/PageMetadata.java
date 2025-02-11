@@ -10,8 +10,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PageMetadata {
-    Long size;
-    Long number;
+    Integer size;
+    Integer number;
     Long totalElements;
-    Long totalPages;
+    Integer totalPages;
 }

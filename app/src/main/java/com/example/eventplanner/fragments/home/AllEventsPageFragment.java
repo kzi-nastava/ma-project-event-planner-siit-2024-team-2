@@ -27,6 +27,8 @@ import com.example.eventplanner.dto.event.EventSummaryDto;
 import com.example.eventplanner.model.utils.PageMetadata;
 import com.example.eventplanner.model.utils.PagedModel;
 import com.example.eventplanner.model.utils.SortDirection;
+import com.example.eventplanner.pagination.OnPaginateListener;
+import com.example.eventplanner.pagination.Pagination;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +48,9 @@ public class AllEventsPageFragment extends Fragment {
     int currentSelectedIndex;
     private RecyclerView recyclerView;
     private EventAdapter adapter;
+    private Pagination pagination;
+    private int currentPage = 1;
+    private static final int pageSize = 1;
 
     public static AllEventsPageFragment newInstance() {
         return new AllEventsPageFragment();
@@ -93,10 +98,15 @@ public class AllEventsPageFragment extends Fragment {
 //            bottomSheetDialog.setContentView(dialogView);
 //            bottomSheetDialog.show();
 //        });
+//        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(requireActivity(),
+//                android.R.layout.simple_spinner_item,
+//                getResources().getStringArray(R.array.event_sort_array));
         spinner = binding.spinnerSort;
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(requireActivity(),
-                android.R.layout.simple_spinner_item,
-                getResources().getStringArray(R.array.event_sort_array));
+        ArrayAdapter<CharSequence> arrayAdapter = ArrayAdapter.createFromResource(
+                getContext(),
+                R.array.event_sort_array,
+                android.R.layout.simple_spinner_item
+        );
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(arrayAdapter);
 
@@ -106,7 +116,7 @@ public class AllEventsPageFragment extends Fragment {
                 currentSelectedIndex = spinner.getSelectedItemPosition();
                 if (currentSelectedIndex != lastSpinnerSelection) {
                     Log.v("EventPlanner", (String) parent.getItemAtPosition(position));
-                    ((TextView) parent.getChildAt(0)).setTextColor(Color.BLUE);
+//                    ((TextView) parent.getChildAt(0)).setTextColor(Color.BLUE);
                     lastSpinnerSelection = currentSelectedIndex;
                     currentSelectedIndex = position;
                     fetchData();
@@ -119,6 +129,12 @@ public class AllEventsPageFragment extends Fragment {
             }
         });
 
+        pagination = new Pagination(getContext(), 0, binding.paginationEvents);
+        pagination.setOnPaginateListener(newPage -> {
+            currentPage = newPage;
+            fetchData();
+        });
+
         return root;
     }
 
@@ -127,6 +143,13 @@ public class AllEventsPageFragment extends Fragment {
         super.onResume();
 
         spinner.setSelection(spinner.getSelectedItemPosition(), false);
+        int totalPages = pageMetadata == null ? 0 : pageMetadata.getTotalPages();
+        pagination = new Pagination(getContext(), totalPages, binding.paginationEvents);
+        pagination.setOnPaginateListener(newPage -> {
+            currentPage = newPage;
+            fetchData();
+        });
+
         //FragmentTransition.to(AllEventsListFragment.newInstance(events), requireActivity(), false, R.id.scroll_products_list);
 
     }
@@ -147,7 +170,7 @@ public class AllEventsPageFragment extends Fragment {
                     .equals("descending") ? SortDirection.DESC : SortDirection.ASC;
         }
         Call<PagedModel<EventSummaryDto>> call = ClientUtils.eventService.getEventSummaries(
-                null, null, sortBy, sortDirection,
+                currentPage-1, pageSize, sortBy, sortDirection,
                 viewModel.getSearchText().getValue(), null,
                 null, null, null, null, null,
                 null, null, null ,null);
@@ -161,6 +184,10 @@ public class AllEventsPageFragment extends Fragment {
                     {
                         events.clear();
                         events.addAll(response.body().getContent());
+                        int previousTotalPages = pageMetadata == null ? 0 : pageMetadata.getTotalPages();
+                        pageMetadata = response.body().getPage();
+                        if (previousTotalPages != pageMetadata.getTotalPages())
+                            pagination.changeTotalPages(pageMetadata.getTotalPages());
                     }
                     else
                         events.clear();

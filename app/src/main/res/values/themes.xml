@@ -7,6 +7,8 @@
         <item name="backgroundColor">@color/white</item>
         <item name="empty_heart_outline_color">@color/cod_gray</item>
         <item name="filled_heart_outline_color">@color/cod_gray</item>
+        <item name="text_color">@color/cod_gray</item>
+        <item name="pagination_background">@color/light_gray</item>
     </style>
 
     <style name="Theme.EventPlanner" parent="Base.Theme.EventPlanner" />
