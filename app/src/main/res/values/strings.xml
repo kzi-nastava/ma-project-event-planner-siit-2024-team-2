@@ -19,4 +19,11 @@
     <string name="select_category">Select a category</string>
     <string name="events">Events</string>
     <string name="services_and_products">Services and products</string>
+    <string name="filter">Filter</string>
+    <string name="filters_label">Filters:</string>
+    <string name="event_type_label">Event type:</string>
+    <string name="max_attendances">Max attendances:</string>
+    <string name="open_label">Open:</string>
+    <string name="distance_label">Maximum distance (km):</string>
+    <string name="date_label">Date:</string>
 </resources>

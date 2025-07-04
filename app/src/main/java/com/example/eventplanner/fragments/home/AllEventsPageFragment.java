@@ -3,12 +3,17 @@ package com.example.eventplanner.fragments.home;
 import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.method.TextKeyListener;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -24,11 +29,17 @@ import com.example.eventplanner.adapters.EventAdapter;
 import com.example.eventplanner.clients.ClientUtils;
 import com.example.eventplanner.databinding.FragmentAllEventsPageBinding;
 import com.example.eventplanner.dto.event.EventSummaryDto;
+import com.example.eventplanner.model.event.Event;
+import com.example.eventplanner.model.event.EventType;
 import com.example.eventplanner.model.utils.PageMetadata;
 import com.example.eventplanner.model.utils.PagedModel;
 import com.example.eventplanner.model.utils.SortDirection;
 import com.example.eventplanner.pagination.OnPaginateListener;
 import com.example.eventplanner.pagination.Pagination;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.slider.RangeSlider;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +61,7 @@ public class AllEventsPageFragment extends Fragment {
     private EventAdapter adapter;
     private Pagination pagination;
     private int currentPage = 1;
-    private static final int pageSize = 1;
+    private static final int pageSize = 10;
 
     public static AllEventsPageFragment newInstance() {
         return new AllEventsPageFragment();
@@ -90,24 +101,47 @@ public class AllEventsPageFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
 
-//        Button btnFilters = binding.btnFilters;
-//        btnFilters.setOnClickListener(v -> {
-//            Log.i("ShopApp", "Bottom Sheet Dialog");
-//            BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(requireActivity(), R.style.FullScreenBottomSheetDialog);
-//            View dialogView = getLayoutInflater().inflate(R.layout.bottom_sheet_filter, null);
-//            bottomSheetDialog.setContentView(dialogView);
-//            bottomSheetDialog.show();
-//        });
-//        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(requireActivity(),
-//                android.R.layout.simple_spinner_item,
-//                getResources().getStringArray(R.array.event_sort_array));
-        spinner = binding.spinnerSort;
+        Button filter = binding.btnFilter;
+        filter.setOnClickListener(v -> {
+            BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(requireActivity(), R.style.FullScreenBottomSheetDialog);
+            View dialogView = getLayoutInflater().inflate(R.layout.bottom_sheet_filter, null);
+
+            LinearLayout linearLayout = dialogView.findViewById(R.id.linear_event_types);
+            // TODO: Use fetched event types
+            EventType[] eventTypes = new EventType[]{
+                    new EventType(0L, "Sajam", null),
+                    new EventType(1L, "Žurka", null),
+                    new EventType(2L, "Proslava", null),
+                    new EventType(3L, "Venčanje", null),
+                    new EventType(4L, "Rođendan", null)
+            };
+            for (EventType type : eventTypes) {
+                CheckBox checkBox = new CheckBox(getContext());
+                checkBox.setLayoutParams(
+                        new LinearLayout.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                checkBox.setText(StringUtils.capitalize(type.getName()));
+                linearLayout.addView(checkBox);
+            }
+            RangeSlider rangeSlider = dialogView.findViewById(R.id.range_slider_events);
+            Pair<Integer, Integer> range = findAttendancesRange();
+            rangeSlider.setValueFrom(range.first);
+            rangeSlider.setValueTo(range.second);
+            if (range.first == 0 && range.second == 1)
+            {
+                rangeSlider.setEnabled(false);
+                rangeSlider.setValues(0f, 1f);
+            }
+            bottomSheetDialog.setContentView(dialogView);
+            bottomSheetDialog.show();
+        });
         ArrayAdapter<CharSequence> arrayAdapter = ArrayAdapter.createFromResource(
                 getContext(),
                 R.array.event_sort_array,
                 android.R.layout.simple_spinner_item
         );
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner = binding.spinnerSort;
         spinner.setAdapter(arrayAdapter);
 
         pagination = new Pagination(getContext(), 0, binding.paginationEvents);
@@ -159,7 +193,6 @@ public class AllEventsPageFragment extends Fragment {
             currentPage = viewModel.getCurrentPage();
             pagination.toPage(currentPage);
         }
-
         //FragmentTransition.to(AllEventsListFragment.newInstance(events), requireActivity(), false, R.id.scroll_products_list);
 
     }
@@ -182,7 +215,7 @@ public class AllEventsPageFragment extends Fragment {
         Call<PagedModel<EventSummaryDto>> call = ClientUtils.eventService.getEventSummaries(
                 currentPage-1, pageSize, sortBy, sortDirection,
                 viewModel.getSearchText().getValue(), null,
-                null, null, null, null, null,
+                null, null, null, true, null,
                 null, null, null ,null);
 
         call.enqueue(new Callback<>() {
@@ -212,5 +245,23 @@ public class AllEventsPageFragment extends Fragment {
                 Log.e("RetrofitCall", Objects.requireNonNull(t.getMessage()));
             }
         });
+    }
+
+    private Pair<Integer, Integer> findAttendancesRange() {
+        int minValue, maxValue;
+        if (events.isEmpty()) {
+            minValue = 0;
+            maxValue = 100;
+        } else {
+            minValue = events.get(0).getMaxAttendances();
+            maxValue = events.get(0).getMaxAttendances();
+        }
+        for (EventSummaryDto event : events) {
+            minValue = Math.min(minValue, event.getMaxAttendances());
+            maxValue = Math.max(maxValue, event.getMaxAttendances());
+        }
+        if (minValue == maxValue)
+            maxValue++;
+        return new Pair<>(minValue, maxValue);
     }
 }
