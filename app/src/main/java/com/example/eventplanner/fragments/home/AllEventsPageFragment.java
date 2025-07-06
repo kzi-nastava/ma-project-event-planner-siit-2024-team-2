@@ -67,7 +67,7 @@ public class AllEventsPageFragment extends Fragment {
     private static final int pageSize = 10;
     //Filtering
     private boolean[] selectedTypes, selectedCities;
-    private List<Double> latitudes, longitutes;
+    private List<Double> latitudes, longitudes;
     private List<Long> types;
     private Integer minMaxAttendances, maxMaxAttendances;
     private Double maxDistance;
@@ -91,6 +91,7 @@ public class AllEventsPageFragment extends Fragment {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 viewModel.setSearchText(query);
+                fetchData();
                 return true;
             }
             @Override
@@ -179,12 +180,12 @@ public class AllEventsPageFragment extends Fragment {
                     }
 
                     latitudes = new ArrayList<>();
-                    longitutes = new ArrayList<>();
+                    longitudes = new ArrayList<>();
                     for (int i = 0; i < selectedCities.length; i++)
                         if (selectedCities[i])
                         {
                             latitudes.add(cities[i].getLat());
-                            longitutes.add(cities[i].getLng());
+                            longitudes.add(cities[i].getLng());
                         }
 
                     if (latitudes != null && !latitudes.isEmpty())
@@ -292,7 +293,7 @@ public class AllEventsPageFragment extends Fragment {
                 currentPage-1, pageSize, sortBy, sortDirection,
                 viewModel.getSearchText().getValue(), null,
                 types, minMaxAttendances, maxMaxAttendances, true, latitudes,
-                longitutes, maxDistance, date, date);
+                longitudes, maxDistance, date, date);
 
         call.enqueue(new Callback<>() {
             @SuppressLint("NotifyDataSetChanged")
