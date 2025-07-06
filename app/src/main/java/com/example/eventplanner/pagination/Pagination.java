@@ -151,6 +151,8 @@ public class Pagination {
         else {
             linearLayout.removeAllViews();
             totalPages = newTotalPages;
+            if (totalPages == 0)
+                totalPages = 1;
             initButtons();
         }
     }
