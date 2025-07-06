@@ -1,0 +1,797 @@
+[
+  {
+    "city": "Belgrade", 
+    "lat": "44.8200", 
+    "lng": "20.4600"
+  }, 
+  {
+    "city": "Novi Sad", 
+    "lat": "45.2542", 
+    "lng": "19.8425"
+  }, 
+  {
+    "city": "Niš", 
+    "lat": "43.3208", 
+    "lng": "21.8958"
+  }, 
+  {
+    "city": "Zemun", 
+    "lat": "44.8500", 
+    "lng": "20.4000"
+  }, 
+  {
+    "city": "Kragujevac", 
+    "lat": "44.0101", 
+    "lng": "20.9172"
+  }, 
+  {
+    "city": "Šabac", 
+    "lat": "44.7500", 
+    "lng": "19.7000"
+  }, 
+  {
+    "city": "Smederevo", 
+    "lat": "44.6667", 
+    "lng": "20.9333"
+  },   
+  {    
+	"city": "Valjevo", 
+    "lat": "44.2667", 
+    "lng": "19.8833"
+  }, 
+  {
+    "city": "Loznica", 
+    "lat": "44.5333", 
+    "lng": "19.2258"
+  }, 
+  {
+    "city": "Pančevo", 
+    "lat": "44.8706", 
+    "lng": "20.6403"
+  }, 
+  {
+    "city": "Sremska Mitrovica", 
+    "lat": "44.9700", 
+    "lng": "19.6125"
+  }, 
+  {
+    "city": "Stara Pazova", 
+    "lat": "44.9833", 
+    "lng": "20.1667"
+  }, 
+  {
+    "city": "Čačak", 
+    "lat": "43.8833", 
+    "lng": "20.3500"
+  }, 
+  {
+    "city": "Požarevac", 
+    "lat": "44.6167", 
+    "lng": "21.1833"
+  }, 
+  {
+    "city": "Zrenjanin", 
+    "lat": "45.3833", 
+    "lng": "20.3894"
+  }, 
+  {
+    "city": "Kraljevo", 
+    "lat": "43.7236", 
+    "lng": "20.6875"
+  }, 
+  {
+    "city": "Novi Pazar", 
+    "lat": "43.1378", 
+    "lng": "20.5161"
+  }, 
+  {
+    "city": "Užice", 
+    "lat": "43.8500", 
+    "lng": "19.8500"
+  }, 
+  {
+    "city": "Kruševac", 
+    "lat": "43.5806", 
+    "lng": "21.3306"
+  }, 
+  {
+    "city": "Lazarevac", 
+    "lat": "44.3667", 
+    "lng": "20.2500"
+  }, 
+  {
+    "city": "Vranje", 
+    "lat": "42.5500", 
+    "lng": "21.9000"
+  }, 
+  {
+    "city": "Ruma", 
+    "lat": "45.0000", 
+    "lng": "19.8333"
+  }, 
+  {
+    "city": "Paraćin", 
+    "lat": "43.8667", 
+    "lng": "21.4167"
+  }, 
+  {
+    "city": "Sombor", 
+    "lat": "45.7833", 
+    "lng": "19.1167"
+  }, 
+  {
+    "city": "Pirot", 
+    "lat": "43.1667", 
+    "lng": "22.6000"
+  }, 
+  {
+    "city": "Mladenovac", 
+    "lat": "44.4333", 
+    "lng": "20.7000"
+  }, 
+  {
+    "city": "Zaječar", 
+    "lat": "43.9167", 
+    "lng": "22.3000"
+  }, 
+  {
+    "city": "Batajnica", 
+    "lat": "44.9000", 
+    "lng": "20.2833"
+  }, 
+  {
+    "city": "Inđija", 
+    "lat": "45.0500", 
+    "lng": "20.0833"
+  }, 
+  {
+    "city": "Aranđelovac", 
+    "lat": "44.3000", 
+    "lng": "20.5667"
+  }, 
+  {
+    "city": "Borča", 
+    "lat": "44.8700", 
+    "lng": "20.4500"
+  }, 
+  {
+    "city": "Surčin", 
+    "lat": "44.7919", 
+    "lng": "20.2723"
+  }, 
+  {
+    "city": "Aleksinac", 
+    "lat": "43.5500", 
+    "lng": "21.7000"
+  }, 
+  {
+    "city": "Smederevska Palanka", 
+    "lat": "44.3663", 
+    "lng": "20.9565"
+  }, 
+  {
+    "city": "Bujanovac", 
+    "lat": "42.4667", 
+    "lng": "21.7667"
+  }, 
+  {
+    "city": "Velika Plana", 
+    "lat": "44.3340", 
+    "lng": "21.0768"
+  }, 
+  {
+    "city": "Gornji Milanovac", 
+    "lat": "44.0242", 
+    "lng": "20.4600"
+  }, 
+  {
+    "city": "Prokuplje", 
+    "lat": "43.2361", 
+    "lng": "21.5903"
+  }, 
+  {
+    "city": "Bečej", 
+    "lat": "45.6167", 
+    "lng": "20.0333"
+  }, 
+  {
+    "city": "Prijepolje", 
+    "lat": "43.3833", 
+    "lng": "19.6333"
+  }, 
+  {
+    "city": "Vršac", 
+    "lat": "45.1167", 
+    "lng": "21.3033"
+  }, 
+  {
+    "city": "Kula", 
+    "lat": "45.6000", 
+    "lng": "19.5333"
+  }, 
+  {
+    "city": "Negotin", 
+    "lat": "44.2292", 
+    "lng": "22.5306"
+  }, 
+  {
+    "city": "Jagodina", 
+    "lat": "43.9667", 
+    "lng": "21.2500"
+  }, 
+  {
+    "city": "Šid", 
+    "lat": "45.1167", 
+    "lng": "19.2333"
+  }, 
+  {
+    "city": "Bor", 
+    "lat": "44.0833", 
+    "lng": "22.1000"
+  }, 
+  {
+    "city": "Kovin", 
+    "lat": "44.7500", 
+    "lng": "20.9667"
+  }, 
+  {
+    "city": "Tutin", 
+    "lat": "42.9897", 
+    "lng": "20.3364"
+  }, 
+  {
+    "city": "Knjaževac", 
+    "lat": "43.5675", 
+    "lng": "22.2575"
+  }, 
+  {
+    "city": "Petrovac na Mlavi", 
+    "lat": "44.3783", 
+    "lng": "21.4194"
+  }, 
+  {
+    "city": "Subotica", 
+    "lat": "46.1003", 
+    "lng": "19.6656"
+  }, 
+  {
+    "city": "Vlasotince", 
+    "lat": "42.9667", 
+    "lng": "22.1333"
+  }, 
+  {
+    "city": "Kikinda", 
+    "lat": "45.8333", 
+    "lng": "20.4500"
+  }, 
+  {
+    "city": "Temerin", 
+    "lat": "45.4167", 
+    "lng": "19.8833"
+  }, 
+  {
+    "city": "Ivanjica", 
+    "lat": "43.5811", 
+    "lng": "20.2297"
+  }, 
+  {
+    "city": "Kaluđerica", 
+    "lat": "44.7500", 
+    "lng": "20.5500"
+  }, 
+  {
+    "city": "Aleksandrovac", 
+    "lat": "43.4589", 
+    "lng": "21.0464"
+  }, 
+  {
+    "city": "Bajina Bašta", 
+    "lat": "43.9500", 
+    "lng": "19.5500"
+  }, 
+  {
+    "city": "Bačka Palanka", 
+    "lat": "45.2500", 
+    "lng": "19.4000"
+  }, 
+  {
+    "city": "Raška", 
+    "lat": "43.2919", 
+    "lng": "20.6156"
+  }, 
+  {
+    "city": "Vrbas", 
+    "lat": "45.5667", 
+    "lng": "19.6500"
+  }, 
+  {
+    "city": "Svilajnac", 
+    "lat": "44.2356", 
+    "lng": "21.1964"
+  }, 
+  {
+    "city": "Apatin", 
+    "lat": "45.6667", 
+    "lng": "18.9833"
+  }, 
+  {
+    "city": "Despotovac", 
+    "lat": "44.0833", 
+    "lng": "21.4333"
+  }, 
+  {
+    "city": "Topola", 
+    "lat": "44.2500", 
+    "lng": "20.7000"
+  }, 
+  {
+    "city": "Surdulica", 
+    "lat": "42.6833", 
+    "lng": "22.1667"
+  }, 
+  {
+    "city": "Lebane", 
+    "lat": "42.9167", 
+    "lng": "21.7333"
+  }, 
+  {
+    "city": "Vladičin Han", 
+    "lat": "42.7000", 
+    "lng": "22.0667"
+  }, 
+  {
+    "city": "Leskovac", 
+    "lat": "43.0000", 
+    "lng": "21.9500"
+  }, 
+  {
+    "city": "Lučani", 
+    "lat": "43.8667", 
+    "lng": "20.1333"
+  }, 
+  {
+    "city": "Kladovo", 
+    "lat": "44.6067", 
+    "lng": "22.6131"
+  }, 
+  {
+    "city": "Senta", 
+    "lat": "45.9314", 
+    "lng": "20.0900"
+  }, 
+  {
+    "city": "Pećinci", 
+    "lat": "44.9000", 
+    "lng": "19.9667"
+  }, 
+  {
+    "city": "Arilje", 
+    "lat": "43.7514", 
+    "lng": "20.0986"
+  }, 
+  {
+    "city": "Majdanpek", 
+    "lat": "44.4167", 
+    "lng": "21.9333"
+  }, 
+  {
+    "city": "Varvarin", 
+    "lat": "43.7167", 
+    "lng": "21.3667"
+  }, 
+  {
+    "city": "Veliko Gradište", 
+    "lat": "44.7500", 
+    "lng": "21.5167"
+  }, 
+  {
+    "city": "Vladimirci", 
+    "lat": "44.6167", 
+    "lng": "19.7833"
+  }, 
+  {
+    "city": "Krupanj", 
+    "lat": "44.3667", 
+    "lng": "19.3667"
+  }, 
+  {
+    "city": "Trstenik", 
+    "lat": "43.6167", 
+    "lng": "20.9833"
+  }, 
+  {
+    "city": "Žitorađa", 
+    "lat": "43.1833", 
+    "lng": "21.7167"
+  }, 
+  {
+    "city": "Srbobran", 
+    "lat": "45.5333", 
+    "lng": "19.7833"
+  }, 
+  {
+    "city": "Brus", 
+    "lat": "43.3814", 
+    "lng": "21.0378"
+  }, 
+  {
+    "city": "Kuršumlija", 
+    "lat": "43.1500", 
+    "lng": "21.2667"
+  }, 
+  {
+    "city": "Titel", 
+    "lat": "45.2047", 
+    "lng": "20.3000"
+  }, 
+  {
+    "city": "Kučevo", 
+    "lat": "44.4833", 
+    "lng": "21.6667"
+  }, 
+  {
+    "city": "Lajkovac", 
+    "lat": "44.3667", 
+    "lng": "20.1667"
+  }, 
+  {
+    "city": "Petrovaradin", 
+    "lat": "45.2500", 
+    "lng": "19.8667"
+  }, 
+  {
+    "city": "Čajetina", 
+    "lat": "43.7500", 
+    "lng": "19.7167"
+  }, 
+  {
+    "city": "Mionica", 
+    "lat": "44.2500", 
+    "lng": "20.0833"
+  }, 
+  {
+    "city": "Svrljig", 
+    "lat": "43.4167", 
+    "lng": "22.1167"
+  }, 
+  {
+    "city": "Knić", 
+    "lat": "43.9264", 
+    "lng": "20.7194"
+  }, 
+  {
+    "city": "Niška Banja", 
+    "lat": "43.2933", 
+    "lng": "22.0061"
+  }, 
+  {
+    "city": "Sjenica", 
+    "lat": "43.2667", 
+    "lng": "20.0000"
+  }, 
+  {
+    "city": "Merošina", 
+    "lat": "43.2833", 
+    "lng": "21.7167"
+  }, 
+  {
+    "city": "Kostolac", 
+    "lat": "44.7147", 
+    "lng": "21.1700"
+  }, 
+  {
+    "city": "Nova Varoš", 
+    "lat": "43.4604", 
+    "lng": "19.8154"
+  }, 
+  {
+    "city": "Sečanj", 
+    "lat": "45.3667", 
+    "lng": "20.7725"
+  }, 
+  {
+    "city": "Novi Bečej", 
+    "lat": "45.6000", 
+    "lng": "20.1167"
+  }, 
+  {
+    "city": "Osečina", 
+    "lat": "44.3667", 
+    "lng": "19.6000"
+  }, 
+  {
+    "city": "Bela Palanka", 
+    "lat": "43.2167", 
+    "lng": "22.3167"
+  }, 
+  {
+    "city": "Kosjerić", 
+    "lat": "44.0000", 
+    "lng": "19.9167"
+  }, 
+  {
+    "city": "Bačka Topola", 
+    "lat": "45.8167", 
+    "lng": "19.6333"
+  }, 
+  {
+    "city": "Batočina", 
+    "lat": "44.1500", 
+    "lng": "21.0833"
+  }, 
+  {
+    "city": "Blace", 
+    "lat": "43.2958", 
+    "lng": "21.2859"
+  }, 
+  {
+    "city": "Rača", 
+    "lat": "44.2333", 
+    "lng": "20.9833"
+  }, 
+  {
+    "city": "Malo Crniće", 
+    "lat": "44.5667", 
+    "lng": "21.2833"
+  }, 
+  {
+    "city": "Rekovac", 
+    "lat": "43.8667", 
+    "lng": "21.1333"
+  }, 
+  {
+    "city": "Bela Crkva", 
+    "lat": "44.8975", 
+    "lng": "21.4169"
+  }, 
+  {
+    "city": "Ada", 
+    "lat": "45.8000", 
+    "lng": "20.1333"
+  }, 
+  {
+    "city": "Vrnjačka Banja", 
+    "lat": "43.6236", 
+    "lng": "20.8936"
+  }, 
+  {
+    "city": "Kanjiža", 
+    "lat": "46.0667", 
+    "lng": "20.0500"
+  }, 
+  {
+    "city": "Ćuprija", 
+    "lat": "43.9333", 
+    "lng": "21.3667"
+  }, 
+  {
+    "city": "Ćićevac", 
+    "lat": "43.7167", 
+    "lng": "21.4500"
+  }, 
+  {
+    "city": "Žabalj", 
+    "lat": "45.3667", 
+    "lng": "20.0667"
+  }, 
+  {
+    "city": "Ražanj", 
+    "lat": "43.6667", 
+    "lng": "21.5500"
+  }, 
+  {
+    "city": "Odžaci", 
+    "lat": "45.5167", 
+    "lng": "19.2667"
+  }, 
+  {
+    "city": "Sremski Karlovci", 
+    "lat": "45.2000", 
+    "lng": "19.9333"
+  }, 
+  {
+    "city": "Gadžin Han", 
+    "lat": "43.2228", 
+    "lng": "22.0322"
+  }, 
+  {
+    "city": "Golubac", 
+    "lat": "44.6500", 
+    "lng": "21.6333"
+  }, 
+  {
+    "city": "Beočin", 
+    "lat": "45.2000", 
+    "lng": "19.7333"
+  }, 
+  {
+    "city": "Dimitrovgrad", 
+    "lat": "43.0167", 
+    "lng": "22.7833"
+  }, 
+  {
+    "city": "Sokobanja", 
+    "lat": "43.6500", 
+    "lng": "21.8667"
+  }, 
+  {
+    "city": "Bački Petrovac", 
+    "lat": "45.3606", 
+    "lng": "19.5917"
+  }, 
+  {
+    "city": "Lapovo", 
+    "lat": "44.1833", 
+    "lng": "21.1000"
+  }, 
+  {
+    "city": "Novi Kneževac", 
+    "lat": "46.0500", 
+    "lng": "20.1000"
+  }, 
+  {
+    "city": "Bogatić", 
+    "lat": "44.8333", 
+    "lng": "19.4833"
+  }, 
+  {
+    "city": "Medveđa", 
+    "lat": "42.8431", 
+    "lng": "21.5847"
+  }, 
+  {
+    "city": "Ub", 
+    "lat": "44.4561", 
+    "lng": "20.0739"
+  }, 
+  {
+    "city": "Bač", 
+    "lat": "45.3833", 
+    "lng": "19.2333"
+  }, 
+  {
+    "city": "Mali Iđoš", 
+    "lat": "45.7069", 
+    "lng": "19.6644"
+  }, 
+  {
+    "city": "Kovačica", 
+    "lat": "45.1117", 
+    "lng": "20.6214"
+  }, 
+  {
+    "city": "Irig", 
+    "lat": "45.1000", 
+    "lng": "19.8500"
+  }, 
+  {
+    "city": "Čoka", 
+    "lat": "45.9333", 
+    "lng": "20.1500"
+  }, 
+  {
+    "city": "Opovo", 
+    "lat": "45.0519", 
+    "lng": "20.4303"
+  }, 
+  {
+    "city": "Plandište", 
+    "lat": "45.2269", 
+    "lng": "21.1217"
+  }, 
+  {
+    "city": "Alibunar", 
+    "lat": "45.0806", 
+    "lng": "20.9656"
+  }, 
+  {
+    "city": "Žitište", 
+    "lat": "45.4833", 
+    "lng": "20.5500"
+  }, 
+  {
+    "city": "Nova Crnja", 
+    "lat": "45.6667", 
+    "lng": "20.6000"
+  }, 
+  {
+    "city": "Crna Trava", 
+    "lat": "42.8101", 
+    "lng": "22.2990"
+  }, 
+  {
+    "city": "Obrenovac", 
+    "lat": "44.6539", 
+    "lng": "20.2000"
+  }, 
+  {
+    "city": "Priboj", 
+    "lat": "43.5836", 
+    "lng": "19.5258"
+  }, 
+  {
+    "city": "Požega", 
+    "lat": "43.8459", 
+    "lng": "20.0368"
+  }, 
+  {
+    "city": "Babušnica", 
+    "lat": "43.0680", 
+    "lng": "22.4115"
+  }, 
+  {
+    "city": "Ljubovija", 
+    "lat": "44.1869", 
+    "lng": "19.3728"
+  }, 
+  {
+    "city": "Ljig", 
+    "lat": "44.2213", 
+    "lng": "20.2375"
+  }, 
+  {
+    "city": "Mali Zvornik", 
+    "lat": "44.3992", 
+    "lng": "19.1214"
+  }, 
+  {
+    "city": "Doljevac", 
+    "lat": "43.1968", 
+    "lng": "21.8334"
+  }, 
+  {
+    "city": "Boljevac", 
+    "lat": "43.8247", 
+    "lng": "21.9519"
+  }, 
+  {
+    "city": "Bojnik", 
+    "lat": "43.0142", 
+    "lng": "21.7180"
+  }, 
+  {
+    "city": "Koceljeva", 
+    "lat": "44.4708", 
+    "lng": "19.8070"
+  }, 
+  {
+    "city": "Bosilegrad", 
+    "lat": "42.5005", 
+    "lng": "22.4728"
+  }, 
+  {
+    "city": "Žabari", 
+    "lat": "44.3562", 
+    "lng": "21.2143"
+  }, 
+  {
+    "city": "Trgovište", 
+    "lat": "42.3514", 
+    "lng": "22.0921"
+  }, 
+  {
+    "city": "Žagubica", 
+    "lat": "44.1979", 
+    "lng": "21.7902"
+  }, 
+  {
+    "city": "Preševo", 
+    "lat": "42.3067", 
+    "lng": "21.6500"
+  }, 
+  {
+    "city": "Sopot", 
+    "lat": "44.5193", 
+    "lng": "20.5758"
+  }, 
+  {
+    "city": "Grocka", 
+    "lat": "44.6720", 
+    "lng": "20.7153"
+  }, 
+  {
+    "city": "Barajevo", 
+    "lat": "44.5790", 
+    "lng": "20.4179"
+  }
+]

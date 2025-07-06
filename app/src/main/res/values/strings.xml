@@ -22,8 +22,10 @@
     <string name="filter">Filter</string>
     <string name="filters_label">Filters:</string>
     <string name="event_type_label">Event type:</string>
+    <string name="select">Select</string>
     <string name="max_attendances">Max attendances:</string>
     <string name="open_label">Open:</string>
     <string name="distance_label">Maximum distance (km):</string>
     <string name="date_label">Date:</string>
+    <string name="locations_label">Locations:</string>
 </resources>

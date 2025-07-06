@@ -12,7 +12,7 @@ public class AllEventsViewModel extends ViewModel {
     private final MutableLiveData<String> searchText;
     @Getter
     @Setter
-    private int currentPage;
+    private int currentPage = 1;
     public AllEventsViewModel(){
         searchText = new MutableLiveData<>();
         queryHint = new MutableLiveData<>();
