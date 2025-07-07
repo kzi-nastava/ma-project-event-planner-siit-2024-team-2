@@ -24,7 +24,7 @@ import retrofit2.http.Query;
 public interface EventTypeService {
     @Headers({"Content-Type:application/json"})
     @GET("event-types")
-    Call<PagedModel<EventType>> getAllEventTypes();
+    Call<List<EventType>> getAllEventTypes();
 
     @Headers({"Content-Type:application/json"})
     @GET("event-types/{id}")

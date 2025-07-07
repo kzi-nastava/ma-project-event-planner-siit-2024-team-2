@@ -27,6 +27,7 @@ import com.example.eventplanner.adapters.EventAdapter;
 import com.example.eventplanner.clients.ClientUtils;
 import com.example.eventplanner.databinding.FragmentAllEventsPageBinding;
 import com.example.eventplanner.dto.event.EventSummaryDto;
+import com.example.eventplanner.dto.event.EventTypeDto;
 import com.example.eventplanner.model.event.EventType;
 import com.example.eventplanner.model.utils.City;
 import com.example.eventplanner.model.utils.PageMetadata;
@@ -43,6 +44,7 @@ import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -52,6 +54,7 @@ import retrofit2.Response;
 
 public class AllEventsPageFragment extends Fragment {
     public static List<EventSummaryDto> events = new ArrayList<>();
+    public static List<EventType> eventTypes = new ArrayList<>();
     public static PageMetadata pageMetadata;
     private AllEventsViewModel viewModel;
     private static final Gson gson = new Gson();
@@ -83,7 +86,7 @@ public class AllEventsPageFragment extends Fragment {
         binding = FragmentAllEventsPageBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        fetchData();
+        fetchEvents();
 
         SearchView searchView = binding.searchText;
         viewModel.getHint().observe(getViewLifecycleOwner(), searchView::setQueryHint);
@@ -91,7 +94,7 @@ public class AllEventsPageFragment extends Fragment {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 viewModel.setSearchText(query);
-                fetchData();
+                fetchEvents();
                 return true;
             }
             @Override
@@ -103,7 +106,7 @@ public class AllEventsPageFragment extends Fragment {
                 return false;
             }
         });
-        viewModel.getSearchText().observe(getViewLifecycleOwner(), text -> fetchData());
+        viewModel.getSearchText().observe(getViewLifecycleOwner(), text -> fetchEvents());
 
 
         recyclerView = binding.recycleViewEvents;
@@ -113,6 +116,8 @@ public class AllEventsPageFragment extends Fragment {
 
 
         Button filter = binding.btnFilter;
+        filter.setEnabled(false); // wait until event types load
+        fetchEventTypes();
         filter.setOnClickListener(v -> {
             if (bottomSheetDialog == null)
             {
@@ -129,17 +134,9 @@ public class AllEventsPageFragment extends Fragment {
                     rangeSlider.setValues(0f, 1f);
                 }
 
-                // TODO: Use fetched event types
-                EventType[] eventTypes = new EventType[]{
-                        new EventType(0L, "Sajam", null),
-                        new EventType(1L, "Žurka", null),
-                        new EventType(2L, "Proslava", null),
-                        new EventType(3L, "Venčanje", null),
-                        new EventType(4L, "Rođendan", null)
-                };
-                String[] typeNames = new String[eventTypes.length];
-                for (int i = 0; i < eventTypes.length; ++i)
-                    typeNames[i] = eventTypes[i].getName();
+                String[] typeNames = new String[eventTypes.size()];
+                for (int i = 0; i < eventTypes.size(); ++i)
+                    typeNames[i] = eventTypes.get(i).getName();
                 Button typesButton = dialogView.findViewById(R.id.button_select_event_types);
                 TextView summaryTypes = dialogView.findViewById(R.id.text_selected_event_types);
                 selectedTypes = new boolean[typeNames.length];
@@ -166,7 +163,7 @@ public class AllEventsPageFragment extends Fragment {
                     types = new ArrayList<>();
                     for (int i = 0; i < selectedTypes.length; i++)
                         if (selectedTypes[i])
-                            types.add(eventTypes[i].getId());
+                            types.add(eventTypes.get(i).getId());
 
                     if (rangeSlider.isEnabled())
                     {
@@ -201,7 +198,7 @@ public class AllEventsPageFragment extends Fragment {
                     else
                         date = null;
 
-                    fetchData();
+                    fetchEvents();
                 });
 
                 bottomSheetDialog.setContentView(dialogView);
@@ -224,7 +221,7 @@ public class AllEventsPageFragment extends Fragment {
         pagination.setOnPaginateListener(newPage -> {
             currentPage = newPage;
             viewModel.setCurrentPage(currentPage);
-            fetchData();
+            fetchEvents();
         });
 
         return root;
@@ -248,7 +245,7 @@ public class AllEventsPageFragment extends Fragment {
 //                    ((TextView) parent.getChildAt(0)).setTextColor(Color.BLUE);
                         lastSpinnerSelection = currentSelectedIndex;
                         currentSelectedIndex = position;
-                        fetchData();
+                        fetchEvents();
                     }
                 }
 
@@ -264,7 +261,7 @@ public class AllEventsPageFragment extends Fragment {
             pagination = new Pagination(getContext(), totalPages, binding.paginationEvents);
             pagination.setOnPaginateListener(newPage -> {
                 currentPage = newPage;
-                fetchData();
+                fetchEvents();
             });
 
             currentPage = viewModel.getCurrentPage();
@@ -280,7 +277,7 @@ public class AllEventsPageFragment extends Fragment {
         binding = null;
     }
 
-    private void fetchData(){
+    private void fetchEvents(){
         String sortBy = null, selectedSort;
         SortDirection sortDirection = null;
         if (spinnerSort != null) {
@@ -319,6 +316,38 @@ public class AllEventsPageFragment extends Fragment {
 
             @Override
             public void onFailure(@NonNull Call<PagedModel<EventSummaryDto>> call, @NonNull Throwable t) {
+                Log.e("RetrofitCall", Objects.requireNonNull(t.getMessage()));
+            }
+        });
+    }
+
+    private void fetchEventTypes(){
+        Call<List<EventType>> call = ClientUtils.eventTypeService.getAllEventTypes();
+
+        call.enqueue(new Callback<>() {
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public void onResponse(@NonNull Call<List<EventType>> call, @NonNull Response<List<EventType>> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null)
+                    {
+                        eventTypes.clear();
+                        eventTypes.addAll(response.body());
+                        eventTypes.sort(Comparator.comparing(EventType::getName));
+                        for(EventType t : eventTypes)
+                            Log.e("Test", t.getName());
+                        binding.btnFilter.setEnabled(true); // we can now filter events since types loaded
+                    }
+                    else
+                        eventTypes.clear();
+                    adapter.notifyDataSetChanged();
+                } else {
+                    Log.e("RetrofitCall", "Failed to fetch event types. Code: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<List<EventType>> call, @NonNull Throwable t) {
                 Log.e("RetrofitCall", Objects.requireNonNull(t.getMessage()));
             }
         });
