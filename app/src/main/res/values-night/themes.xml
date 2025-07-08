@@ -3,9 +3,9 @@
     <style name="Base.Theme.EventPlanner" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
-        <item name="colorPrimary">@color/primary_color</item>
+        <item name="colorPrimary">@color/primary</item>
         <item name="backgroundColor">@color/pickled_bluewood</item>
-        <item name="empty_heart_outline_color">@color/white</item>
+        <item name="outline_color">@color/white</item>
         <item name="filled_heart_outline_color">@color/red</item>
         <item name="text_color">@color/white</item>
         <item name="pagination_background">@color/dark_gray</item>

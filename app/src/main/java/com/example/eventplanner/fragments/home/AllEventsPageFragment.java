@@ -2,6 +2,8 @@ package com.example.eventplanner.fragments.home;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -12,12 +14,15 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,7 +32,6 @@ import com.example.eventplanner.adapters.EventAdapter;
 import com.example.eventplanner.clients.ClientUtils;
 import com.example.eventplanner.databinding.FragmentAllEventsPageBinding;
 import com.example.eventplanner.dto.event.EventSummaryDto;
-import com.example.eventplanner.dto.event.EventTypeDto;
 import com.example.eventplanner.model.event.EventType;
 import com.example.eventplanner.model.utils.City;
 import com.example.eventplanner.model.utils.PageMetadata;
@@ -35,7 +39,7 @@ import com.example.eventplanner.model.utils.PagedModel;
 import com.example.eventplanner.model.utils.SortDirection;
 import com.example.eventplanner.pagination.Pagination;
 import com.example.eventplanner.utils.JsonUtils;
-import com.example.eventplanner.utils.MultiSelectDialogHelper;
+import com.example.eventplanner.utils.DialogHelper;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.slider.RangeSlider;
 import com.google.android.material.slider.Slider;
@@ -70,11 +74,11 @@ public class AllEventsPageFragment extends Fragment {
     private static final int pageSize = 10;
     //Filtering
     private boolean[] selectedTypes, selectedCities;
-    private List<Double> latitudes, longitudes;
-    private List<Long> types;
+    private List<Double> latitudes = new ArrayList<>(), longitudes = new ArrayList<>();
+    private List<Long> types = new ArrayList<>(), dateRange = new ArrayList<>();
     private Integer minMaxAttendances, maxMaxAttendances;
     private Double maxDistance;
-    private Long date;
+    private Long minDate, maxDate;
 
     public static AllEventsPageFragment newInstance() {
         return new AllEventsPageFragment();
@@ -139,9 +143,10 @@ public class AllEventsPageFragment extends Fragment {
                     typeNames[i] = eventTypes.get(i).getName();
                 Button typesButton = dialogView.findViewById(R.id.button_select_event_types);
                 TextView summaryTypes = dialogView.findViewById(R.id.text_selected_event_types);
+                ImageView clearTypes = dialogView.findViewById(R.id.button_clear_event_types);
                 selectedTypes = new boolean[typeNames.length];
-                MultiSelectDialogHelper.createDialog(typeNames, typesButton, dialogView.getContext(),
-                        selectedTypes, "Select Event Types:", summaryTypes);
+                DialogHelper.createMultiSelectDialog(typeNames, typesButton, dialogView.getContext(),
+                        selectedTypes, "Select Event Types:", summaryTypes, clearTypes);
 
                 City[] cities = loadCities();
                 String[] cityNames = new String[cities.length];
@@ -149,18 +154,19 @@ public class AllEventsPageFragment extends Fragment {
                     cityNames[i] = cities[i].getCity();
                 Button citiesButton = dialogView.findViewById(R.id.button_select_locations);
                 TextView summaryCities = dialogView.findViewById(R.id.text_selected_locations);
+                ImageView clearCities = dialogView.findViewById(R.id.button_clear_locations);
                 selectedCities = new boolean[cityNames.length];
-                MultiSelectDialogHelper.createDialog(cityNames, citiesButton, dialogView.getContext(),
-                        selectedCities, "Select Locations:", summaryCities);
+                DialogHelper.createMultiSelectDialog(cityNames, citiesButton, dialogView.getContext(),
+                        selectedCities, "Select Locations:", summaryCities, clearCities);
 
-                CheckBox dateCheckBox = dialogView.findViewById(R.id.checkbox_event_use_date);
-                CalendarView calendarView = dialogView.findViewById(R.id.calendar_select_event_date);
-                calendarView.setVisibility(View.GONE);
-                dateCheckBox.setOnCheckedChangeListener((btn, checked) ->
-                        calendarView.setVisibility(checked ? View.VISIBLE : View.GONE));
+                Button datesButton = dialogView.findViewById(R.id.button_select_dates);
+                TextView summaryDates = dialogView.findViewById(R.id.text_selected_dates);
+                ImageView clearDates = dialogView.findViewById(R.id.button_clear_dates);
+                DialogHelper.createDateRangeDialog(datesButton, "Select a date range", summaryDates,
+                        dateRange, getChildFragmentManager(), clearDates);
 
                 bottomSheetDialog.setOnDismissListener((dialogInterface) -> {
-                    types = new ArrayList<>();
+                    types.clear();
                     for (int i = 0; i < selectedTypes.length; i++)
                         if (selectedTypes[i])
                             types.add(eventTypes.get(i).getId());
@@ -176,8 +182,8 @@ public class AllEventsPageFragment extends Fragment {
                         maxMaxAttendances = null;
                     }
 
-                    latitudes = new ArrayList<>();
-                    longitudes = new ArrayList<>();
+                    latitudes.clear();
+                    longitudes.clear();
                     for (int i = 0; i < selectedCities.length; i++)
                         if (selectedCities[i])
                         {
@@ -193,10 +199,16 @@ public class AllEventsPageFragment extends Fragment {
                     else
                         maxDistance = null;
 
-                    if (dateCheckBox.isChecked())
-                        date = calendarView.getDate();
+                    if (dateRange != null && dateRange.size() >= 2)
+                    {
+                        minDate = dateRange.get(0);
+                        maxDate = dateRange.get(1);
+                    }
                     else
-                        date = null;
+                    {
+                        minDate = null;
+                        maxDate = null;
+                    }
 
                     fetchEvents();
                 });
@@ -231,8 +243,6 @@ public class AllEventsPageFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
-        Log.i("Resume","Resume");
 
         spinnerSort.setSelection(spinnerSort.getSelectedItemPosition(), false);
         if (spinnerSort.getOnItemSelectedListener() == null) {
@@ -290,7 +300,7 @@ public class AllEventsPageFragment extends Fragment {
                 currentPage-1, pageSize, sortBy, sortDirection,
                 viewModel.getSearchText().getValue(), null,
                 types, minMaxAttendances, maxMaxAttendances, true, latitudes,
-                longitudes, maxDistance, date, date);
+                longitudes, maxDistance, minDate, maxDate);
 
         call.enqueue(new Callback<>() {
             @SuppressLint("NotifyDataSetChanged")
@@ -334,8 +344,6 @@ public class AllEventsPageFragment extends Fragment {
                         eventTypes.clear();
                         eventTypes.addAll(response.body());
                         eventTypes.sort(Comparator.comparing(EventType::getName));
-                        for(EventType t : eventTypes)
-                            Log.e("Test", t.getName());
                         binding.btnFilter.setEnabled(true); // we can now filter events since types loaded
                     }
                     else

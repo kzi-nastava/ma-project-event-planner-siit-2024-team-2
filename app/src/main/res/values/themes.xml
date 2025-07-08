@@ -3,9 +3,11 @@
     <style name="Base.Theme.EventPlanner" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
-        <item name="colorPrimary">@color/primary_color</item>
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryContainer">@color/primary_container</item>
+        <item name="colorSecondaryContainer">@color/secondary_container</item>
         <item name="backgroundColor">@color/white</item>
-        <item name="empty_heart_outline_color">@color/cod_gray</item>
+        <item name="outline_color">@color/cod_gray</item>
         <item name="filled_heart_outline_color">@color/cod_gray</item>
         <item name="text_color">@color/cod_gray</item>
         <item name="pagination_background">@color/light_gray</item>

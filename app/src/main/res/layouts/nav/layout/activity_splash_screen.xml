@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.SplashScreenActivity"
-    android:background="@color/secondary_color">
+    android:background="@color/primary_container">
 
     <TextView
         android:id="@+id/textView2"
@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:text="Event Planner"
         android:textSize="40sp"
-        android:textColor="@color/primary_color"
+        android:textColor="@color/primary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
