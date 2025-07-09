@@ -22,7 +22,7 @@ import retrofit2.http.Query;
 
 public interface ServiceProductService {
     @Headers({"Content-Type:application/json"})
-    @GET("serviceProducts")
+    @GET("service-products")
     Call<PagedModel<ServiceProduct>> getServiceProducts(
             @Query("page") Integer page,
             @Query("size") Integer size,
@@ -39,7 +39,7 @@ public interface ServiceProductService {
             @Query("serviceProductProviderId") Long serviceProductProviderId);
 
     @Headers({"Content-Type:application/json"})
-    @GET("serviceProducts/summaries")
+    @GET("service-products/summaries")
     Call<PagedModel<ServiceProductSummaryDto>> getServiceProductSummaries(
             @Query("page") Integer page,
             @Query("size") Integer size,
@@ -56,22 +56,22 @@ public interface ServiceProductService {
             @Query("serviceProductProviderId") Long serviceProductProviderId);
 
     @Headers({"Content-Type:application/json"})
-    @GET("serviceProducts/{id}")
+    @GET("service-products/{id}")
     Call<ServiceProduct> getServiceProductById(@Path("id") Long id);
 
     @Headers({"Content-Type:application/json"})
-    @POST("serviceProducts")
+    @POST("service-products")
     Call<ServiceProduct> createServiceProduct(@Body ServiceProductDto serviceProductDto);
 
     @Headers({"Content-Type:application/json"})
-    @PUT("serviceProducts/{id}")
+    @PUT("service-products/{id}")
     Call<ServiceProduct> updateServiceProduct(@Path("id") Long id, @Body ServiceProductDto serviceProductDto);
 
     @Headers({"Content-Type:application/json"})
-    @DELETE("serviceProducts/{id}")
+    @DELETE("service-products/{id}")
     Call<ResponseBody> deleteServiceProduct(@Path("id") Long id);
 
     @Headers({"Content-Type:application/json"})
-    @GET("serviceProducts/top5")
+    @GET("service-products/top5")
     Call<List<ServiceProductSummaryDto>> getTop5();
 }

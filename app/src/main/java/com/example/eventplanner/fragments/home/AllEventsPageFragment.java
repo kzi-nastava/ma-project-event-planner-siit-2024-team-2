@@ -90,8 +90,6 @@ public class AllEventsPageFragment extends Fragment {
         binding = FragmentAllEventsPageBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        fetchEvents();
-
         SearchView searchView = binding.searchText;
         viewModel.getHint().observe(getViewLifecycleOwner(), searchView::setQueryHint);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -117,7 +115,6 @@ public class AllEventsPageFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
         adapter = new EventAdapter(events);
         recyclerView.setAdapter(adapter);
-
 
         Button filter = binding.btnFilter;
         filter.setEnabled(false); // wait until event types load
@@ -235,6 +232,8 @@ public class AllEventsPageFragment extends Fragment {
             viewModel.setCurrentPage(currentPage);
             fetchEvents();
         });
+
+        fetchEvents();
 
         return root;
     }

@@ -4,6 +4,7 @@ import com.example.eventplanner.BuildConfig;
 import com.example.eventplanner.clients.event.EventService;
 import com.example.eventplanner.clients.event.EventTypeService;
 import com.example.eventplanner.clients.order.BookingService;
+import com.example.eventplanner.clients.serviceproduct.ServiceProductCategoryService;
 import com.example.eventplanner.clients.serviceproduct.ServiceProductService;
 
 import java.util.concurrent.TimeUnit;
@@ -56,6 +57,7 @@ public class ClientUtils {
 
     // ServiceProduct
     public static ServiceProductService serviceProductService = retrofit.create(ServiceProductService.class);
+    public static ServiceProductCategoryService serviceProductCategoryService = retrofit.create(ServiceProductCategoryService.class);
 
     // User
 
