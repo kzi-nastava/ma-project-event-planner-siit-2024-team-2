@@ -1,6 +1,7 @@
 package com.example.eventplanner.clients.serviceproduct;
 
 import com.example.eventplanner.dto.serviceproduct.ServiceProductFilteringValuesDto;
+import com.example.eventplanner.model.utils.ServiceProductDType;
 import com.example.eventplanner.model.utils.SortDirection;
 import com.example.eventplanner.dto.serviceproduct.ServiceProductDto;
 import com.example.eventplanner.dto.serviceproduct.ServiceProductSummaryDto;
@@ -31,14 +32,17 @@ public interface ServiceProductService {
             @Query("sortDirection") SortDirection sortDirection,
             @Query("name") String name,
             @Query("description") String description,
+            @Query("type") ServiceProductDType type,
             @Query("categoryIds") List<Long> categoryIds,
             @Query("available") Boolean available,
             @Query("visible") Boolean visible,
             @Query("minPrice") Integer minPrice,
             @Query("maxPrice") Integer maxPrice,
             @Query("availableEventTypeIds") List<Long> availableEventTypeIds,
-            @Query("serviceProductProviderId") Long serviceProductProviderId);
-
+            @Query("serviceProductProviderId") Long serviceProductProviderId,
+            @Query("minDuration") Float minDuration,
+            @Query("maxDuration") Float maxDuration,
+            @Query("automaticReserved") Boolean automaticReserved);
     @Headers({"Content-Type:application/json"})
     @GET("service-products/summaries")
     Call<PagedModel<ServiceProductSummaryDto>> getServiceProductSummaries(
@@ -48,13 +52,17 @@ public interface ServiceProductService {
             @Query("sortDirection") SortDirection sortDirection,
             @Query("name") String name,
             @Query("description") String description,
+            @Query("type") ServiceProductDType type,
             @Query("categoryIds") List<Long> categoryIds,
             @Query("available") Boolean available,
             @Query("visible") Boolean visible,
             @Query("minPrice") Integer minPrice,
             @Query("maxPrice") Integer maxPrice,
             @Query("availableEventTypeIds") List<Long> availableEventTypeIds,
-            @Query("serviceProductProviderId") Long serviceProductProviderId);
+            @Query("serviceProductProviderId") Long serviceProductProviderId,
+            @Query("minDuration") Float minDuration,
+            @Query("maxDuration") Float maxDuration,
+            @Query("automaticReserved") Boolean automaticReserved);
 
     @Headers({"Content-Type:application/json"})
     @GET("service-products/{id}")

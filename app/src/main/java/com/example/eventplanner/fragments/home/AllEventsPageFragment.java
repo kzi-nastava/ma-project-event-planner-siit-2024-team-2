@@ -117,8 +117,7 @@ public class AllEventsPageFragment extends Fragment {
         fetchEventTypes();
         fetchAttendancesRange();
         filter.setOnClickListener(v -> {
-            if (bottomSheetDialog == null)
-            {
+            if (bottomSheetDialog == null) {
                 bottomSheetDialog = new BottomSheetDialog(requireActivity(), R.style.FullScreenBottomSheetDialog);
                 View dialogView = getLayoutInflater().inflate(R.layout.bottom_sheet_event_filter, null);
 
@@ -169,13 +168,10 @@ public class AllEventsPageFragment extends Fragment {
                         if (selectedTypes[i])
                             types.add(eventTypes.get(i).getId());
 
-                    if (rangeSlider.isEnabled())
-                    {
+                    if (rangeSlider.isEnabled()) {
                         minMaxAttendances = Math.round(rangeSlider.getValues().get(0));
                         maxMaxAttendances = Math.round(rangeSlider.getValues().get(1));
-                    }
-                    else
-                    {
+                    } else {
                         minMaxAttendances = null;
                         maxMaxAttendances = null;
                     }
@@ -183,27 +179,21 @@ public class AllEventsPageFragment extends Fragment {
                     latitudes.clear();
                     longitudes.clear();
                     for (int i = 0; i < selectedCities.length; i++)
-                        if (selectedCities[i])
-                        {
+                        if (selectedCities[i]) {
                             latitudes.add(cities[i].getLat());
                             longitudes.add(cities[i].getLng());
                         }
 
-                    if (latitudes != null && !latitudes.isEmpty())
-                    {
+                    if (latitudes != null && !latitudes.isEmpty()) {
                         Slider slider = dialogView.findViewById(R.id.slider_distance_events);
                         maxDistance = (double) slider.getValue();
-                    }
-                    else
+                    } else
                         maxDistance = null;
 
-                    if (dateRange != null && dateRange.size() >= 2)
-                    {
+                    if (dateRange != null && dateRange.size() >= 2) {
                         minDate = dateRange.get(0);
                         maxDate = dateRange.get(1);
-                    }
-                    else
-                    {
+                    } else {
                         minDate = null;
                         maxDate = null;
                     }
@@ -251,8 +241,6 @@ public class AllEventsPageFragment extends Fragment {
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     currentSelectedIndex = spinnerSort.getSelectedItemPosition();
                     if (currentSelectedIndex != lastSpinnerSelection) {
-                        Log.v("EventPlanner", (String) parent.getItemAtPosition(position));
-//                    ((TextView) parent.getChildAt(0)).setTextColor(Color.BLUE);
                         lastSpinnerSelection = currentSelectedIndex;
                         currentSelectedIndex = position;
                         fetchEvents();
@@ -277,8 +265,6 @@ public class AllEventsPageFragment extends Fragment {
             currentPage = viewModel.getCurrentPage();
             pagination.toPage(currentPage);
         }
-        //FragmentTransition.to(AllEventsListFragment.newInstance(events), requireActivity(), false, R.id.scroll_products_list);
-
     }
 
     @Override
@@ -361,7 +347,6 @@ public class AllEventsPageFragment extends Fragment {
         Call<List<Integer>> call = ClientUtils.eventService.getMaxAttendancesRange();
 
         call.enqueue(new Callback<>() {
-            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onResponse(@NonNull Call<List<Integer>> call, @NonNull Response<List<Integer>> response) {
                 if (response.isSuccessful()) {

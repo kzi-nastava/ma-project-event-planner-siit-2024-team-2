@@ -24,9 +24,9 @@
 
     <fragment
         android:id="@+id/nav_service_products"
-        android:name="com.example.eventplanner.fragments.home.ServiceProductsFragment"
+        android:name="com.example.eventplanner.fragments.home.AllServiceProductsPageFragment"
         android:label="@string/services_and_products"
-        tools:layout="@layout/fragment_service_products"
+        tools:layout="@layout/fragment_all_service_products_page"
         app:popUpToInclusive="true"
         />
 
