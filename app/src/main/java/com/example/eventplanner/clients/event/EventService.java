@@ -78,4 +78,8 @@ public interface EventService {
     @Headers({"Content-Type:application/json"})
     @GET("events/top5")
     Call<List<EventSummaryDto>> getTop5();
+
+    @Headers({"Content-Type:application/json"})
+    @GET("events/max-attendances-range")
+    Call<List<Integer>> getMaxAttendancesRange();
 }

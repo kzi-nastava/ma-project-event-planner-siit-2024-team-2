@@ -2,8 +2,6 @@ package com.example.eventplanner.fragments.home;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -12,8 +10,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CalendarView;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -21,8 +17,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -76,9 +70,11 @@ public class AllEventsPageFragment extends Fragment {
     private boolean[] selectedTypes, selectedCities;
     private List<Double> latitudes = new ArrayList<>(), longitudes = new ArrayList<>();
     private List<Long> types = new ArrayList<>(), dateRange = new ArrayList<>();
+    private List<Integer> fullMaxAttendancesRange = new ArrayList<>();
     private Integer minMaxAttendances, maxMaxAttendances;
     private Double maxDistance;
     private Long minDate, maxDate;
+    private boolean fetchedTypes, fetchedMaxAttendances;
 
     public static AllEventsPageFragment newInstance() {
         return new AllEventsPageFragment();
@@ -111,7 +107,7 @@ public class AllEventsPageFragment extends Fragment {
         viewModel.getSearchText().observe(getViewLifecycleOwner(), text -> fetchEvents());
 
 
-        recyclerView = binding.recycleViewEvents;
+        recyclerView = binding.recyclerViewEvents;
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
         adapter = new EventAdapter(events);
         recyclerView.setAdapter(adapter);
@@ -119,21 +115,26 @@ public class AllEventsPageFragment extends Fragment {
         Button filter = binding.btnFilter;
         filter.setEnabled(false); // wait until event types load
         fetchEventTypes();
+        fetchAttendancesRange();
         filter.setOnClickListener(v -> {
             if (bottomSheetDialog == null)
             {
                 bottomSheetDialog = new BottomSheetDialog(requireActivity(), R.style.FullScreenBottomSheetDialog);
-                View dialogView = getLayoutInflater().inflate(R.layout.bottom_sheet_filter, null);
+                View dialogView = getLayoutInflater().inflate(R.layout.bottom_sheet_event_filter, null);
 
                 RangeSlider rangeSlider = dialogView.findViewById(R.id.range_slider_events);
-                Pair<Integer, Integer> range = findAttendancesRange();
+                Pair<Integer, Integer> range;
+                if (fullMaxAttendancesRange == null || fullMaxAttendancesRange.size() < 2)
+                    range = new Pair<>(0, 1);
+                else if (Objects.equals(fullMaxAttendancesRange.get(0), fullMaxAttendancesRange.get(1)))
+                    range = new Pair<>(0, 1);
+                else
+                    range = new Pair<>(fullMaxAttendancesRange.get(0), fullMaxAttendancesRange.get(1));
                 rangeSlider.setValueFrom(range.first);
                 rangeSlider.setValueTo(range.second);
+                rangeSlider.setValues((float)range.first, (float)range.second);
                 if (range.first == 0 && range.second == 1)
-                {
                     rangeSlider.setEnabled(false);
-                    rangeSlider.setValues(0f, 1f);
-                }
 
                 String[] typeNames = new String[eventTypes.size()];
                 for (int i = 0; i < eventTypes.size(); ++i)
@@ -334,25 +335,21 @@ public class AllEventsPageFragment extends Fragment {
         Call<List<EventType>> call = ClientUtils.eventTypeService.getAllEventTypes();
 
         call.enqueue(new Callback<>() {
-            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onResponse(@NonNull Call<List<EventType>> call, @NonNull Response<List<EventType>> response) {
                 if (response.isSuccessful()) {
-                    if (response.body() != null)
-                    {
-                        eventTypes.clear();
+                    eventTypes.clear();
+                    if (response.body() != null) {
                         eventTypes.addAll(response.body());
                         eventTypes.sort(Comparator.comparing(EventType::getName));
-                        binding.btnFilter.setEnabled(true); // we can now filter events since types loaded
+                        fetchedTypes = true;
+                        if (fetchedMaxAttendances)
+                            binding.btnFilter.setEnabled(true); // we can now filter events since everything loaded
                     }
-                    else
-                        eventTypes.clear();
-                    adapter.notifyDataSetChanged();
                 } else {
                     Log.e("RetrofitCall", "Failed to fetch event types. Code: " + response.code());
                 }
             }
-
             @Override
             public void onFailure(@NonNull Call<List<EventType>> call, @NonNull Throwable t) {
                 Log.e("RetrofitCall", Objects.requireNonNull(t.getMessage()));
@@ -360,22 +357,30 @@ public class AllEventsPageFragment extends Fragment {
         });
     }
 
-    private Pair<Integer, Integer> findAttendancesRange() {
-        int minValue, maxValue;
-        if (events.isEmpty()) {
-            minValue = 0;
-            maxValue = 100;
-        } else {
-            minValue = events.get(0).getMaxAttendances();
-            maxValue = events.get(0).getMaxAttendances();
-        }
-        for (EventSummaryDto event : events) {
-            minValue = Math.min(minValue, event.getMaxAttendances());
-            maxValue = Math.max(maxValue, event.getMaxAttendances());
-        }
-        if (minValue == maxValue)
-            maxValue++;
-        return new Pair<>(minValue, maxValue);
+    private void fetchAttendancesRange() {
+        Call<List<Integer>> call = ClientUtils.eventService.getMaxAttendancesRange();
+
+        call.enqueue(new Callback<>() {
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public void onResponse(@NonNull Call<List<Integer>> call, @NonNull Response<List<Integer>> response) {
+                if (response.isSuccessful()) {
+                    fullMaxAttendancesRange.clear();
+                    if (response.body() != null) {
+                        fullMaxAttendancesRange.addAll(response.body());
+                        fetchedMaxAttendances = true;
+                        if (fetchedTypes)
+                            binding.btnFilter.setEnabled(true); // we can now filter events since everything loaded
+                    }
+                } else {
+                    Log.e("RetrofitCall", "Failed to fetch max attendances range. Code: " + response.code());
+                }
+            }
+            @Override
+            public void onFailure(@NonNull Call<List<Integer>> call, @NonNull Throwable t) {
+                Log.e("RetrofitCall", Objects.requireNonNull(t.getMessage()));
+            }
+        });
     }
 
     private City[] loadCities()
