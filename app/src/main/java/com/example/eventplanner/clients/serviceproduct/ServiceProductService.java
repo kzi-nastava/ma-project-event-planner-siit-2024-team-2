@@ -1,5 +1,6 @@
 package com.example.eventplanner.clients.serviceproduct;
 
+import com.example.eventplanner.dto.serviceproduct.ServiceProductFilteringValuesDto;
 import com.example.eventplanner.model.utils.SortDirection;
 import com.example.eventplanner.dto.serviceproduct.ServiceProductDto;
 import com.example.eventplanner.dto.serviceproduct.ServiceProductSummaryDto;
@@ -74,4 +75,8 @@ public interface ServiceProductService {
     @Headers({"Content-Type:application/json"})
     @GET("service-products/top5")
     Call<List<ServiceProductSummaryDto>> getTop5();
+
+    @Headers({"Content-Type:application/json"})
+    @GET("service-products/filtering-values")
+    Call<ServiceProductFilteringValuesDto> getFilteringValues();
 }
