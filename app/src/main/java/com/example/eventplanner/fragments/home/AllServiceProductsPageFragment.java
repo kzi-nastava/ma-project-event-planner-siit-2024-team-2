@@ -315,6 +315,12 @@ public class AllServiceProductsPageFragment extends Fragment {
             sortDirection = selectedSort.substring(selectedSort.indexOf(" ") + 1)
                     .equals("descending") ? SortDirection.DESC : SortDirection.ASC;
         }
+        if (spType == null) {
+            minDuration = null;
+            maxDuration = null;
+            automaticReservation = null;
+        }
+
         Call<PagedModel<ServiceProductSummaryDto>> call = ClientUtils.serviceProductService.getServiceProductSummaries(
                 currentPage-1, pageSize, sortBy, sortDirection,
                 viewModel.getSearchText().getValue(), null,
