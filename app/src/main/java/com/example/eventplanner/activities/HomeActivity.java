@@ -26,6 +26,7 @@ import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import retrofit2.Call;
@@ -90,35 +91,6 @@ public class HomeActivity extends AppCompatActivity {
                 .build();
         NavigationUI.setupWithNavController(navigationView, navController);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
-
-
-        Call<ArrayList<Booking>> call = ClientUtils.bookingService.getAll();
-        call.enqueue(new Callback<ArrayList<Booking>>() {
-            @Override
-            public void onResponse(Call<ArrayList<Booking>> call, Response<ArrayList<Booking>> response) {
-                if (response.isSuccessful()) {
-                    Toast.makeText(HomeActivity.this, response.message(), Toast.LENGTH_LONG).show();
-                    Log.e("Home", response.message());
-                    Log.e("Home", String.valueOf(response.body().size()));
-                    for (Booking booking: response.body()) {
-
-                        Log.e("Home", booking.toString());
-                    }
-                    //productsLiveData.postValue(response.body());
-                } else {
-//                    Toast.makeText(HomeActivity.this, response.code(), Toast.LENGTH_SHORT).show();
-                    Log.e("Home", "Failed to fetch products. Code: " + response.code());
-                    //errorMessage.postValue("Failed to fetch products. Code: " + response.code());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ArrayList<Booking>> call, Throwable t) {
-                Toast.makeText(HomeActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
-                Log.w("error", t.getMessage());
-                //errorMessage.postValue(t.getMessage());
-            }
-        });
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.example.eventplanner.dto.order;
+package com.example.eventplanner.model.utils;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,8 +9,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PurchaseDto {
-    private long eventId;
-    private long productId;
-    private double price;
+public class PageMetadata {
+    Integer size;
+    Integer number;
+    Long totalElements;
+    Integer totalPages;
 }

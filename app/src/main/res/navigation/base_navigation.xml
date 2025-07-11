@@ -16,17 +16,17 @@
 
     <fragment
         android:id="@+id/nav_events"
-        android:name="com.example.eventplanner.fragments.home.EventsFragment"
+        android:name="com.example.eventplanner.fragments.home.AllEventsPageFragment"
         android:label="@string/events"
-        tools:layout="@layout/fragment_events"
+        tools:layout="@layout/fragment_all_events_page"
         app:popUpToInclusive="true"
         />
 
     <fragment
         android:id="@+id/nav_service_products"
-        android:name="com.example.eventplanner.fragments.home.ServiceProductsFragment"
+        android:name="com.example.eventplanner.fragments.home.AllServiceProductsPageFragment"
         android:label="@string/services_and_products"
-        tools:layout="@layout/fragment_service_products"
+        tools:layout="@layout/fragment_all_service_products_page"
         app:popUpToInclusive="true"
         />
 

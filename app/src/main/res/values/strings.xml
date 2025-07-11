@@ -19,4 +19,21 @@
     <string name="select_category">Select a category</string>
     <string name="events">Events</string>
     <string name="services_and_products">Services and products</string>
+    <string name="filter">Filter</string>
+    <string name="filters_label">Filters:</string>
+    <string name="event_type_label">Event type:</string>
+    <string name="select">Select</string>
+    <string name="clear">Clear</string>
+    <string name="max_attendances">Max attendances:</string>
+    <string name="open_label">Open:</string>
+    <string name="distance_label">Maximum distance (km):</string>
+    <string name="date_label">Date:</string>
+    <string name="locations_label">Locations:</string>
+    <string name="category_label">Category:</string>
+    <string name="price_label">Price:</string>
+    <string name="duration_label">Duration:</string>
+    <string name="available_event_types_label">Available Event Types:</string>
+    <string name="automatic_reservation_label">Automatic Reservation:</string>
+    <string name="services">Services</string>
+    <string name="products">Products</string>
 </resources>

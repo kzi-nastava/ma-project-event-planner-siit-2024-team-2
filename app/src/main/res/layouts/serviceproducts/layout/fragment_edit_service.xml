@@ -233,7 +233,7 @@
                 android:id="@+id/btn_cancel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/secondary_color"
+                android:backgroundTint="@color/primary_container"
                 android:textColor="@color/black"
                 android:text="Cancel" />
         </LinearLayout>
