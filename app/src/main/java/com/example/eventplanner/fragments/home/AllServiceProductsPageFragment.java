@@ -43,6 +43,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.checkbox.MaterialCheckBox;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.slider.RangeSlider;
 import com.google.android.material.slider.Slider;
 import com.google.gson.Gson;
@@ -70,6 +71,7 @@ public class AllServiceProductsPageFragment extends Fragment {
     private ServiceProductAdapter adapter;
     private BottomSheetDialog bottomSheetDialog;
     private Pagination pagination;
+    private CircularProgressIndicator progressIndicator;
     private int currentPage = 1;
     private static final int pageSize = 10;
     //Filtering
@@ -117,6 +119,8 @@ public class AllServiceProductsPageFragment extends Fragment {
         adapter = new ServiceProductAdapter(serviceProducts);
         recyclerView.setAdapter(adapter);
 
+        progressIndicator = binding.progressServiceProducts;
+
         Button filter = binding.btnFilter;
         filter.setEnabled(false); // wait until serviceProduct types load
         fetchFilteringValues();
@@ -129,6 +133,7 @@ public class AllServiceProductsPageFragment extends Fragment {
                 int toggleServiceId = R.id.button_toggle_service;
                 int toggleProductId = R.id.button_toggle_product;
                 LinearLayout linearServiceFilter = dialogView.findViewById(R.id.linear_service_filters);
+                linearServiceFilter.setVisibility(View.GONE);
 
                 toggleGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
                     if (checkedId == toggleServiceId)
@@ -316,6 +321,10 @@ public class AllServiceProductsPageFragment extends Fragment {
                 spType, categories, true, true, minPrice,
                 maxPrice, eventTypes, null, minDuration, maxDuration, automaticReservation);
 
+        serviceProducts.clear();
+        progressIndicator.setVisibility(View.VISIBLE);
+        adapter.notifyDataSetChanged(); // it's will be safer to use data set changed here, and is performance insignificant.
+
         call.enqueue(new Callback<>() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
@@ -329,6 +338,7 @@ public class AllServiceProductsPageFragment extends Fragment {
                         pageMetadata = response.body().getPage();
                         if (previousTotalPages != pageMetadata.getTotalPages())
                             pagination.changeTotalPages(pageMetadata.getTotalPages());
+                        progressIndicator.setVisibility(View.GONE);
                     }
                     else
                         serviceProducts.clear();

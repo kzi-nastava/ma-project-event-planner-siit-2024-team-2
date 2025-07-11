@@ -35,6 +35,7 @@ import com.example.eventplanner.pagination.Pagination;
 import com.example.eventplanner.utils.JsonUtils;
 import com.example.eventplanner.utils.DialogHelper;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.slider.RangeSlider;
 import com.google.android.material.slider.Slider;
 import com.google.gson.Gson;
@@ -64,6 +65,7 @@ public class AllEventsPageFragment extends Fragment {
     private EventAdapter adapter;
     private BottomSheetDialog bottomSheetDialog;
     private Pagination pagination;
+    private CircularProgressIndicator progressIndicator;
     private int currentPage = 1;
     private static final int pageSize = 10;
     //Filtering
@@ -111,6 +113,8 @@ public class AllEventsPageFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
         adapter = new EventAdapter(events);
         recyclerView.setAdapter(adapter);
+
+        progressIndicator = binding.progressEvents;
 
         Button filter = binding.btnFilter;
         filter.setEnabled(false); // wait until event types load
@@ -288,19 +292,23 @@ public class AllEventsPageFragment extends Fragment {
                 types, minMaxAttendances, maxMaxAttendances, true, latitudes,
                 longitudes, maxDistance, minDate, maxDate);
 
+        events.clear();
+        progressIndicator.setVisibility(View.VISIBLE);
+        adapter.notifyDataSetChanged(); // it's will be safer to use data set changed here, and is performance insignificant.
+
         call.enqueue(new Callback<>() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onResponse(@NonNull Call<PagedModel<EventSummaryDto>> call, @NonNull Response<PagedModel<EventSummaryDto>> response) {
                 if (response.isSuccessful()) {
-                    if (response.body() != null)
-                    {
+                    if (response.body() != null) {
                         events.clear();
                         events.addAll(response.body().getContent());
                         int previousTotalPages = pageMetadata == null ? 0 : pageMetadata.getTotalPages();
                         pageMetadata = response.body().getPage();
                         if (previousTotalPages != pageMetadata.getTotalPages())
                             pagination.changeTotalPages(pageMetadata.getTotalPages());
+                        progressIndicator.setVisibility(View.GONE);
                     }
                     else
                         events.clear();

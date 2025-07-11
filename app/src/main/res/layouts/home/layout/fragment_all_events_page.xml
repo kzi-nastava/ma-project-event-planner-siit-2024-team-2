@@ -71,6 +71,19 @@
         app:layout_constraintBottom_toTopOf="@+id/pagination_events"
         tools:listitem="@layout/fragment_event_compact" />
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/progress_events"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:indeterminateTintMode="src_atop"
+            android:layout_gravity="center"
+            android:visibility="gone"/>
+    </FrameLayout>
+
     <LinearLayout
         android:id="@+id/pagination_events"
         android:layout_width="match_parent"

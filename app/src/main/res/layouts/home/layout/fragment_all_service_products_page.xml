@@ -58,6 +58,7 @@
 
     </LinearLayout>
 
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_service_products"
         android:layout_width="match_parent"
@@ -70,6 +71,19 @@
         app:layout_constraintTop_toBottomOf="@+id/linear2"
         app:layout_constraintBottom_toTopOf="@+id/pagination_service_products"
         tools:listitem="@layout/fragment_service_product_compact" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/progress_service_products"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:indeterminateTintMode="src_atop"
+            android:layout_gravity="center"
+            android:visibility="gone"/>
+    </FrameLayout>
 
     <LinearLayout
         android:id="@+id/pagination_service_products"

@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import com.example.eventplanner.adapters.EventAdapter;
 import com.example.eventplanner.adapters.ServiceProductAdapter;
@@ -33,6 +34,7 @@ public class HomeFragment extends Fragment {
     EventAdapter eventAdapter;
     ServiceProductAdapter serviceProductAdapter;
     RecyclerView recyclerViewEvents, recyclerViewServiceProducts;
+    RelativeLayout progressContainerEvents, progressContainerServiceProducts;
     List<EventSummaryDto> events = new ArrayList<>();
     List<ServiceProductSummaryDto> serviceProducts = new ArrayList<>();
 
@@ -56,6 +58,9 @@ public class HomeFragment extends Fragment {
         serviceProductAdapter = new ServiceProductAdapter(serviceProducts);
         recyclerViewServiceProducts.setAdapter(serviceProductAdapter);
 
+        progressContainerEvents = binding.progressContainerEvents;
+        progressContainerServiceProducts = binding.progressContainerServiceProducts;
+
         fetchTop5Events();
         fetchTop5ServiceProducts();
 
@@ -69,13 +74,13 @@ public class HomeFragment extends Fragment {
             @Override
             public void onResponse(@NonNull Call<List<EventSummaryDto>> call, @NonNull Response<List<EventSummaryDto>> response) {
                 if (response.isSuccessful()) {
-                    if (response.body() != null)
-                    {
+                    if (response.body() != null) {
                         events.clear();
                         events.addAll(response.body());
                     }
                     else
                         events.clear();
+                    progressContainerEvents.setVisibility(View.GONE);
                     eventAdapter.notifyDataSetChanged();
                 } else {
                     Log.e("RetrofitCall", "Failed to fetch events. Code: " + response.code());
@@ -96,13 +101,13 @@ public class HomeFragment extends Fragment {
             @Override
             public void onResponse(@NonNull Call<List<ServiceProductSummaryDto>> call, @NonNull Response<List<ServiceProductSummaryDto>> response) {
                 if (response.isSuccessful()) {
-                    if (response.body() != null)
-                    {
+                    if (response.body() != null) {
                         serviceProducts.clear();
                         serviceProducts.addAll(response.body());
                     }
                     else
                         serviceProducts.clear();
+                    progressContainerServiceProducts.setVisibility(View.GONE);
                     serviceProductAdapter.notifyDataSetChanged();
                 } else {
                     Log.e("RetrofitCall", "Failed to fetch serviceProducts. Code: " + response.code());
