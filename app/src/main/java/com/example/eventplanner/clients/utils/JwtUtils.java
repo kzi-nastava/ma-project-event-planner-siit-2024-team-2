@@ -17,10 +17,20 @@ public class JwtUtils {
     }
 
     public static void saveJwtToken(Context context, String token) {
+        cachedJwtToken = token;
+        if (context == null) return;
         SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(JWT_TOKEN_KEY, token);
         editor.apply();
-        cachedJwtToken = token;
+    }
+
+    public static void clearJwtToken(Context context) {
+        cachedJwtToken = null;
+        if (context == null) return;
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove(JWT_TOKEN_KEY);
+        editor.apply();
     }
 }

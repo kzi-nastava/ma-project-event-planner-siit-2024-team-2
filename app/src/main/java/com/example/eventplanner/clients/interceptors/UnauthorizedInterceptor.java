@@ -26,7 +26,7 @@ public class UnauthorizedInterceptor implements Interceptor{
         Response response = chain.proceed(chain.request());
 
         if (response.code() == 401) {
-            JwtUtils.saveJwtToken(context, null);
+            JwtUtils.clearJwtToken(context);
 
             Intent intent = new Intent(context, LoginActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
