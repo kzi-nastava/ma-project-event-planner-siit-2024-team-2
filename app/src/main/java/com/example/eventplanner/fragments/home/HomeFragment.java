@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +15,7 @@ import android.widget.RelativeLayout;
 
 import com.example.eventplanner.adapters.EventAdapter;
 import com.example.eventplanner.adapters.ServiceProductAdapter;
-import com.example.eventplanner.clients.ClientUtils;
+import com.example.eventplanner.clients.utils.ClientUtils;
 import com.example.eventplanner.databinding.FragmentHomeBinding;
 import com.example.eventplanner.dto.event.EventSummaryDto;
 import com.example.eventplanner.dto.serviceproduct.ServiceProductSummaryDto;
@@ -24,11 +23,8 @@ import com.example.eventplanner.utils.SimpleCallback;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class HomeFragment extends Fragment {
     FragmentHomeBinding binding;

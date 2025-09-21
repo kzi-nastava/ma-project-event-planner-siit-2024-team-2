@@ -2,7 +2,6 @@ package com.example.eventplanner.fragments.home;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +14,6 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
@@ -25,39 +23,31 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.eventplanner.R;
 import com.example.eventplanner.adapters.ServiceProductAdapter;
-import com.example.eventplanner.clients.ClientUtils;
+import com.example.eventplanner.clients.utils.ClientUtils;
 import com.example.eventplanner.databinding.FragmentAllServiceProductsPageBinding;
 import com.example.eventplanner.dto.serviceproduct.ServiceProductFilteringValuesDto;
 import com.example.eventplanner.dto.serviceproduct.ServiceProductSummaryDto;
 import com.example.eventplanner.model.event.EventType;
 import com.example.eventplanner.model.serviceproduct.ServiceProductCategory;
-import com.example.eventplanner.model.utils.City;
 import com.example.eventplanner.model.utils.PageMetadata;
 import com.example.eventplanner.model.utils.PagedModel;
 import com.example.eventplanner.model.utils.ServiceProductDType;
 import com.example.eventplanner.model.utils.SortDirection;
 import com.example.eventplanner.pagination.Pagination;
 import com.example.eventplanner.utils.DialogHelper;
-import com.example.eventplanner.utils.JsonUtils;
 import com.example.eventplanner.utils.SimpleCallback;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.android.material.button.MaterialButton;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.slider.RangeSlider;
-import com.google.android.material.slider.Slider;
 import com.google.gson.Gson;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class AllServiceProductsPageFragment extends Fragment {
     public static List<ServiceProductSummaryDto> serviceProducts = new ArrayList<>();

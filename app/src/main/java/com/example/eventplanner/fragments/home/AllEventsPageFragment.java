@@ -2,7 +2,6 @@ package com.example.eventplanner.fragments.home;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.eventplanner.R;
 import com.example.eventplanner.adapters.EventAdapter;
-import com.example.eventplanner.clients.ClientUtils;
+import com.example.eventplanner.clients.utils.ClientUtils;
 import com.example.eventplanner.databinding.FragmentAllEventsPageBinding;
 import com.example.eventplanner.dto.event.EventSummaryDto;
 import com.example.eventplanner.model.event.EventType;
@@ -49,8 +48,6 @@ import java.util.List;
 import java.util.Objects;
 
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class AllEventsPageFragment extends Fragment {
     public static List<EventSummaryDto> events = new ArrayList<>();

@@ -1,4 +1,4 @@
-package com.example.eventplanner.clients.serviceproduct;
+package com.example.eventplanner.clients.services.serviceproduct;
 
 import com.example.eventplanner.dto.serviceproduct.ServiceProductFilteringValuesDto;
 import com.example.eventplanner.model.utils.ServiceProductDType;
