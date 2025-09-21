@@ -39,6 +39,7 @@ import com.example.eventplanner.model.utils.SortDirection;
 import com.example.eventplanner.pagination.Pagination;
 import com.example.eventplanner.utils.DialogHelper;
 import com.example.eventplanner.utils.JsonUtils;
+import com.example.eventplanner.utils.SimpleCallback;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.button.MaterialButtonToggleGroup;
@@ -306,6 +307,7 @@ public class AllServiceProductsPageFragment extends Fragment {
         binding = null;
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private void fetchServiceProducts(){
         String sortBy = null, selectedSort;
         SortDirection sortDirection = null;
@@ -331,57 +333,36 @@ public class AllServiceProductsPageFragment extends Fragment {
         progressIndicator.setVisibility(View.VISIBLE);
         adapter.notifyDataSetChanged(); // it's will be safer to use data set changed here, and is performance insignificant.
 
-        call.enqueue(new Callback<>() {
-            @SuppressLint("NotifyDataSetChanged")
-            @Override
-            public void onResponse(@NonNull Call<PagedModel<ServiceProductSummaryDto>> call, @NonNull Response<PagedModel<ServiceProductSummaryDto>> response) {
-                if (response.isSuccessful()) {
-                    if (response.body() != null)
-                    {
-                        serviceProducts.clear();
-                        serviceProducts.addAll(response.body().getContent());
-                        int previousTotalPages = pageMetadata == null ? 0 : pageMetadata.getTotalPages();
-                        pageMetadata = response.body().getPage();
-                        if (previousTotalPages != pageMetadata.getTotalPages())
-                            pagination.changeTotalPages(pageMetadata.getTotalPages());
-                        progressIndicator.setVisibility(View.GONE);
-                    }
-                    else
-                        serviceProducts.clear();
-                    adapter.notifyDataSetChanged();
-                } else {
-                    Log.e("RetrofitCall", "Failed to fetch serviceProducts. Code: " + response.code());
+        call.enqueue(new SimpleCallback<>(
+            response -> {
+                serviceProducts.clear();
+                if (response.body() != null)
+                {
+                    serviceProducts.addAll(response.body().getContent());
+                    int previousTotalPages = pageMetadata == null ? 0 : pageMetadata.getTotalPages();
+                    pageMetadata = response.body().getPage();
+                    if (previousTotalPages != pageMetadata.getTotalPages())
+                        pagination.changeTotalPages(pageMetadata.getTotalPages());
+                    progressIndicator.setVisibility(View.GONE);
                 }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<PagedModel<ServiceProductSummaryDto>> call, @NonNull Throwable t) {
-                Log.e("RetrofitCall", Objects.requireNonNull(t.getMessage()));
-            }
-        });
+                adapter.notifyDataSetChanged();
+            },
+            error -> {}
+        ));
     }
 
     private void fetchFilteringValues() {
         Call<ServiceProductFilteringValuesDto> call = ClientUtils.serviceProductService.getFilteringValues();
 
-        call.enqueue(new Callback<>() {
-            @Override
-            public void onResponse(@NonNull Call<ServiceProductFilteringValuesDto> call,
-                                   @NonNull Response<ServiceProductFilteringValuesDto> response) {
-                if (response.isSuccessful()) {
-                    filteringValues = null;
-                    if (response.body() != null) {
-                        filteringValues = response.body();
-                        binding.btnFilter.setEnabled(true); // we can now filter events since everything loaded
-                    }
-                } else {
-                    Log.e("RetrofitCall", "Failed to fetch service product filtering values. Code: " + response.code());
+        call.enqueue(new SimpleCallback<>(
+            response -> {
+                filteringValues = null;
+                if (response.body() != null) {
+                    filteringValues = response.body();
+                    binding.btnFilter.setEnabled(true); // we can now filter events since everything loaded
                 }
-            }
-            @Override
-            public void onFailure(@NonNull Call<ServiceProductFilteringValuesDto> call, @NonNull Throwable t) {
-                Log.e("RetrofitCall", Objects.requireNonNull(t.getMessage()));
-            }
-        });
+            },
+            error -> {}
+        ));
     }
 }

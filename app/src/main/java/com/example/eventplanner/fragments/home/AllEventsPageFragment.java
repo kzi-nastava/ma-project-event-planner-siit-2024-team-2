@@ -34,6 +34,7 @@ import com.example.eventplanner.model.utils.SortDirection;
 import com.example.eventplanner.pagination.Pagination;
 import com.example.eventplanner.utils.JsonUtils;
 import com.example.eventplanner.utils.DialogHelper;
+import com.example.eventplanner.utils.SimpleCallback;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.slider.RangeSlider;
@@ -277,6 +278,7 @@ public class AllEventsPageFragment extends Fragment {
         binding = null;
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private void fetchEvents(){
         String sortBy = null, selectedSort;
         SortDirection sortDirection = null;
@@ -296,84 +298,56 @@ public class AllEventsPageFragment extends Fragment {
         progressIndicator.setVisibility(View.VISIBLE);
         adapter.notifyDataSetChanged(); // it's will be safer to use data set changed here, and is performance insignificant.
 
-        call.enqueue(new Callback<>() {
-            @SuppressLint("NotifyDataSetChanged")
-            @Override
-            public void onResponse(@NonNull Call<PagedModel<EventSummaryDto>> call, @NonNull Response<PagedModel<EventSummaryDto>> response) {
-                if (response.isSuccessful()) {
-                    if (response.body() != null) {
-                        events.clear();
-                        events.addAll(response.body().getContent());
-                        int previousTotalPages = pageMetadata == null ? 0 : pageMetadata.getTotalPages();
-                        pageMetadata = response.body().getPage();
-                        if (previousTotalPages != pageMetadata.getTotalPages())
-                            pagination.changeTotalPages(pageMetadata.getTotalPages());
-                        progressIndicator.setVisibility(View.GONE);
-                    }
-                    else
-                        events.clear();
-                    adapter.notifyDataSetChanged();
-                } else {
-                    Log.e("RetrofitCall", "Failed to fetch events. Code: " + response.code());
+        call.enqueue(new SimpleCallback<>(
+            response -> {
+                events.clear();
+                if (response.body() != null) {
+                    events.addAll(response.body().getContent());
+                    int previousTotalPages = pageMetadata == null ? 0 : pageMetadata.getTotalPages();
+                    pageMetadata = response.body().getPage();
+                    if (previousTotalPages != pageMetadata.getTotalPages())
+                        pagination.changeTotalPages(pageMetadata.getTotalPages());
+                    progressIndicator.setVisibility(View.GONE);
                 }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<PagedModel<EventSummaryDto>> call, @NonNull Throwable t) {
-                Log.e("RetrofitCall", Objects.requireNonNull(t.getMessage()));
-            }
-        });
+                adapter.notifyDataSetChanged();
+            },
+            error -> {}
+        ));
     }
 
     private void fetchEventTypes(){
         Call<List<EventType>> call = ClientUtils.eventTypeService.getAllEventTypes();
 
-        call.enqueue(new Callback<>() {
-            @Override
-            public void onResponse(@NonNull Call<List<EventType>> call, @NonNull Response<List<EventType>> response) {
-                if (response.isSuccessful()) {
-                    eventTypes.clear();
-                    if (response.body() != null) {
-                        eventTypes.addAll(response.body());
-                        eventTypes.sort(Comparator.comparing(EventType::getName));
-                        fetchedTypes = true;
-                        if (fetchedMaxAttendances)
-                            binding.btnFilter.setEnabled(true); // we can now filter events since everything loaded
-                    }
-                } else {
-                    Log.e("RetrofitCall", "Failed to fetch event types. Code: " + response.code());
+        call.enqueue(new SimpleCallback<>(
+            response -> {
+                eventTypes.clear();
+                if (response.body() != null) {
+                    eventTypes.addAll(response.body());
+                    eventTypes.sort(Comparator.comparing(EventType::getName));
+                    fetchedTypes = true;
+                    if (fetchedMaxAttendances)
+                        binding.btnFilter.setEnabled(true); // we can now filter events since everything loaded
                 }
-            }
-            @Override
-            public void onFailure(@NonNull Call<List<EventType>> call, @NonNull Throwable t) {
-                Log.e("RetrofitCall", Objects.requireNonNull(t.getMessage()));
-            }
-        });
+            },
+            error -> {}
+        ));
     }
 
     private void fetchAttendancesRange() {
         Call<List<Integer>> call = ClientUtils.eventService.getMaxAttendancesRange();
 
-        call.enqueue(new Callback<>() {
-            @Override
-            public void onResponse(@NonNull Call<List<Integer>> call, @NonNull Response<List<Integer>> response) {
-                if (response.isSuccessful()) {
-                    fullMaxAttendancesRange.clear();
-                    if (response.body() != null) {
-                        fullMaxAttendancesRange.addAll(response.body());
-                        fetchedMaxAttendances = true;
-                        if (fetchedTypes)
-                            binding.btnFilter.setEnabled(true); // we can now filter events since everything loaded
-                    }
-                } else {
-                    Log.e("RetrofitCall", "Failed to fetch max attendances range. Code: " + response.code());
+        call.enqueue(new SimpleCallback<> (
+            response -> {
+                fullMaxAttendancesRange.clear();
+                if (response.body() != null) {
+                    fullMaxAttendancesRange.addAll(response.body());
+                    fetchedMaxAttendances = true;
+                    if (fetchedTypes)
+                        binding.btnFilter.setEnabled(true); // we can now filter events since everything loaded
                 }
-            }
-            @Override
-            public void onFailure(@NonNull Call<List<Integer>> call, @NonNull Throwable t) {
-                Log.e("RetrofitCall", Objects.requireNonNull(t.getMessage()));
-            }
-        });
+            },
+            error -> {}
+        ));
     }
 
     private City[] loadCities()

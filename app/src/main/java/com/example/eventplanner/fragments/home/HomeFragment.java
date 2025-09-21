@@ -20,6 +20,7 @@ import com.example.eventplanner.clients.ClientUtils;
 import com.example.eventplanner.databinding.FragmentHomeBinding;
 import com.example.eventplanner.dto.event.EventSummaryDto;
 import com.example.eventplanner.dto.serviceproduct.ServiceProductSummaryDto;
+import com.example.eventplanner.utils.SimpleCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,58 +67,34 @@ public class HomeFragment extends Fragment {
 
         return root;
     }
+    @SuppressLint("NotifyDataSetChanged")
     private void fetchTop5Events(){
         Call<List<EventSummaryDto>> call = ClientUtils.eventService.getTop5();
 
-        call.enqueue(new Callback<>() {
-            @SuppressLint("NotifyDataSetChanged")
-            @Override
-            public void onResponse(@NonNull Call<List<EventSummaryDto>> call, @NonNull Response<List<EventSummaryDto>> response) {
-                if (response.isSuccessful()) {
-                    if (response.body() != null) {
-                        events.clear();
+        call.enqueue(new SimpleCallback<>(
+                response -> {
+                    events.clear();
+                    if (response.body() != null)
                         events.addAll(response.body());
-                    }
-                    else
-                        events.clear();
                     progressContainerEvents.setVisibility(View.GONE);
                     eventAdapter.notifyDataSetChanged();
-                } else {
-                    Log.e("RetrofitCall", "Failed to fetch events. Code: " + response.code());
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<List<EventSummaryDto>> call, @NonNull Throwable t) {
-                Log.e("RetrofitCall", Objects.requireNonNull(t.getMessage()));
-            }
-        });
+                },
+                error -> {}
+        ));
     }
+    @SuppressLint("NotifyDataSetChanged")
     private void fetchTop5ServiceProducts(){
         Call<List<ServiceProductSummaryDto>> call = ClientUtils.serviceProductService.getTop5();
 
-        call.enqueue(new Callback<>() {
-            @SuppressLint("NotifyDataSetChanged")
-            @Override
-            public void onResponse(@NonNull Call<List<ServiceProductSummaryDto>> call, @NonNull Response<List<ServiceProductSummaryDto>> response) {
-                if (response.isSuccessful()) {
-                    if (response.body() != null) {
-                        serviceProducts.clear();
+        call.enqueue(new SimpleCallback<>(
+                response -> {
+                    serviceProducts.clear();
+                    if (response.body() != null)
                         serviceProducts.addAll(response.body());
-                    }
-                    else
-                        serviceProducts.clear();
                     progressContainerServiceProducts.setVisibility(View.GONE);
                     serviceProductAdapter.notifyDataSetChanged();
-                } else {
-                    Log.e("RetrofitCall", "Failed to fetch serviceProducts. Code: " + response.code());
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<List<ServiceProductSummaryDto>> call, @NonNull Throwable t) {
-                Log.e("RetrofitCall", Objects.requireNonNull(t.getMessage()));
-            }
-        });
+                },
+                error -> {}
+        ));
     }
 }
