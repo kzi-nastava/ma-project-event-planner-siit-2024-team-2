@@ -3,6 +3,8 @@ package com.example.eventplanner.model.user;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+
 import com.example.eventplanner.model.serviceproduct.ServiceProduct;
 import com.example.eventplanner.model.utils.UserRole;
 
@@ -28,17 +30,18 @@ public class EventOrganizer extends BaseUser implements Parcelable, Serializable
             id = in.readLong();
         }
         email = in.readString();
-        password = in.readString();
         firstName = in.readString();
         lastName = in.readString();
         address = in.readString();
         phoneNumber = in.readString();
-        blockedUsers = in.createTypedArrayList(BaseUser.CREATOR);
+        image = in.readString();
+        imageEncodedName = in.readString();
+        mutedNotifications = in.readByte() != 0;
         favoriteServiceProducts = in.createTypedArrayList(ServiceProduct.CREATOR);
     }
 
     @Override
-    public void writeToParcel(Parcel dest, int flags) {
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
         if (id == null) {
             dest.writeByte((byte) 0);
         } else {
@@ -46,12 +49,13 @@ public class EventOrganizer extends BaseUser implements Parcelable, Serializable
             dest.writeLong(id);
         }
         dest.writeString(email);
-        dest.writeString(password);
         dest.writeString(firstName);
         dest.writeString(lastName);
         dest.writeString(address);
         dest.writeString(phoneNumber);
-        dest.writeTypedList(blockedUsers);
+        dest.writeString(image);
+        dest.writeString(imageEncodedName);
+        dest.writeByte((byte) (mutedNotifications ? 1 : 0));
         dest.writeTypedList(favoriteServiceProducts);
     }
 

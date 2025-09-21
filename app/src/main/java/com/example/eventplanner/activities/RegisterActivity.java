@@ -14,7 +14,14 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.eventplanner.R;
+import com.example.eventplanner.clients.utils.ClientUtils;
+import com.example.eventplanner.dto.auth.RegisterUserDto;
+import com.example.eventplanner.model.utils.UserRole;
+import com.example.eventplanner.utils.SimpleCallback;
 import com.google.android.material.textfield.TextInputEditText;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -24,6 +31,7 @@ public class RegisterActivity extends AppCompatActivity {
     private LinearLayout eventOrganizerForm;
     private LinearLayout serviceProviderForm;
     private RadioGroup userTypeRadioGroup;
+    private boolean isEventOrganizer = true;
 
 
 
@@ -62,9 +70,11 @@ public class RegisterActivity extends AppCompatActivity {
                 if (checkedId == R.id.eventOrganizerRadioButton) {
                     eventOrganizerForm.setVisibility(View.VISIBLE);
                     serviceProviderForm.setVisibility(View.GONE);
+                    isEventOrganizer = true;
                 } else if (checkedId == R.id.serviceProviderRadioButton) {
                     eventOrganizerForm.setVisibility(View.GONE);
                     serviceProviderForm.setVisibility(View.VISIBLE);
+                    isEventOrganizer = false;
                 }
             }
         });
@@ -111,11 +121,34 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void createUser() {
+        String email = emailEditText.getText().toString().trim();
+        String password = passwordEditText.getText().toString().trim();
         String firstName = firstNameEditText.getText().toString().trim();
         String lastName = lastNameEditText.getText().toString().trim();
-        String email = emailEditText.getText().toString().trim();
         String address = addressEditText.getText().toString().trim();
         String phone = phoneEditText.getText().toString().trim();
+
+        RegisterUserDto dto = RegisterUserDto.builder()
+                .email(email)
+                .password(password)
+                .firstName(firstName)
+                .lastName(lastName)
+                .address(address)
+                .phoneNumber(phone)
+                .userRole(isEventOrganizer ? UserRole.EVENT_ORGANIZER : UserRole.SERVICE_PRODUCT_PROVIDER)
+                .build();
+
+        Call<ResponseBody> call = ClientUtils.authService.registerUser(dto);
+        call.enqueue(new SimpleCallback<>(
+                response -> {
+                    if (response != null) {
+                        Toast.makeText(this, "Registration successful", Toast.LENGTH_SHORT).show();
+                        navigateToSignIn();
+                    } else
+                        Toast.makeText(this, "Registration failed", Toast.LENGTH_SHORT).show();
+                },
+                error -> Toast.makeText(this, "Registration failed", Toast.LENGTH_SHORT).show()
+        ));
 
         Toast.makeText(this, "User " + firstName + " " + lastName + " registered successfully!", Toast.LENGTH_SHORT).show();
 
@@ -130,5 +163,10 @@ public class RegisterActivity extends AppCompatActivity {
         confirmPasswordEditText.setText("");
         addressEditText.setText("");
         phoneEditText.setText("");
+    }
+
+    private void navigateToSignIn()  {
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
     }
 }

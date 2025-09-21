@@ -5,6 +5,7 @@ import android.content.Context;
 import com.example.eventplanner.BuildConfig;
 import com.example.eventplanner.clients.interceptors.JwtInterceptor;
 import com.example.eventplanner.clients.interceptors.UnauthorizedInterceptor;
+import com.example.eventplanner.clients.services.auth.AuthService;
 import com.example.eventplanner.clients.services.event.EventService;
 import com.example.eventplanner.clients.services.event.EventTypeService;
 import com.example.eventplanner.clients.services.order.BookingService;
@@ -70,7 +71,7 @@ public class ClientUtils {
         // User
 
         // Auth
-
+        authService = retrofit.create(AuthService.class);
     }
 
     // Event
@@ -87,4 +88,5 @@ public class ClientUtils {
     // User
 
     // Auth
+    public static AuthService authService;
 }

@@ -34,7 +34,7 @@ public class SimpleCallback<T> implements Callback<T> {
 
     @Override
     public void onFailure(@NonNull Call<T> call, @NonNull Throwable t) {
-        Log.e("RetrofitCall", Objects.requireNonNull(t.getMessage()));
+        Log.e("RetrofitCall", "Error: " + t.getClass().getSimpleName() + " - " + t.getMessage(), t);
         onError.accept(null);
     }
 }

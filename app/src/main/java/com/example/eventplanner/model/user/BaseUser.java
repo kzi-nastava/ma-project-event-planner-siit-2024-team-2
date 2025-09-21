@@ -3,6 +3,8 @@ package com.example.eventplanner.model.user;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+
 import com.example.eventplanner.model.utils.UserRole;
 
 import java.io.Serializable;
@@ -20,13 +22,14 @@ import lombok.Setter;
 public class BaseUser implements Parcelable, Serializable{
     protected Long id;
     protected String email;
-    protected String password;
     protected UserRole userRole;
     protected String firstName;
     protected String lastName;
     protected String address;
     protected String phoneNumber;
-    protected List<BaseUser> blockedUsers;
+    protected String image = null;
+    protected String imageEncodedName = null;
+    protected boolean mutedNotifications = false;
 
     protected BaseUser(Parcel in) {
         if (in.readByte() == 0) {
@@ -35,34 +38,13 @@ public class BaseUser implements Parcelable, Serializable{
             id = in.readLong();
         }
         email = in.readString();
-        password = in.readString();
         firstName = in.readString();
         lastName = in.readString();
         address = in.readString();
         phoneNumber = in.readString();
-        blockedUsers = in.createTypedArrayList(BaseUser.CREATOR);
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        if (id == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeLong(id);
-        }
-        dest.writeString(email);
-        dest.writeString(password);
-        dest.writeString(firstName);
-        dest.writeString(lastName);
-        dest.writeString(address);
-        dest.writeString(phoneNumber);
-        dest.writeTypedList(blockedUsers);
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
+        image = in.readString();
+        imageEncodedName = in.readString();
+        mutedNotifications = in.readByte() != 0;
     }
 
     public static final Creator<BaseUser> CREATOR = new Creator<BaseUser>() {
@@ -76,4 +58,27 @@ public class BaseUser implements Parcelable, Serializable{
             return new BaseUser[size];
         }
     };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
+        if (id == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(id);
+        }
+        dest.writeString(email);
+        dest.writeString(firstName);
+        dest.writeString(lastName);
+        dest.writeString(address);
+        dest.writeString(phoneNumber);
+        dest.writeString(image);
+        dest.writeString(imageEncodedName);
+        dest.writeByte((byte) (mutedNotifications ? 1 : 0));
+    }
 }
