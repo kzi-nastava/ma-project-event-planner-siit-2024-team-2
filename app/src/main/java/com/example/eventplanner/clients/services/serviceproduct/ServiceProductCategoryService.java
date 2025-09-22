@@ -1,4 +1,4 @@
-package com.example.eventplanner.clients.serviceproduct;
+package com.example.eventplanner.clients.services.serviceproduct;
 
 import com.example.eventplanner.dto.serviceproduct.ServiceProductCategoryDto;
 import com.example.eventplanner.model.serviceproduct.ServiceProductCategory;

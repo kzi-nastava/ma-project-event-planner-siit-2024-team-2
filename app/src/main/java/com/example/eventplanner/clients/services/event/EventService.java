@@ -1,4 +1,4 @@
-package com.example.eventplanner.clients.event;
+package com.example.eventplanner.clients.services.event;
 
 import com.example.eventplanner.dto.event.EventDto;
 import com.example.eventplanner.dto.event.EventSummaryDto;

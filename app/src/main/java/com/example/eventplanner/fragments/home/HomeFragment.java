@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,18 +15,16 @@ import android.widget.RelativeLayout;
 
 import com.example.eventplanner.adapters.EventAdapter;
 import com.example.eventplanner.adapters.ServiceProductAdapter;
-import com.example.eventplanner.clients.ClientUtils;
+import com.example.eventplanner.clients.utils.ClientUtils;
 import com.example.eventplanner.databinding.FragmentHomeBinding;
 import com.example.eventplanner.dto.event.EventSummaryDto;
 import com.example.eventplanner.dto.serviceproduct.ServiceProductSummaryDto;
+import com.example.eventplanner.utils.SimpleCallback;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class HomeFragment extends Fragment {
     FragmentHomeBinding binding;
@@ -66,58 +63,34 @@ public class HomeFragment extends Fragment {
 
         return root;
     }
+    @SuppressLint("NotifyDataSetChanged")
     private void fetchTop5Events(){
         Call<List<EventSummaryDto>> call = ClientUtils.eventService.getTop5();
 
-        call.enqueue(new Callback<>() {
-            @SuppressLint("NotifyDataSetChanged")
-            @Override
-            public void onResponse(@NonNull Call<List<EventSummaryDto>> call, @NonNull Response<List<EventSummaryDto>> response) {
-                if (response.isSuccessful()) {
-                    if (response.body() != null) {
-                        events.clear();
+        call.enqueue(new SimpleCallback<>(
+                response -> {
+                    events.clear();
+                    if (response.body() != null)
                         events.addAll(response.body());
-                    }
-                    else
-                        events.clear();
                     progressContainerEvents.setVisibility(View.GONE);
                     eventAdapter.notifyDataSetChanged();
-                } else {
-                    Log.e("RetrofitCall", "Failed to fetch events. Code: " + response.code());
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<List<EventSummaryDto>> call, @NonNull Throwable t) {
-                Log.e("RetrofitCall", Objects.requireNonNull(t.getMessage()));
-            }
-        });
+                },
+                error -> {}
+        ));
     }
+    @SuppressLint("NotifyDataSetChanged")
     private void fetchTop5ServiceProducts(){
         Call<List<ServiceProductSummaryDto>> call = ClientUtils.serviceProductService.getTop5();
 
-        call.enqueue(new Callback<>() {
-            @SuppressLint("NotifyDataSetChanged")
-            @Override
-            public void onResponse(@NonNull Call<List<ServiceProductSummaryDto>> call, @NonNull Response<List<ServiceProductSummaryDto>> response) {
-                if (response.isSuccessful()) {
-                    if (response.body() != null) {
-                        serviceProducts.clear();
+        call.enqueue(new SimpleCallback<>(
+                response -> {
+                    serviceProducts.clear();
+                    if (response.body() != null)
                         serviceProducts.addAll(response.body());
-                    }
-                    else
-                        serviceProducts.clear();
                     progressContainerServiceProducts.setVisibility(View.GONE);
                     serviceProductAdapter.notifyDataSetChanged();
-                } else {
-                    Log.e("RetrofitCall", "Failed to fetch serviceProducts. Code: " + response.code());
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<List<ServiceProductSummaryDto>> call, @NonNull Throwable t) {
-                Log.e("RetrofitCall", Objects.requireNonNull(t.getMessage()));
-            }
-        });
+                },
+                error -> {}
+        ));
     }
 }
