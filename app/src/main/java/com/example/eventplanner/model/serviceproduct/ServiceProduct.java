@@ -13,12 +13,11 @@ import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
+//@NoArgsConstructor
 @AllArgsConstructor
 public class ServiceProduct implements Parcelable, Serializable {
     protected Long id;
@@ -32,6 +31,8 @@ public class ServiceProduct implements Parcelable, Serializable {
     protected List<String> images;
     protected List<EventType> availableEventTypes;
     protected ServiceProductProvider serviceProductProvider;
+
+    protected ServiceProduct() {}
 
     protected ServiceProduct(Parcel in) {
         if (in.readByte() == 0) {

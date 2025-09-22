@@ -20,7 +20,7 @@ public class ServiceProductCategory implements Parcelable, Serializable {
     private Long id;
     private String name;
 
-    protected ServiceProductCategory(Parcel in) {
+    public ServiceProductCategory(Parcel in) {
         if (in.readByte() == 0) {
             id = null;
         } else {

@@ -9,7 +9,6 @@ import com.example.eventplanner.model.event.EventType;
 import com.example.eventplanner.model.user.ServiceProductProvider;
 
 import java.io.Serializable;
-import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,7 +28,7 @@ public class Service extends ServiceProduct implements Parcelable, Serializable 
     private int cancellationDaysDeadline;
     private boolean hasAutomaticReservation;
 
-    protected Service(Parcel in) {
+    public Service(Parcel in) {
         if (in.readByte() == 0) {
             id = null;
         } else {

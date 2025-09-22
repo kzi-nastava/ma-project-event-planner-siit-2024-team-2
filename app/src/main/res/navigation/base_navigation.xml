@@ -20,9 +20,9 @@
 
     <fragment
         android:id="@+id/nav_events"
-        android:name="com.example.eventplanner.fragments.home.EventsFragment"
+        android:name="com.example.eventplanner.fragments.home.AllEventsPageFragment"
         android:label="@string/events"
-        tools:layout="@layout/fragment_events"
+        tools:layout="@layout/fragment_all_events_page"
         app:popUpToInclusive="true"
         />
 
@@ -37,15 +37,15 @@
 
     <fragment
         android:id="@+id/nav_service_products"
-        android:name="com.example.eventplanner.fragments.home.ServiceProductsFragment"
+        android:name="com.example.eventplanner.fragments.home.AllServiceProductsPageFragment"
         android:label="@string/services_and_products"
-        tools:layout="@layout/fragment_service_products"
+        tools:layout="@layout/fragment_all_service_products_page"
         app:popUpToInclusive="true"
         />
 
     <fragment
         android:id="@+id/nav_logout"
-        android:name="com.example.eventplanner.fragments.login.LoginFragment"
+        android:name="com.example.eventplanner.fragments.login.LogoutFragment"
         android:label="Login"
         tools:layout="@layout/fragment_login"
         app:popUpTo="@+id/nav_home"
@@ -67,8 +67,8 @@
         android:label="Services"
         tools:layout="@layout/fragment_services_page"
         app:popUpTo="@+id/nav_home"
-        app:popUpToInclusive="true"
-        />
+        app:popUpToInclusive="true">
+    </fragment>
 
     <fragment
         android:id="@+id/nav_edit_service"

@@ -33,12 +33,13 @@ public class ServiceProductProvider extends BaseUser implements Parcelable, Seri
             id = in.readLong();
         }
         email = in.readString();
-        password = in.readString();
         firstName = in.readString();
         lastName = in.readString();
         address = in.readString();
         phoneNumber = in.readString();
-        blockedUsers = in.createTypedArrayList(BaseUser.CREATOR);
+        image = in.readString();
+        imageEncodedName = in.readString();
+        mutedNotifications = in.readByte() != 0;
         companyName = in.readString();
         companyDescription = in.readString();
     }
@@ -69,12 +70,13 @@ public class ServiceProductProvider extends BaseUser implements Parcelable, Seri
             dest.writeLong(id);
         }
         dest.writeString(email);
-        dest.writeString(password);
         dest.writeString(firstName);
         dest.writeString(lastName);
         dest.writeString(address);
         dest.writeString(phoneNumber);
-        dest.writeTypedList(blockedUsers);
+        dest.writeString(image);
+        dest.writeString(imageEncodedName);
+        dest.writeByte((byte) (mutedNotifications ? 1 : 0));
         dest.writeString(companyName);
         dest.writeString(companyDescription);
     }

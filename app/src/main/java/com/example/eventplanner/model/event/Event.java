@@ -5,6 +5,9 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import com.example.eventplanner.dto.user.BaseUserDto;
+import com.example.eventplanner.model.user.BaseUser;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -23,13 +26,15 @@ public class Event implements Parcelable, Serializable {
     private String name;
     private String description;
     private EventType type;
+    private BaseUser eventOrganizerDto;
     private int maxAttendances;
     private boolean open;
     private double longitude;
     private double latitude;
-    private Date date;
+    private long date;
     private List<Activity> activities;
     private List<Budget> budgets;
+    private List<String> invitationEmails;
 
     protected Event(Parcel in) {
         if (in.readByte() == 0) {
@@ -40,12 +45,15 @@ public class Event implements Parcelable, Serializable {
         name = in.readString();
         description = in.readString();
         type = in.readParcelable(EventType.class.getClassLoader());
+        eventOrganizerDto = in.readParcelable(BaseUser.class.getClassLoader());
         maxAttendances = in.readInt();
         open = in.readByte() != 0;
         longitude = in.readDouble();
         latitude = in.readDouble();
+        date = in.readLong();
         activities = in.createTypedArrayList(Activity.CREATOR);
         budgets = in.createTypedArrayList(Budget.CREATOR);
+        invitationEmails = in.createStringArrayList();
     }
 
     public static final Creator<Event> CREATOR = new Creator<Event>() {
@@ -76,11 +84,14 @@ public class Event implements Parcelable, Serializable {
         dest.writeString(name);
         dest.writeString(description);
         dest.writeParcelable(type, flags);
+        dest.writeParcelable(eventOrganizerDto, flags);
         dest.writeInt(maxAttendances);
         dest.writeByte((byte) (open ? 1 : 0));
         dest.writeDouble(longitude);
         dest.writeDouble(latitude);
+        dest.writeLong(date);
         dest.writeTypedList(activities);
         dest.writeTypedList(budgets);
+        dest.writeStringList(invitationEmails);
     }
 }
