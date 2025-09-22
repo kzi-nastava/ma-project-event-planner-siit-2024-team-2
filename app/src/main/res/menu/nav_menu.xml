@@ -8,6 +8,10 @@
         android:title="@string/events" />
 
     <item
+        android:id="@+id/nav_create_event"
+        android:title="@string/new_event" />
+
+    <item
         android:id="@+id/nav_service_products"
         android:title="@string/services_and_products" />
 
@@ -31,7 +35,4 @@
         android:id="@+id/nav_edit_service"
         android:title="New service" />
 
-    <item
-        android:id="@+id/nav_create_event"
-        android:title="New Event" />
 </menu>

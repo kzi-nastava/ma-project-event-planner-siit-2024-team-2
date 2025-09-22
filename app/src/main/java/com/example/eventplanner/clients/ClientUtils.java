@@ -44,4 +44,5 @@ public class ClientUtils {
             .build();
 
     public static BookingService bookingService = retrofit.create(BookingService.class);
+    public static EventTypeService eventTypeService = retrofit.create(EventTypeService.class);
 }

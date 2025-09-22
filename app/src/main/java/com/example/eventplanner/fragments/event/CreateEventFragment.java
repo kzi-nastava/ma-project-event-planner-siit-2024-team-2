@@ -1,98 +1,54 @@
 package com.example.eventplanner.fragments.event;
 
-import static androidx.fragment.app.FragmentKt.setFragmentResult;
-import static java.lang.Integer.parseInt;
-import static java.lang.Long.parseLong;
-
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProvider;
-
-import android.Manifest;
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.os.Bundle;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
+import androidx.lifecycle.ViewModelProvider;
 
-import org.osmdroid.api.IMapController;
-import org.osmdroid.config.Configuration;
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.MapView;
-import org.osmdroid.api.IGeoPoint;
-import org.osmdroid.views.overlay.Marker;
-
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.eventplanner.R;
 import com.example.eventplanner.activities.SelectLocationActivity;
-import com.example.eventplanner.fragments.SelectLocationFragment;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.checkbox.MaterialCheckBox;
-import com.google.android.material.textfield.TextInputEditText;
-
-import java.util.Date;
-
-import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.DateValidatorPointForward;
+import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.android.material.textfield.TextInputEditText;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class CreateEventFragment extends Fragment {
 
     private CreateEventViewModel viewModel;
 
-    private TextInputEditText etName, etDescription, etTypeId, etMaxAttendances;
-    private long selectedDateMillis = -1;
+    private TextInputEditText etName, etDescription, etMaxAttendances;
     private MaterialCheckBox cbIsOpen;
     private MaterialButton btnSubmit, btnSelectDate, btnSelectLocation;
+
+    private Spinner spinnerEventType;
+    private TextView tvEventTypeLabel;
+    private final List<Long> eventTypeIds = new ArrayList<>();
+    private final List<String> eventTypeNames = new ArrayList<>();
+    private long selectedTypeId = -1;
+
+    private long selectedDateMillis = -1;
     private double latitude = 0, longitude = 0;
-
-    private MapView mapView;
-    private LocationManager locationManager;
-    private LocationListener locationListener;
-    private final int PERMISSION_CODE = 100;
-
-
-
-    private void showDatePickerDialog() {
-        MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker()
-                .setTitleText("Select Event Date")
-                .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
-                .setCalendarConstraints(new CalendarConstraints.Builder()
-                        .setValidator(DateValidatorPointForward.now())  // Future dates only
-                        .build())
-                .build();
-
-        datePicker.show(getParentFragmentManager(), "DATE_PICKER");
-
-        // Handle positive selection
-        datePicker.addOnPositiveButtonClickListener(selection -> {
-            selectedDateMillis = selection;  // Store the selected date in milliseconds
-            String formattedDate = datePicker.getHeaderText();  // Example: "Dec 8, 2024"
-            Toast.makeText(getContext(), formattedDate, Toast.LENGTH_SHORT).show();
-            btnSelectDate.setText(formattedDate);
-        });
-    }
 
     private final ActivityResultLauncher<Intent> locationLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
@@ -109,17 +65,21 @@ public class CreateEventFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_create_event, container, false);
 
-
         viewModel = new ViewModelProvider(this).get(CreateEventViewModel.class);
+
         etName = view.findViewById(R.id.et_event_name);
         etDescription = view.findViewById(R.id.et_event_description);
-        etTypeId = view.findViewById(R.id.et_event_type_id);
         etMaxAttendances = view.findViewById(R.id.et_event_max_attendances);
+
         cbIsOpen = view.findViewById(R.id.cb_is_open);
         btnSubmit = view.findViewById(R.id.btn_submit);
         btnSelectLocation = view.findViewById(R.id.btn_select_location);
         btnSelectDate = view.findViewById(R.id.btn_select_date);
 
+        spinnerEventType = view.findViewById(R.id.spinner_event_type);
+        tvEventTypeLabel = view.findViewById(R.id.tv_event_type_label);
+
+        // Observe creation result
         viewModel.getIsEventCreated().observe(getViewLifecycleOwner(), isSuccess -> {
             if (isSuccess) {
                 Toast.makeText(getContext(), "Event Created Successfully!", Toast.LENGTH_SHORT).show();
@@ -128,12 +88,36 @@ public class CreateEventFragment extends Fragment {
                 Toast.makeText(getContext(), "Failed to Create Event!", Toast.LENGTH_SHORT).show();
             }
         });
+
+        // Populate spinner (TODO: replace with real data load)
+        prepareEventTypes();
+
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(
+                getContext(),
+                android.R.layout.simple_spinner_item,
+                eventTypeNames
+        );
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerEventType.setAdapter(spinnerAdapter);
+
+        spinnerEventType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View selectedView, int position, long id) {
+                selectedTypeId = eventTypeIds.get(position);
+                // clear error when user chooses something
+                tvEventTypeLabel.setError(null);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                selectedTypeId = -1;
+            }
+        });
+
         btnSelectDate.setOnClickListener(v -> showDatePickerDialog());
         btnSubmit.setOnClickListener(v -> {
-            if (validateForm())
-                handleFormSubmit();
-            else
-                Toast.makeText(getContext(), "Please fix the errors before submitting!", Toast.LENGTH_SHORT).show();
+            if (validateForm()) handleFormSubmit();
+            else Toast.makeText(getContext(), "Please fix the errors before submitting!", Toast.LENGTH_SHORT).show();
         });
 
         btnSelectLocation.setOnClickListener(v -> {
@@ -141,24 +125,38 @@ public class CreateEventFragment extends Fragment {
             locationLauncher.launch(intent);
         });
 
-
-
         return view;
     }
 
+    private void showDatePickerDialog() {
+        MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker()
+                .setTitleText("Select Event Date")
+                .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
+                .setCalendarConstraints(new CalendarConstraints.Builder()
+                        .setValidator(DateValidatorPointForward.now())
+                        .build())
+                .build();
+
+        datePicker.show(getParentFragmentManager(), "DATE_PICKER");
+
+        datePicker.addOnPositiveButtonClickListener(selection -> {
+            selectedDateMillis = selection;
+            String formattedDate = datePicker.getHeaderText();
+            Toast.makeText(getContext(), formattedDate, Toast.LENGTH_SHORT).show();
+            btnSelectDate.setText(formattedDate);
+        });
+    }
 
     private void handleFormSubmit() {
         String name = getText(etName);
         String description = getText(etDescription);
-        long typeId = parseLong(getText(etTypeId));
-        int maxAttendances = parseInt(getText(etMaxAttendances));
+        int maxAttendances = Integer.parseInt(getText(etMaxAttendances));
         Date date = new Date(selectedDateMillis);
         boolean isOpen = cbIsOpen.isChecked();
-        Toast.makeText(getContext(), name, Toast.LENGTH_SHORT).show();
-        viewModel.createEvent(name, description, typeId, maxAttendances, isOpen, 0,
-                0, date);
-    }
 
+        // selectedTypeId is set by spinner
+        viewModel.createEvent(name, description, selectedTypeId, maxAttendances, isOpen, longitude, latitude, date);
+    }
 
     private boolean validateForm() {
         boolean isValid = true;
@@ -177,18 +175,24 @@ public class CreateEventFragment extends Fragment {
             etDescription.setError(null);
         }
 
-        if (!isNumeric(getText(etTypeId))) {
-            etTypeId.setError("Type ID must be a valid number!");
+        if (getText(etMaxAttendances).isEmpty()) {
+            etMaxAttendances.setError("Maximum attendances is required!");
             isValid = false;
         } else {
-            etTypeId.setError(null);
+            try {
+                Integer.parseInt(getText(etMaxAttendances));
+                etMaxAttendances.setError(null);
+            } catch (NumberFormatException ex) {
+                etMaxAttendances.setError("Maximum attendances must be a number!");
+                isValid = false;
+            }
         }
 
-        if (!isNumeric(getText(etMaxAttendances))) {
-            etMaxAttendances.setError("Maximum attendances must be a number!");
+        if (selectedTypeId == -1) {
+            tvEventTypeLabel.setError("Please select an event type!");
             isValid = false;
         } else {
-            etMaxAttendances.setError(null);
+            tvEventTypeLabel.setError(null);
         }
 
         if (selectedDateMillis == -1) {
@@ -201,14 +205,6 @@ public class CreateEventFragment extends Fragment {
         return isValid;
     }
 
-    private boolean isNumeric(String str) {
-        try {
-            Long.parseLong(str);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
-    }
     private String getText(TextInputEditText editText) {
         return TextUtils.isEmpty(editText.getText()) ? "" : editText.getText().toString();
     }
@@ -216,9 +212,15 @@ public class CreateEventFragment extends Fragment {
     private void clearForm() {
         etName.setText("");
         etDescription.setText("");
-        etTypeId.setText("");
         etMaxAttendances.setText("");
         cbIsOpen.setChecked(false);
-    }
 
+        // reset spinner to prompt
+        spinnerEventType.setSelection(0);
+        tvEventTypeLabel.setError(null);
+
+        // reset date
+        selectedDateMillis = -1;
+        btnSelectDate.setText("Select Date");
+    }
 }

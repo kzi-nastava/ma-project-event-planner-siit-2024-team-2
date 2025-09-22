@@ -12,13 +12,26 @@
         android:label="Home"
         tools:layout="@layout/fragment_home"
         app:popUpToInclusive="true"
-        />
+        >
+        <action
+            android:id="@+id/action_nav_home_self"
+            app:destination="@id/nav_home" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_events"
         android:name="com.example.eventplanner.fragments.home.EventsFragment"
         android:label="@string/events"
         tools:layout="@layout/fragment_events"
+        app:popUpToInclusive="true"
+        />
+
+    <fragment
+        android:id="@+id/nav_create_event"
+        android:name="com.example.eventplanner.fragments.event.CreateEventFragment"
+        android:label="@string/new_event"
+        tools:layout="@layout/fragment_create_event"
+        app:popUpTo="@+id/nav_home"
         app:popUpToInclusive="true"
         />
 
@@ -62,15 +75,6 @@
         android:name="com.example.eventplanner.fragments.services.EditServiceFragment"
         android:label="New service"
         tools:layout="@layout/fragment_edit_service"
-        app:popUpTo="@+id/nav_home"
-        app:popUpToInclusive="true"
-        />
-
-    <fragment
-        android:id="@+id/nav_create_event"
-        android:name="com.example.eventplanner.fragments.event.CreateEventFragment"
-        android:label="Create Event"
-        tools:layout="@layout/fragment_create_event"
         app:popUpTo="@+id/nav_home"
         app:popUpToInclusive="true"
         />

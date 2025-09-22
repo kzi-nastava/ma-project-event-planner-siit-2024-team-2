@@ -18,5 +18,6 @@
     <string name="profile">Profile</string>
     <string name="select_category">Select a category</string>
     <string name="events">Events</string>
+    <string name="new_event">New event</string>
     <string name="services_and_products">Services and products</string>
 </resources>

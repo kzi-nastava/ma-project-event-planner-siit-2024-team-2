@@ -36,17 +36,22 @@
                 android:lines="3" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Type ID -->
-        <com.google.android.material.textfield.TextInputLayout
+        <!-- Event Type Spinner -->
+        <TextView
+            android:id="@+id/tv_event_type_label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Type ID">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_event_type_id"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="number" />
-        </com.google.android.material.textfield.TextInputLayout>
+            android:text="Event Type"
+            android:textSize="14sp"
+            android:paddingTop="8dp"
+            android:paddingBottom="4dp"/>
+
+        <Spinner
+            android:id="@+id/spinner_event_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+
 
         <!-- Max Attendances -->
         <com.google.android.material.textfield.TextInputLayout
