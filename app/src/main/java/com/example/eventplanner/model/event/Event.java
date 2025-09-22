@@ -9,6 +9,7 @@ import com.example.eventplanner.dto.user.BaseUserDto;
 import com.example.eventplanner.model.user.BaseUser;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -16,11 +17,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class Event implements Parcelable, Serializable {
     private Long id;
     private String name;
@@ -67,6 +70,9 @@ public class Event implements Parcelable, Serializable {
             return new Event[size];
         }
     };
+
+    public Event(long l, String name, String description, EventType eventType, int maxAttendances, boolean isOpen, double latitude, double longitude, Date date, ArrayList<Activity> activities, ArrayList<Budget> budgets) {
+    }
 
     @Override
     public int describeContents() {

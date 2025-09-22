@@ -90,7 +90,7 @@ public class CreateEventFragment extends Fragment {
         });
 
         // Populate spinner (TODO: replace with real data load)
-        prepareEventTypes();
+        // prepareEventTypes();
 
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(
                 getContext(),
