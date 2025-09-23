@@ -27,6 +27,24 @@
         />
 
     <fragment
+        android:id="@+id/editEventFragment"
+        android:name="com.example.eventplanner.fragments.event.EditEventFragment"
+        android:label="Edit Event" >
+        <argument
+            android:name="eventId"
+            app:argType="long" />
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/nav_my_events"
+        android:name="com.example.eventplanner.fragments.event.MyEventsFragment"
+        android:label="@string/my_events"
+        tools:layout="@layout/fragment_my_events"
+        app:popUpToInclusive="true"
+        />
+
+    <fragment
         android:id="@+id/nav_create_event"
         android:name="com.example.eventplanner.fragments.event.CreateEventFragment"
         android:label="@string/new_event"

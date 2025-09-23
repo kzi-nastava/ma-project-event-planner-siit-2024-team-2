@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.example.eventplanner.R;
 import com.example.eventplanner.activities.SelectLocationActivity;
+import com.example.eventplanner.model.event.EventType;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.datepicker.CalendarConstraints;
@@ -66,6 +67,25 @@ public class CreateEventFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_create_event, container, false);
 
         viewModel = new ViewModelProvider(this).get(CreateEventViewModel.class);
+        viewModel.getEventTypes().observe(getViewLifecycleOwner(), types -> {
+            eventTypeIds.clear();
+            eventTypeNames.clear();
+
+            if (types != null) {
+                for (EventType type : types) {
+                    eventTypeIds.add(type.getId());
+                    eventTypeNames.add(type.getName());
+                }
+            }
+
+            ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(
+                    getContext(),
+                    android.R.layout.simple_spinner_item,
+                    eventTypeNames
+            );
+            spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinnerEventType.setAdapter(spinnerAdapter);
+        });
 
         etName = view.findViewById(R.id.et_event_name);
         etDescription = view.findViewById(R.id.et_event_description);

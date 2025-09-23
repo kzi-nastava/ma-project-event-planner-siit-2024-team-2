@@ -2,49 +2,37 @@ package com.example.eventplanner.fragments.event;
 
 import android.util.Log;
 
-import com.example.eventplanner.clients.utils.ClientUtils;
+import com.example.eventplanner.clients.repositories.EventRepository;
 import com.example.eventplanner.dto.event.EventDto;
-import com.example.eventplanner.model.event.Event;
 import com.example.eventplanner.model.event.EventType;
-import com.example.eventplanner.utils.SimpleCallback;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import retrofit2.Call;
-
 public class CreateEventViewModel extends ViewModel {
+    private final EventRepository repository;
+
     private final MutableLiveData<Boolean> isEventCreated = new MutableLiveData<>();
+
+    public CreateEventViewModel() {
+        this.repository = new EventRepository();
+    }
 
     public LiveData<Boolean> getIsEventCreated() {
         return isEventCreated;
     }
 
-    private final MutableLiveData<List<EventType>> eventTypes = new MutableLiveData<>();
-
     public LiveData<List<EventType>> getEventTypes() {
-        Call<List<EventType>> call = ClientUtils.eventTypeService.getAllEventTypes();
-
-        call.enqueue(new SimpleCallback<>(
-                response -> {
-                    if (response != null) {
-                        eventTypes.setValue(response.body());
-                    }
-                },
-                error -> {
-                    // You might want to log or expose error state
-                    eventTypes.setValue(new ArrayList<>()); // fallback empty list
-                }
-        ));
-
-        return eventTypes;
+        // delegate to repository
+        return repository.getEventTypes();
     }
-
 
     public void createEvent(String name, String description, long typeId, int maxAttendances,
                             boolean isOpen, double longitude, double latitude, Date date) {
@@ -56,37 +44,32 @@ public class CreateEventViewModel extends ViewModel {
             return;
         }
 
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        String formattedDate = sdf.format(date);
+
         // Build DTO
         EventDto eventDto = new EventDto(
                 name,
                 description,
                 typeId,
+                1,
                 maxAttendances,
                 isOpen,
                 longitude,
                 latitude,
-                date,
+                formattedDate,
                 new ArrayList<>(), // activityIds
                 new ArrayList<>()  // budgetIds
         );
 
-        // Call backend
-        Call<Event> call = ClientUtils.eventService.createEvent(eventDto);
-
-        call.enqueue(new SimpleCallback<>(
-                response -> {
-                    if (response != null && response.body() != null) {
-                        Log.d("EVENT_CREATED", response.body().toString());
-                        isEventCreated.setValue(true);
-                    } else {
-                        isEventCreated.setValue(false);
-                    }
-                },
-                error -> {
-                    Log.e("EVENT_CREATE_ERROR", error.toString());
-                    isEventCreated.setValue(false);
-                }
-        ));
+        // delegate to repository
+        repository.createEvent(eventDto).observeForever(event -> {
+            if (event != null) {
+                Log.d("EVENT_CREATED", event.toString());
+                isEventCreated.setValue(true);
+            } else {
+                isEventCreated.setValue(false);
+            }
+        });
     }
-
 }

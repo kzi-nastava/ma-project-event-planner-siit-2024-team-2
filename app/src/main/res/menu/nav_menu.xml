@@ -8,6 +8,10 @@
         android:title="@string/events" />
 
     <item
+        android:id="@+id/nav_my_events"
+        android:title="@string/my_events" />
+
+    <item
         android:id="@+id/nav_create_event"
         android:title="@string/new_event" />
 

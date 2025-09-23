@@ -5,4 +5,9 @@
         <domain includeSubdomains="true">b.tile.openstreetmap.org</domain>
         <domain includeSubdomains="true">c.tile.openstreetmap.org</domain>
     </domain-config>
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <!-- Trust anchors for your secure connections go here -->
+        </trust-anchors>
+    </base-config>
 </network-security-config>
