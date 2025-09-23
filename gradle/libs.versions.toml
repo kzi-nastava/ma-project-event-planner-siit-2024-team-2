@@ -13,6 +13,7 @@ constraintlayout = "2.2.0"
 navigationRuntime = "2.8.3"
 navigationUi = "2.8.3"
 navigationFragment = "2.8.3"
+osmdroidAndroid = "6.1.11"
 retrofitVersion = "2.3.0"
 lombokVersion = "1.18.30"
 
@@ -31,6 +32,8 @@ constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayo
 navigation-runtime = { group = "androidx.navigation", name = "navigation-runtime", version.ref = "navigationRuntime" }
 navigation-ui = { group = "androidx.navigation", name = "navigation-ui", version.ref = "navigationUi" }
 navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment", version.ref = "navigationFragment" }
+osmdroid-android = { module = "org.osmdroid:osmdroid-android", version.ref = "osmdroidAndroid" }
+osmdroid-geopackage = { module = "org.osmdroid:osmdroid-geopackage", version.ref = "osmdroidAndroid"}
 retrofit2-retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofitVersion" }
 projectlombok-lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombokVersion" }
 

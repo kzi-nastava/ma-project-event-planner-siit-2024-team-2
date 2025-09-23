@@ -15,12 +15,13 @@ import lombok.Setter;
 public class EventDto {
     private String name;
     private String description;
-    private long type;
+    private long eventTypeId;
+    private long eventOrganizerId;
     private int maxAttendances;
     private boolean open;
     private double longitude;
     private double latitude;
-    private Date date;
+    private String date;
     private List<Long> activityIds;
     private List<Long> budgetIds;
 }

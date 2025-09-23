@@ -29,7 +29,7 @@ import retrofit2.Call;
 public class LoginActivity extends AppCompatActivity {
 
     private TextInputEditText emailEditText, passwordEditText;
-    private Button loginButton, registerButton;
+    private Button loginButton, registerButton, continueButton;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +40,7 @@ public class LoginActivity extends AppCompatActivity {
         passwordEditText = findViewById(R.id.passwordEditText);
         loginButton = findViewById(R.id.loginButton);
         registerButton = findViewById(R.id.registerButton);
+        continueButton = findViewById(R.id.continueWithoutAccount);
 
         loginButton.setOnClickListener(v -> {
             if (validateInputs()) {
@@ -51,13 +52,18 @@ public class LoginActivity extends AppCompatActivity {
             Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
             startActivity(intent);
         });
+
+        continueButton.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+            startActivity(intent);
+        });
     }
 
     private boolean validateInputs() {
         String email = emailEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
 
-        if (TextUtils.isEmpty(email) || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+        if (TextUtils.isEmpty(email)) {
             emailEditText.setError("Valid email is required");
             return false;
         }

@@ -18,6 +18,7 @@
     <string name="profile">Profile</string>
     <string name="select_category">Select a category</string>
     <string name="events">Events</string>
+    <string name="new_event">New event</string>
     <string name="services_and_products">Services and products</string>
     <string name="filter">Filter</string>
     <string name="filters_label">Filters:</string>
@@ -36,4 +37,5 @@
     <string name="automatic_reservation_label">Automatic Reservation:</string>
     <string name="services">Services</string>
     <string name="products">Products</string>
+    <string name="my_events">My events</string>
 </resources>
