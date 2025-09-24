@@ -13,20 +13,28 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.eventplanner.R;
+import com.example.eventplanner.adapters.EventAdapter;
 import com.example.eventplanner.adapters.ServiceProductAdapter;
 import com.example.eventplanner.clients.utils.ClientUtils;
+import com.example.eventplanner.clients.utils.UserIdUtils;
 import com.example.eventplanner.databinding.FragmentAllServiceProductsPageBinding;
+import com.example.eventplanner.dto.event.EventSummaryDto;
 import com.example.eventplanner.dto.serviceproduct.ServiceProductFilteringValuesDto;
 import com.example.eventplanner.dto.serviceproduct.ServiceProductSummaryDto;
+import com.example.eventplanner.fragments.event.EventDetailsFragment;
+import com.example.eventplanner.fragments.services.ServiceProductDetailsFragment;
 import com.example.eventplanner.model.event.EventType;
 import com.example.eventplanner.model.serviceproduct.ServiceProductCategory;
 import com.example.eventplanner.model.utils.PageMetadata;
@@ -107,7 +115,32 @@ public class AllServiceProductsPageFragment extends Fragment {
 
         recyclerView = binding.recyclerViewServiceProducts;
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
-        adapter = new ServiceProductAdapter(serviceProducts);
+        adapter = new ServiceProductAdapter(serviceProducts, new ServiceProductAdapter.OnServiceProductClickListener() {
+            @Override
+            public void onMoreInfoClick(ServiceProductSummaryDto serviceProduct) {
+                ServiceProductDetailsFragment detailsFragment = new ServiceProductDetailsFragment();
+                Bundle args = new Bundle();
+                args.putLong("serviceProductId", serviceProduct.getId());
+                detailsFragment.setArguments(args);
+
+                // Navigate using NavController from a view inside the fragment
+                NavController navController = Navigation.findNavController(requireActivity(), R.id.fragment_nav_content_main);
+                navController.navigate(R.id.fragment_service_product_details, args);
+            }
+
+            @Override
+            public void onHeartClick(ServiceProductSummaryDto serviceProduct, boolean isFavorite) {
+                long userId = UserIdUtils.getUserId(getContext());
+                if (isFavorite) {
+                    viewModel.addFavoriteServiceProduct(userId, serviceProduct.getId());
+                    Toast.makeText(getContext(), "Added to favorites", Toast.LENGTH_SHORT).show();
+                } else {
+                    viewModel.removeFavoriteServiceProduct(userId, serviceProduct.getId());
+                    Toast.makeText(getContext(), "Removed from favorites", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+        });
         recyclerView.setAdapter(adapter);
 
         progressIndicator = binding.progressServiceProducts;
