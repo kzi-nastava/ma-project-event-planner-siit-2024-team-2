@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 
 import com.example.eventplanner.dto.event.EventTypeDto;
 
+import java.io.Serializable;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -18,7 +19,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ServiceProductSummaryDto implements Parcelable {
+public class ServiceProductSummaryDto implements Parcelable, Serializable {
     protected long id;
     protected ServiceProductCategoryDto category;
     protected boolean available;
@@ -28,6 +29,7 @@ public class ServiceProductSummaryDto implements Parcelable {
     protected String description;
     protected String creatorEmail;
     protected String creatorName;
+    protected boolean favorite;
 
     protected ServiceProductSummaryDto(Parcel in) {
         id = in.readLong();

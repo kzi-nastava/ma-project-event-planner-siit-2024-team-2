@@ -12,6 +12,9 @@ import android.view.ViewGroup;
 import com.example.eventplanner.R;
 import com.example.eventplanner.activities.LoginActivity;
 import com.example.eventplanner.clients.utils.JwtUtils;
+import com.example.eventplanner.clients.utils.UserIdUtils;
+import com.example.eventplanner.clients.utils.UserRoleUtils;
+import com.example.eventplanner.model.utils.UserRole;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,6 +32,8 @@ public class LogoutFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         JwtUtils.clearJwtToken(getActivity());
+        UserIdUtils.clearUserId(getActivity());
+        UserRoleUtils.clearUserRole(getActivity());
 
         Intent intent = new Intent(getActivity(), LoginActivity.class);
         startActivity(intent);

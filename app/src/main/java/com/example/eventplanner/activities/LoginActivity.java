@@ -14,6 +14,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.eventplanner.R;
 import com.example.eventplanner.clients.utils.ClientUtils;
 import com.example.eventplanner.clients.utils.JwtUtils;
+import com.example.eventplanner.clients.utils.UserIdUtils;
+import com.example.eventplanner.clients.utils.UserRoleUtils;
 import com.example.eventplanner.dto.auth.LoginDto;
 import com.example.eventplanner.dto.auth.LoginResponseDto;
 import com.example.eventplanner.model.event.Event;
@@ -86,6 +88,8 @@ public class LoginActivity extends AppCompatActivity {
                     if (response.body() != null) {
                         Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show();
                         JwtUtils.saveJwtToken(this, response.body().getJwt());
+                        UserIdUtils.saveUserId(this, response.body().getId());
+                        UserRoleUtils.saveUserRole(this, response.body().getRole());
 
                         navigateToHomeScreen();
                     } else

@@ -1,7 +1,9 @@
 package com.example.eventplanner.fragments.home;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,19 +14,25 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.eventplanner.R;
 import com.example.eventplanner.adapters.EventAdapter;
+import com.example.eventplanner.adapters.MyEventAdapter;
 import com.example.eventplanner.clients.utils.ClientUtils;
+import com.example.eventplanner.clients.utils.UserIdUtils;
 import com.example.eventplanner.databinding.FragmentAllEventsPageBinding;
 import com.example.eventplanner.dto.event.EventSummaryDto;
+import com.example.eventplanner.fragments.event.EventDetailsFragment;
 import com.example.eventplanner.model.event.EventType;
 import com.example.eventplanner.model.utils.City;
 import com.example.eventplanner.model.utils.PageMetadata;
@@ -109,8 +117,39 @@ public class AllEventsPageFragment extends Fragment {
 
         recyclerView = binding.recyclerViewEvents;
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
-        adapter = new EventAdapter(events);
+        adapter = new EventAdapter(events, new EventAdapter.OnEventClickListener() {
+            @Override
+            public void onMoreInfoClick(EventSummaryDto event) {
+                EventDetailsFragment detailsFragment = new EventDetailsFragment();
+                Bundle args = new Bundle();
+                args.putLong("eventId", event.getId());
+                detailsFragment.setArguments(args);
+
+                // Navigate using NavController from a view inside the fragment
+                NavController navController = Navigation.findNavController(requireActivity(), R.id.fragment_nav_content_main);
+                navController.navigate(R.id.fragment_event_details, args);
+            }
+
+            @Override
+            public void onHeartClick(EventSummaryDto event, boolean isFavorite) {
+                long userId = UserIdUtils.getUserId(getContext());
+                if (isFavorite) {
+                    viewModel.addFavoriteEvent(userId, event.getId());
+                    Toast.makeText(getContext(), "Added to favorites", Toast.LENGTH_SHORT).show();
+                } else {
+                    viewModel.removeFavoriteEvent(userId, event.getId());
+                    Toast.makeText(getContext(), "Removed from favorites", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+        });
         recyclerView.setAdapter(adapter);
+        viewModel.getFavoriteEventIds().observe(getViewLifecycleOwner(), favIds -> {
+            for (EventSummaryDto e : events) {
+                e.setFavorite(favIds.contains(e.getId()));
+            }
+            adapter.notifyDataSetChanged();
+        });
 
         progressIndicator = binding.progressEvents;
 
@@ -276,7 +315,7 @@ public class AllEventsPageFragment extends Fragment {
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private void fetchEvents(){
+    private void fetchEvents() {
         String sortBy = null, selectedSort;
         SortDirection sortDirection = null;
         if (spinnerSort != null) {
@@ -285,32 +324,44 @@ public class AllEventsPageFragment extends Fragment {
             sortDirection = selectedSort.substring(selectedSort.indexOf(" ") + 1)
                     .equals("descending") ? SortDirection.DESC : SortDirection.ASC;
         }
+
         Call<PagedModel<EventSummaryDto>> call = ClientUtils.eventService.getEventSummaries(
-                currentPage-1, pageSize, sortBy, sortDirection,
+                currentPage - 1, pageSize, sortBy, sortDirection,
                 viewModel.getSearchText().getValue(), null,
                 types, minMaxAttendances, maxMaxAttendances, true, latitudes,
-                longitudes, maxDistance, minDate, maxDate);
+                longitudes, maxDistance, minDate, maxDate
+        );
 
-        events.clear();
         progressIndicator.setVisibility(View.VISIBLE);
-        adapter.notifyDataSetChanged(); // it's will be safer to use data set changed here, and is performance insignificant.
+        events.clear();
+        adapter.notifyDataSetChanged();
 
         call.enqueue(new SimpleCallback<>(
-            response -> {
-                events.clear();
-                if (response.body() != null) {
-                    events.addAll(response.body().getContent());
-                    int previousTotalPages = pageMetadata == null ? 0 : pageMetadata.getTotalPages();
-                    pageMetadata = response.body().getPage();
-                    if (previousTotalPages != pageMetadata.getTotalPages())
-                        pagination.changeTotalPages(pageMetadata.getTotalPages());
+                response -> {
+                    events.clear();
+                    if (response.body() != null) {
+                        events.addAll(response.body().getContent());
+
+                        // Mark favorites using ViewModel
+                        List<Long> favIds = viewModel.getFavoriteEventIds().getValue();
+                        if (favIds != null) {
+                            for (EventSummaryDto e : events) {
+                                e.setFavorite(favIds.contains(e.getId()));
+                            }
+                        }
+
+                        int previousTotalPages = pageMetadata == null ? 0 : pageMetadata.getTotalPages();
+                        pageMetadata = response.body().getPage();
+                        if (previousTotalPages != pageMetadata.getTotalPages())
+                            pagination.changeTotalPages(pageMetadata.getTotalPages());
+                    }
                     progressIndicator.setVisibility(View.GONE);
-                }
-                adapter.notifyDataSetChanged();
-            },
-            error -> {}
+                    adapter.notifyDataSetChanged();
+                },
+                error -> {}
         ));
     }
+
 
     private void fetchEventTypes(){
         Call<List<EventType>> call = ClientUtils.eventTypeService.getAllEventTypes();
@@ -347,8 +398,7 @@ public class AllEventsPageFragment extends Fragment {
         ));
     }
 
-    private City[] loadCities()
-    {
+    private City[] loadCities() {
         String json;
         try {
             json = JsonUtils.readJsonFromAssets(getContext(), "cities.json");
