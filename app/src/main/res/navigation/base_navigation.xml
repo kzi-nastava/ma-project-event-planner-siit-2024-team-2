@@ -35,6 +35,24 @@
             app:argType="long" />
     </fragment>
 
+    <fragment
+        android:id="@+id/fragment_event_details"
+        android:name="com.example.eventplanner.fragments.event.EventDetailsFragment"
+        android:label="Event Details" >
+        <argument
+            android:name="eventId"
+            app:argType="long" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/fragment_service_product_details"
+        android:name="com.example.eventplanner.fragments.services.ServiceProductDetailsFragment"
+        android:label="Service Product Details" >
+        <argument
+            android:name="serviceProductId"
+            app:argType="long" />
+    </fragment>
+
 
     <fragment
         android:id="@+id/nav_my_events"

@@ -9,7 +9,7 @@ public class UserIdUtils {
    private static long cachedUserId = -1;
 
    public static long getUserId(Context context) {
-      if (cachedUserId < 0) {
+      if (cachedUserId >= 0) {
          return cachedUserId;
       }
       SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);

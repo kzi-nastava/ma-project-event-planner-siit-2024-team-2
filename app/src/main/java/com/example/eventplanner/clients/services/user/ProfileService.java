@@ -55,6 +55,19 @@ public interface ProfileService {
     @GET("users/{userId}/favorite-events")
     Call<List<EventSummaryDto>>  getFavoriteEvents(@Path("userId")long userId);
 
+    @POST("users/{userId}/favorite-events/{eventId}")
+    Call<Void> addFavoriteEvent(@Path("userId") long userId, @Path("eventId") long eventId);
+
+    @DELETE("users/{userId}/favorite-events/{eventId}")
+    Call<Void> removeFavoriteEvent(@Path("userId") long userId, @Path("eventId") long eventId);
+
+    @POST("users/{userId}/favorite-service-products/{productId}")
+    Call<Void> addFavoriteServiceProduct(@Path("userId") long userId, @Path("productId") long productId);
+
+    @DELETE("users/{userId}/favorite-service-products/{productId}")
+    Call<Void> removeFavoriteServiceProduct(@Path("userId") long userId, @Path("productId") long productId);
+
+
     // Helper body classes
     class ImageNameBody {
         private String imageName;

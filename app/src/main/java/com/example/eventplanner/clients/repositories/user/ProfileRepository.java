@@ -124,4 +124,43 @@ public class ProfileRepository {
       return liveData;
    }
 
+   // Favorite events
+   public LiveData<Boolean> addFavoriteEvent(long userId, long eventId) {
+      MutableLiveData<Boolean> liveData = new MutableLiveData<>();
+      profileService.addFavoriteEvent(userId, eventId).enqueue(new SimpleCallback<>(
+              response -> liveData.setValue(response.isSuccessful()),
+              error -> liveData.setValue(false)
+      ));
+      return liveData;
+   }
+
+   public LiveData<Boolean> removeFavoriteEvent(long userId, long eventId) {
+      MutableLiveData<Boolean> liveData = new MutableLiveData<>();
+      profileService.removeFavoriteEvent(userId, eventId).enqueue(new SimpleCallback<>(
+              response -> liveData.setValue(response.isSuccessful()),
+              error -> liveData.setValue(false)
+      ));
+      return liveData;
+   }
+
+   // Favorite service products
+   public LiveData<Boolean> addFavoriteServiceProduct(long userId, long productId) {
+      MutableLiveData<Boolean> liveData = new MutableLiveData<>();
+      profileService.addFavoriteServiceProduct(userId, productId).enqueue(new SimpleCallback<>(
+              response -> liveData.setValue(response.isSuccessful()),
+              error -> liveData.setValue(false)
+      ));
+      return liveData;
+   }
+
+   public LiveData<Boolean> removeFavoriteServiceProduct(long userId, long productId) {
+      MutableLiveData<Boolean> liveData = new MutableLiveData<>();
+      profileService.removeFavoriteServiceProduct(userId, productId).enqueue(new SimpleCallback<>(
+              response -> liveData.setValue(response.isSuccessful()),
+              error -> liveData.setValue(false)
+      ));
+      return liveData;
+   }
+
+
 }

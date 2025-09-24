@@ -85,27 +85,39 @@
             android:layout_gravity="center_horizontal"/>
 
         <!-- Company Info -->
-        <TextView
+        <LinearLayout
+            android:id="@+id/layoutCompanyInfo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Company Info"
-            style="@style/TextAppearance.AppCompat.Headline"/>
-        <EditText
-            android:id="@+id/etCompanyName"
-            android:hint="Company Name"
-            android:enabled="false"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-        <EditText
-            android:id="@+id/etCompanyAddress"
-            android:hint="Company Address"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-        <Button
-            android:id="@+id/btnUpdateCompany"
-            android:text="Update Company Info"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:orientation="vertical"
+            android:visibility="gone"> <!-- default hidden -->
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Company Info"
+                style="@style/TextAppearance.AppCompat.Headline"/>
+
+            <EditText
+                android:id="@+id/etCompanyName"
+                android:hint="Company Name"
+                android:enabled="false"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <EditText
+                android:id="@+id/etCompanyAddress"
+                android:hint="Company Address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:id="@+id/btnUpdateCompany"
+                android:text="Update Company Info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+
 
         <!-- Favorite Events -->
         <TextView

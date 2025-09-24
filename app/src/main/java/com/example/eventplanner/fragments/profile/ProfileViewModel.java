@@ -32,6 +32,9 @@ public class ProfileViewModel extends ViewModel {
    // Update results
    private final MutableLiveData<Boolean> updateSuccess = new MutableLiveData<>();
    public LiveData<Boolean> getUpdateSuccess() { return updateSuccess; }
+   //Favorite results
+   private final MutableLiveData<Boolean> favoriteActionSuccess = new MutableLiveData<>();
+   public LiveData<Boolean> getFavoriteActionSuccess() { return favoriteActionSuccess; }
 
    // ---- Loaders ----
    public void loadUser(long userId) {
@@ -95,5 +98,23 @@ public class ProfileViewModel extends ViewModel {
       profileRepository.deleteAccount(userId).observeForever(success -> {
          updateSuccess.setValue(Boolean.TRUE.equals(success));
       });
+   }
+
+   // Favorite events
+   public void addFavoriteEvent(long userId, long eventId) {
+      profileRepository.addFavoriteEvent(userId, eventId).observeForever(favoriteActionSuccess::setValue);
+   }
+
+   public void removeFavoriteEvent(long userId, long eventId) {
+      profileRepository.removeFavoriteEvent(userId, eventId).observeForever(favoriteActionSuccess::setValue);
+   }
+
+   // Favorite service products
+   public void addFavoriteServiceProduct(long userId, long productId) {
+      profileRepository.addFavoriteServiceProduct(userId, productId).observeForever(favoriteActionSuccess::setValue);
+   }
+
+   public void removeFavoriteServiceProduct(long userId, long productId) {
+      profileRepository.removeFavoriteServiceProduct(userId, productId).observeForever(favoriteActionSuccess::setValue);
    }
 }

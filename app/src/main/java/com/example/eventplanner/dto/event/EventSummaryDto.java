@@ -28,6 +28,7 @@ public class EventSummaryDto implements Parcelable {
     private long date;
     private String creatorName;
     private String creatorEmail;
+    private boolean favorite;
 
     protected EventSummaryDto(Parcel in) {
         id = in.readLong();

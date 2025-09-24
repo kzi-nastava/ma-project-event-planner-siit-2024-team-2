@@ -17,6 +17,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -25,9 +27,13 @@ import com.example.eventplanner.R;
 import com.example.eventplanner.adapters.FavoriteEventsAdapter;
 import com.example.eventplanner.adapters.FavoriteServiceProductsAdapter;
 import com.example.eventplanner.clients.utils.UserIdUtils;
+import com.example.eventplanner.clients.utils.UserRoleUtils;
+import com.example.eventplanner.dto.event.EventSummaryDto;
+import com.example.eventplanner.dto.serviceproduct.ServiceProductSummaryDto;
 import com.example.eventplanner.dto.user.CompanyInfoDto;
 import com.example.eventplanner.dto.user.UserDto;
 import com.example.eventplanner.dto.user.UserInfoDto;
+import com.example.eventplanner.fragments.event.EventDetailsFragment;
 import com.example.eventplanner.fragments.profile.ProfileViewModel;
 
 import java.util.ArrayList;
@@ -53,6 +59,8 @@ public class ProfileFragment extends Fragment {
     private Uri selectedImageUri;
     private ProfileViewModel profileViewModel;
     private long userId = -1;
+    private String userRole = null;
+    private View layoutCompanyInfo;
 
     private final ActivityResultLauncher<String> pickImageLauncher =
             registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
@@ -69,9 +77,16 @@ public class ProfileFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
+        layoutCompanyInfo = view.findViewById(R.id.layoutCompanyInfo);
 
         // get userId early
         userId = UserIdUtils.getUserId(requireContext());
+        userRole = UserRoleUtils.getUserRole(requireContext());
+        if ("SERVICE_PRODUCT_PROVIDER".equals(userRole)) {
+            layoutCompanyInfo.setVisibility(View.VISIBLE);
+        } else {
+            layoutCompanyInfo.setVisibility(View.GONE);
+        }
 
         // --- find views ---
         ivProfilePicture = view.findViewById(R.id.ivProfilePicture);
@@ -107,10 +122,48 @@ public class ProfileFragment extends Fragment {
 
         // --- setup adapters & recyclers ---
         eventsAdapter = new FavoriteEventsAdapter();
+        eventsAdapter.setOnEventClickListener(new FavoriteEventsAdapter.OnEventClickListener() {
+            @Override
+            public void onMoreInfoClick(EventSummaryDto event) {
+                // Navigate to EventDetailsFragment
+                EventDetailsFragment detailsFragment = new EventDetailsFragment();
+                Bundle args = new Bundle();
+                args.putLong("eventId", event.getId()); // pass event id
+                detailsFragment.setArguments(args);
+
+                NavController navController = Navigation.findNavController(requireActivity(), R.id.fragment_nav_content_main);
+                navController.navigate(R.id.fragment_event_details, args);
+            }
+
+            @Override
+            public void onHeartClick(EventSummaryDto event) {
+                if (userId != -1) {
+                    profileViewModel.removeFavoriteEvent(userId, event.getId());
+                    Toast.makeText(getContext(), "Removed from favorites", Toast.LENGTH_SHORT).show();
+                    profileViewModel.loadFavoriteEvents(userId);
+                }
+            }
+        });
         rvFavoriteEvents.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
         rvFavoriteEvents.setAdapter(eventsAdapter);
 
         productsAdapter = new FavoriteServiceProductsAdapter();
+        productsAdapter.setOnServiceProductClickListener(new FavoriteServiceProductsAdapter.OnServiceProductClickListener() {
+            @Override
+            public void onMoreInfoClick(ServiceProductSummaryDto product) {
+                // Navigate to product details
+                Toast.makeText(getContext(), "More info: " + product.getName(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onHeartClick(ServiceProductSummaryDto product) {
+                if (userId != -1) {
+                    profileViewModel.removeFavoriteServiceProduct(userId, product.getId());
+                    Toast.makeText(getContext(), "Removed from favorites", Toast.LENGTH_SHORT).show();
+                    profileViewModel.loadFavoriteServiceProducts(userId);
+                }
+            }
+        });
         rvFavoriteServiceProducts.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
         rvFavoriteServiceProducts.setAdapter(productsAdapter);
 
@@ -237,4 +290,5 @@ public class ProfileFragment extends Fragment {
             ivProfilePicture.setImageResource(R.drawable.profile_picture);
         }
     }
+
 }

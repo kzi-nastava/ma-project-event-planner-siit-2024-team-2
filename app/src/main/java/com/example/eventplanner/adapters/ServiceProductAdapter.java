@@ -7,12 +7,15 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.eventplanner.R;
+import com.example.eventplanner.dto.event.EventSummaryDto;
 import com.example.eventplanner.dto.serviceproduct.ServiceProductSummaryDto;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -21,83 +24,90 @@ import lombok.Getter;
 
 public class ServiceProductAdapter extends RecyclerView.Adapter<ServiceProductAdapter.ViewHolder> {
     private List<ServiceProductSummaryDto> localDataSet = new ArrayList<>();
+    private OnServiceProductClickListener listener;
 
-    /**
-     * Provide a reference to the type of views that you are using
-     * (custom ViewHolder)
-     */
+    public interface OnServiceProductClickListener {
+        void onMoreInfoClick(ServiceProductSummaryDto serviceProduct);
+
+        void onHeartClick(ServiceProductSummaryDto serviceProduct, boolean isFavorite);
+    }
+
+    public ServiceProductAdapter(List<ServiceProductSummaryDto> dataSet, ServiceProductAdapter.OnServiceProductClickListener listener) {
+        this.localDataSet = dataSet != null ? dataSet : new ArrayList<>();
+        this.listener = listener;
+    }
+
+    public void setOnServiceProductClickListener(ServiceProductAdapter.OnServiceProductClickListener listener) {
+        this.listener = listener;
+    }
+
     @Getter
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        private final TextView sppUsername;
-        private final TextView sppEmail;
-        private final TextView serviceProductName;
-        private final TextView serviceProductPrice;
-        private final TextView serviceProductDescription;
+        private final TextView username, email, name, price, description;
         private final Button moreInfo;
         private final ImageButton heart;
-        private boolean favorite;
 
         public ViewHolder(View view) {
             super(view);
-            // Define click listener for the ViewHolder's View
-
-            sppUsername = (TextView) view.findViewById(R.id.text_spp_username);
-            sppEmail = (TextView) view.findViewById(R.id.text_spp_email);
-            serviceProductName = (TextView) view.findViewById(R.id.text_service_product_name);
-            serviceProductPrice = (TextView) view.findViewById(R.id.text_service_product_price);
-            serviceProductDescription = (TextView) view.findViewById(R.id.text_service_product_description);
-            moreInfo = (Button) view.findViewById(R.id.btn_service_product_more_info);
-            heart = (ImageButton) view.findViewById(R.id.btn_service_product_heart);
-
-            heart.setOnClickListener(v -> {
-                favorite = !favorite;
-                v.setBackgroundResource(favorite ? R.drawable.heart_filled : R.drawable.heart_empty);
-            });
+            username = view.findViewById(R.id.text_spp_username);
+            email = view.findViewById(R.id.text_spp_email);
+            name = view.findViewById(R.id.text_service_product_name);
+            price = view.findViewById(R.id.text_service_product_price);
+            description = view.findViewById(R.id.text_service_product_description);
+            moreInfo = view.findViewById(R.id.btn_service_product_more_info);
+            heart = view.findViewById(R.id.btn_service_product_heart);
         }
-
     }
 
-    /**
-     * Initialize the dataset of the Adapter
-     *
-     * @param dataSet String[] containing the data to populate views to be used
-     * by RecyclerView
-     */
-    public ServiceProductAdapter(List<ServiceProductSummaryDto> dataSet) {
-        localDataSet = dataSet;
-    }
-
-    // Create new views (invoked by the layout manager)
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        // Create a new view, which defines the UI of the list item
+    public ServiceProductAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.fragment_service_product_compact, viewGroup, false);
-
-        return new ViewHolder(view);
+        return new ServiceProductAdapter.ViewHolder(view);
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(ViewHolder viewHolder, final int position) {
-
-        // Get element from your dataset at this position and replace the
-        // contents of the view with that element
+    public void onBindViewHolder(@NonNull ServiceProductAdapter.ViewHolder holder, int position) {
         ServiceProductSummaryDto dto = localDataSet.get(position);
-        viewHolder.getSppUsername().setText(dto.getCreatorName());
-        viewHolder.getSppEmail().setText(dto.getCreatorEmail());
-        viewHolder.getServiceProductName().setText(dto.getName());
-        viewHolder.getServiceProductPrice().setText(
-                dto.getPrice() <= 0
-                        ? "Contact"
-                        : "$" + Double.toString(dto.getPrice()));
-        viewHolder.getServiceProductDescription().setText(dto.getDescription());
-        viewHolder.getHeart().setBackgroundResource(viewHolder.isFavorite() ? R.drawable.heart_filled : R.drawable.heart_empty);
+
+        holder.getUsername().setText(dto.getCreatorName() != null ? dto.getCreatorName() : "Creator");
+        holder.getEmail().setText(dto.getCreatorEmail() != null ? dto.getCreatorEmail() : "email@example.com");
+        holder.getName().setText(dto.getName() != null ? dto.getName() : "Service");
+        holder.getPrice().setText(dto.isAvailable() ? "$" + dto.getPrice() : "Not available");
+        holder.getDescription().setText(dto.getDescription() != null ? dto.getDescription() : "No description");
+
+
+        // Set initial heart state
+        holder.getHeart().setImageResource(dto.isFavorite()
+                ? R.drawable.heart_filled
+                : R.drawable.heart_empty
+        );
+
+        // More Info button
+        holder.getMoreInfo().setOnClickListener(v -> {
+            if (listener != null) listener.onMoreInfoClick(dto);
+        });
+
+        // Heart button toggle
+        holder.getHeart().setOnClickListener(v -> {
+            boolean newState = !dto.isFavorite();
+            dto.setFavorite(newState); // update DTO itself
+            holder.getHeart().setImageResource(newState
+                    ? R.drawable.heart_filled
+                    : R.drawable.heart_empty
+            );
+            if (listener != null) listener.onHeartClick(dto, newState);
+        });
     }
 
-    // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
         return localDataSet.size();
+    }
+
+    public void updateData(List<ServiceProductSummaryDto> serviceProducts) {
+        this.localDataSet = serviceProducts != null ? serviceProducts : new ArrayList<>();
+        notifyDataSetChanged();
     }
 }
