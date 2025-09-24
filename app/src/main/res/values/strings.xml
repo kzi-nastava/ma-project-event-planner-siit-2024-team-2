@@ -37,5 +37,6 @@
     <string name="automatic_reservation_label">Automatic Reservation:</string>
     <string name="services">Services</string>
     <string name="products">Products</string>
-    <string name="my_events">My events</string>
+    <string name="my_events">My Events</string>
+    <string name="event_types">Event Types</string>
 </resources>

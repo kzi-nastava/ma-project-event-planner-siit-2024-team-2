@@ -62,6 +62,14 @@
         app:popUpToInclusive="true"
         />
 
+
+    <fragment
+        android:id="@+id/nav_event_types"
+        android:name="com.example.eventplanner.fragments.eventtype.EventTypeListFragment"
+        android:label="Event Types"
+        tools:layout="@layout/fragment_event_type_list">
+    </fragment>
+
     <fragment
         android:id="@+id/nav_create_event"
         android:name="com.example.eventplanner.fragments.event.CreateEventFragment"

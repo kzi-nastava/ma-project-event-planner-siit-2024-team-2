@@ -2,7 +2,7 @@ package com.example.eventplanner.fragments.event;
 
 import android.util.Log;
 
-import com.example.eventplanner.clients.repositories.EventRepository;
+import com.example.eventplanner.clients.repositories.event.EventRepository;
 import com.example.eventplanner.dto.event.EventDto;
 import com.example.eventplanner.model.event.EventType;
 

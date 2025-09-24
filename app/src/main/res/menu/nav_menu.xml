@@ -12,6 +12,10 @@
         android:title="@string/my_events" />
 
     <item
+        android:id="@+id/nav_event_types"
+        android:title="@string/event_types" />
+
+    <item
         android:id="@+id/nav_create_event"
         android:title="@string/new_event" />
 
