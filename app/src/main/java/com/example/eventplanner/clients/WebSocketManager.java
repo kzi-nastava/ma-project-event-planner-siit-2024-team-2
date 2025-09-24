@@ -15,26 +15,25 @@ import com.google.gson.Gson;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-import okhttp3.WebSocket;
-import okhttp3.WebSocketListener;
-public class WebSocketManager extends WebSocketListener {
-    private final OkHttpClient client;
-    private WebSocket webSocket;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import ua.naiksoftware.stomp.Stomp;
+import ua.naiksoftware.stomp.StompClient;
+import ua.naiksoftware.stomp.dto.StompHeader;
+
+public class WebSocketManager {
+    private StompClient stompClient;
     private final String url;
     private final JwtTokenProvider jwtTokenProvider;
     private final Gson gson;
 
     private final Map<String, MutableLiveData<WSMessage>> channels = new HashMap<>();
-    private final Set<String> subscriptions = new HashSet<>();
+    private final CompositeDisposable compositeDisposable = new CompositeDisposable();
     private final MutableLiveData<Boolean> isConnected = new MutableLiveData<>();
 
     private boolean shouldReconnect = true;
@@ -43,20 +42,36 @@ public class WebSocketManager extends WebSocketListener {
     public WebSocketManager(String url, JwtTokenProvider jwtTokenProvider) {
         this.url = url;
         this.jwtTokenProvider = jwtTokenProvider;
-        this.client = new OkHttpClient.Builder()
-                .readTimeout(0, TimeUnit.MILLISECONDS)
-                .build();
         this.gson = new Gson();
     }
 
     public void connect() {
-        Request.Builder reqBuilder = new Request.Builder().url(url);
-        if (jwtTokenProvider != null ) {
+        stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, url);
+        List<StompHeader> headers = new ArrayList<>();
+        if (jwtTokenProvider != null) {
             String token = jwtTokenProvider.getJwtToken();
-            if (token != null)
-                reqBuilder.addHeader("Authorization", "Bearer " + token);
+            if (token != null) {
+                headers.add(new StompHeader("Authorization", "Bearer " + token));
+            }
         }
-        webSocket = client.newWebSocket(reqBuilder.build(), this);
+        stompClient.connect(headers);
+
+        Disposable lifecycleDisposable = stompClient.lifecycle().subscribe(lifecycleEvent -> {
+            switch (lifecycleEvent.getType()) {
+                case OPENED:
+                    isConnected.postValue(true);
+                    resubscribeToTopics();
+                    break;
+                case CLOSED:
+                case ERROR:
+                    isConnected.postValue(false);
+                    if (shouldReconnect) {
+                        scheduleReconnect();
+                    }
+                    break;
+            }
+        });
+        compositeDisposable.add(lifecycleDisposable);
     }
 
     private void scheduleReconnect() {
@@ -65,84 +80,51 @@ public class WebSocketManager extends WebSocketListener {
 
     public void close() {
         shouldReconnect = false;
-        if (webSocket != null) webSocket.close(1000, "Closing normally");
+        if (stompClient != null) {
+            stompClient.disconnect();
+        }
+        compositeDisposable.dispose();
     }
 
-    @Override
-    public void onClosed(@NonNull WebSocket webSocket, int code, @NonNull String reason) {
-        isConnected.postValue(false);
-        if (shouldReconnect) scheduleReconnect();
-    }
-
-    @Override
-    public void onFailure(@NonNull WebSocket webSocket, @NonNull Throwable t, Response response) {
-        isConnected.postValue(false);
-        if (shouldReconnect) scheduleReconnect();
-    }
-
-    @Override
-    public void onOpen(@NonNull WebSocket webSocket, @NonNull Response response) {
-        isConnected.postValue(true);
-        for (String dest : subscriptions) {
-            sendSubscribe(dest);
+    private void resubscribeToTopics() {
+        for (String dest : channels.keySet()) {
+            subscribeToDestination(dest);
         }
     }
 
-
-    @Override
-    public void onMessage(@NonNull WebSocket webSocket, @NonNull String text) {
-        WSMessage message = gson.fromJson(text, WSMessage.class);
-        String destination = buildDestination(message.getTopic(), message.getSubtopic(), message.getToId());
-        MutableLiveData<WSMessage> channel = channels.get(destination);
-        if (channel != null)
-            channel.postValue(message);
+    private void subscribeToDestination(String destination) {
+        Disposable topicDisposable = stompClient.topic(destination)
+                .subscribe(stompMessage -> {
+                    WSMessage message = gson.fromJson(stompMessage.getPayload(), WSMessage.class);
+                    MutableLiveData<WSMessage> channel = channels.get(destination);
+                    if (channel != null) {
+                        channel.postValue(message);
+                    }
+                }, throwable -> Log.e("WS", "Error on topic subscription", throwable));
+        compositeDisposable.add(topicDisposable);
     }
 
     public LiveData<WSMessage> getChannel(String topic, String subtopic, String userId) {
         String dest = buildDestination(topic, subtopic, userId);
         if (!channels.containsKey(dest)) {
             channels.put(dest, new MutableLiveData<>());
+            if (stompClient != null && stompClient.isConnected()) {
+                subscribeToDestination(dest);
+            }
         }
         return channels.get(dest);
     }
 
     public void subscribe(String topic, String subtopic, String userId) {
         String dest = buildDestination(topic, subtopic, userId);
-        subscriptions.add(dest);
-        sendSubscribe(dest);
+        if (!channels.containsKey(dest)) {
+            getChannel(topic, subtopic, userId);
+        }
     }
 
     public void unsubscribe(String topic, String subtopic, String userId) {
         String dest = buildDestination(topic, subtopic, userId);
-        subscriptions.remove(dest);
         channels.remove(dest);
-        sendUnsubscribe(dest);
-    }
-
-    private void sendSubscribe(String dest) {
-        if (webSocket != null) {
-            JSONObject payload = new JSONObject();
-            try {
-                payload.put("action", "SUBSCRIBE");
-                payload.put("destination", dest);
-                webSocket.send(payload.toString());
-            } catch (JSONException e) {
-                Log.e("WS", "Failed to subscribe", e);
-            }
-        }
-    }
-
-    private void sendUnsubscribe(String dest) {
-        if (webSocket != null) {
-            JSONObject payload = new JSONObject();
-            try {
-                payload.put("action", "UNSUBSCRIBE");
-                payload.put("destination", dest);
-                webSocket.send(payload.toString());
-            } catch (JSONException e) {
-                Log.e("WS", "Failed to subscribe", e);
-            }
-        }
     }
 
     private String buildDestination(String topic, String subtopic, String userId) {
@@ -158,4 +140,3 @@ public class WebSocketManager extends WebSocketListener {
         return dest.toString();
     }
 }
-

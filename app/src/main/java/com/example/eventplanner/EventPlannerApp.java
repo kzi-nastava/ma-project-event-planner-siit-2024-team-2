@@ -18,11 +18,16 @@ public class EventPlannerApp extends Application {
 
         ClientUtils.init(this);
         webSocketManager = new WebSocketManager(
-                "ws://" + BuildConfig.IP_ADDR + "/ws/notifications",
+                "ws://" + BuildConfig.IP_ADDR + "/socket/websocket",
                 () -> JwtUtils.getJwtToken(getApplicationContext())
         );
         webSocketManager.connect();
+    }
 
+    @Override
+    public void onTerminate() {
+        super.onTerminate();
+        webSocketManager.close();
     }
 
 }

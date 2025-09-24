@@ -16,7 +16,9 @@ navigationFragment = "2.8.3"
 osmdroidAndroid = "6.1.11"
 retrofitVersion = "2.3.0"
 lombokVersion = "1.18.30"
-stompprotocolandroid = "{latest version}"
+rxandroid = "2.1.1"
+rxjava = "2.2.21"
+stompprotocolandroid = "1.6.6"
 
 [libraries]
 commons-lang3 = { module = "org.apache.commons:commons-lang3", version.ref = "commonsLang3" }
@@ -37,6 +39,8 @@ osmdroid-android = { module = "org.osmdroid:osmdroid-android", version.ref = "os
 osmdroid-geopackage = { module = "org.osmdroid:osmdroid-geopackage", version.ref = "osmdroidAndroid"}
 retrofit2-retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofitVersion" }
 projectlombok-lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombokVersion" }
+rxandroid = { module = "io.reactivex.rxjava2:rxandroid", version.ref = "rxandroid" }
+rxjava = { module = "io.reactivex.rxjava2:rxjava", version.ref = "rxjava" }
 stompprotocolandroid = { module = "com.github.NaikSoftware:StompProtocolAndroid", version.ref = "stompprotocolandroid" }
 
 [plugins]
