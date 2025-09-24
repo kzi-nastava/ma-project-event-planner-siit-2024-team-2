@@ -68,6 +68,7 @@ dependencies {
     implementation libs.osmdroid.android
     implementation libs.osmdroid.geopackage
     implementation libs.commons.lang3
+    implementation libs.stompprotocolandroid
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core

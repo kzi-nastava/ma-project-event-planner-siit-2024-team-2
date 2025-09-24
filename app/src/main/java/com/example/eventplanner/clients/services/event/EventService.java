@@ -6,10 +6,8 @@ import com.example.eventplanner.model.event.Event;
 import com.example.eventplanner.model.utils.PagedModel;
 import com.example.eventplanner.model.utils.SortDirection;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;

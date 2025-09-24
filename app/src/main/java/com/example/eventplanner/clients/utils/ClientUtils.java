@@ -34,12 +34,13 @@ public class ClientUtils {
     }
 
     private static OkHttpClient getClient(Context context){
+        JwtTokenProvider jwtTokenProvider = () -> JwtUtils.getJwtToken(context);
         return new OkHttpClient.Builder()
                 .connectTimeout(120, TimeUnit.SECONDS)
                 .readTimeout(120, TimeUnit.SECONDS)
                 .writeTimeout(120, TimeUnit.SECONDS)
                 .addInterceptor(getLoggingInterceptor())
-                .addInterceptor(new JwtInterceptor(context))
+                .addInterceptor(new JwtInterceptor(jwtTokenProvider))
                 .addInterceptor(new UnauthorizedInterceptor(context))
                 .addInterceptor(chain -> {
                     Request request = chain.request().newBuilder()

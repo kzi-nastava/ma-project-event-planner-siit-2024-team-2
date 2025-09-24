@@ -4,6 +4,7 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
+import com.example.eventplanner.clients.utils.JwtTokenProvider;
 import com.example.eventplanner.clients.utils.JwtUtils;
 
 import java.io.IOException;
@@ -13,16 +14,17 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class JwtInterceptor implements Interceptor {
-    private final Context context;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    public JwtInterceptor(Context context) {
-        this.context = context;
+    public JwtInterceptor(JwtTokenProvider jwtTokenProvider)
+    {
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @NonNull
     @Override
     public Response intercept(@NonNull Chain chain) throws IOException {
-        String jwtToken = JwtUtils.getJwtToken(context);
+        String jwtToken = jwtTokenProvider.getJwtToken();
 
         if (jwtToken != null) {
             Request newRequest = chain.request().newBuilder()
