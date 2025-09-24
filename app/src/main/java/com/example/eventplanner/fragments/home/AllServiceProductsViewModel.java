@@ -4,13 +4,22 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.eventplanner.clients.repositories.serviceproduct.ServiceProductRepository;
 import com.example.eventplanner.clients.repositories.user.ProfileRepository;
+import com.example.eventplanner.dto.serviceproduct.ServiceProductFilteringValuesDto;
+import com.example.eventplanner.dto.serviceproduct.ServiceProductSummaryDto;
+import com.example.eventplanner.model.utils.PagedModel;
+import com.example.eventplanner.model.utils.ServiceProductDType;
+import com.example.eventplanner.model.utils.SortDirection;
+
+import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
 
 public class AllServiceProductsViewModel extends ViewModel {
     private final ProfileRepository profileRepository = new ProfileRepository();
+    private final ServiceProductRepository serviceProductRepository = new ServiceProductRepository();
     private final MutableLiveData<String> queryHint;
     private final MutableLiveData<String> searchText;
     @Getter
@@ -41,5 +50,20 @@ public class AllServiceProductsViewModel extends ViewModel {
 
     public void removeFavoriteServiceProduct(long userId, long productId) {
         profileRepository.removeFavoriteServiceProduct(userId, productId).observeForever(favoriteActionSuccess::setValue);
+    }
+
+    public LiveData<PagedModel<ServiceProductSummaryDto>> getServiceProductSummaries(
+            Integer page, Integer size, String sortBy, SortDirection sortDirection, String name,
+            String description, ServiceProductDType type, List<Long> categoryIds, Boolean available,
+            Boolean visible, Integer minPrice, Integer maxPrice, List<Long> availableEventTypeIds,
+            Long serviceProductProviderId, Float minDuration, Float maxDuration, Boolean automaticReserved) {
+        return serviceProductRepository.getServiceProductSummaries(page, size, sortBy, sortDirection, name,
+                description, type, categoryIds, available, visible, minPrice, maxPrice,
+                availableEventTypeIds, serviceProductProviderId, minDuration, maxDuration,
+                automaticReserved);
+    }
+
+    public LiveData<ServiceProductFilteringValuesDto> getFilteringValues() {
+        return serviceProductRepository.getFilteringValues();
     }
 }

@@ -4,18 +4,25 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.eventplanner.clients.repositories.EventRepository;
 import com.example.eventplanner.clients.repositories.user.ProfileRepository;
 import com.example.eventplanner.dto.event.EventSummaryDto;
+import com.example.eventplanner.model.event.EventType;
+import com.example.eventplanner.model.utils.PagedModel;
+import com.example.eventplanner.model.utils.SortDirection;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
+import retrofit2.Call;
+import retrofit2.http.Query;
 
 @Getter
 public class AllEventsViewModel extends ViewModel {
     private final ProfileRepository profileRepository = new ProfileRepository();
+    private final EventRepository eventRepository = new EventRepository();
     private final MutableLiveData<String> queryHint = new MutableLiveData<>("Search...");
     private final MutableLiveData<String> searchText = new MutableLiveData<>();
     private final MutableLiveData<Boolean> favoriteActionSuccess = new MutableLiveData<>();
@@ -61,5 +68,22 @@ public class AllEventsViewModel extends ViewModel {
                         favoriteEventIds.setValue(ids);
                     }
                 });
+    }
+    public LiveData<PagedModel<EventSummaryDto>> getEventSummaries(Integer page, Integer size,
+           String sortBy, SortDirection sortDirection, String name, String description,
+           List<Long> types, Integer minMaxAttendances, Integer maxMaxAttendances, Boolean open,
+           List<Double> latitudes, List<Double> longitudes, Double maxDistance, Long startDate,
+           Long endDate) {
+        return eventRepository.getEventSummaries(page, size, sortBy, sortDirection,
+                name, description, types, minMaxAttendances, maxMaxAttendances, open,
+                latitudes, longitudes, maxDistance, startDate, endDate);
+    }
+
+    public LiveData<List<Integer>> getMaxAttendancesRange() {
+        return eventRepository.getMaxAttendancesRange();
+    }
+
+    public LiveData<List<EventType>> getEventTypes() {
+        return eventRepository.getEventTypes();
     }
 }
