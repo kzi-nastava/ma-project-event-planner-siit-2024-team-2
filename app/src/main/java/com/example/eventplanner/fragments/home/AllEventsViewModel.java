@@ -16,8 +16,6 @@ import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
-import retrofit2.Call;
-import retrofit2.http.Query;
 
 @Getter
 public class AllEventsViewModel extends ViewModel {
@@ -29,6 +27,10 @@ public class AllEventsViewModel extends ViewModel {
     private final MutableLiveData<List<Long>> favoriteEventIds = new MutableLiveData<>(new ArrayList<>());
     @Setter
     private int currentPage = 1;
+
+    private final MutableLiveData<PagedModel<EventSummaryDto>> events = new MutableLiveData<>();
+    private final MutableLiveData<List<EventType>> eventTypes = new MutableLiveData<>(new ArrayList<>());
+    private final MutableLiveData<List<Integer>> maxAttendancesRange = new MutableLiveData<>(new ArrayList<>());
 
     public LiveData<String> getHint() { return queryHint; }
     public LiveData<String> getSearchText() { return searchText; }
@@ -69,21 +71,29 @@ public class AllEventsViewModel extends ViewModel {
                     }
                 });
     }
-    public LiveData<PagedModel<EventSummaryDto>> getEventSummaries(Integer page, Integer size,
-           String sortBy, SortDirection sortDirection, String name, String description,
-           List<Long> types, Integer minMaxAttendances, Integer maxMaxAttendances, Boolean open,
-           List<Double> latitudes, List<Double> longitudes, Double maxDistance, Long startDate,
-           Long endDate) {
-        return eventRepository.getEventSummaries(page, size, sortBy, sortDirection,
+    public void fetchEvents(Integer page, Integer size,
+                            String sortBy, SortDirection sortDirection, String name, String description,
+                            List<Long> types, Integer minMaxAttendances, Integer maxMaxAttendances, Boolean open,
+                            List<Double> latitudes, List<Double> longitudes, Double maxDistance, Long startDate,
+                            Long endDate) {
+        eventRepository.getEventSummaries(page, size, sortBy, sortDirection,
                 name, description, types, minMaxAttendances, maxMaxAttendances, open,
-                latitudes, longitudes, maxDistance, startDate, endDate);
+                latitudes, longitudes, maxDistance, startDate, endDate
+        ).observeForever(result -> {
+            if (result != null)
+                events.setValue(result);
+        });
     }
 
-    public LiveData<List<Integer>> getMaxAttendancesRange() {
-        return eventRepository.getMaxAttendancesRange();
+    public void fetchEventTypes() {
+        eventRepository.getEventTypes().observeForever(list -> {
+            if (list != null) eventTypes.setValue(list);
+        });
     }
 
-    public LiveData<List<EventType>> getEventTypes() {
-        return eventRepository.getEventTypes();
+    public void fetchAttendancesRange() {
+        eventRepository.getMaxAttendancesRange().observeForever(range -> {
+            if (range != null) maxAttendancesRange.setValue(range);
+        });
     }
 }
