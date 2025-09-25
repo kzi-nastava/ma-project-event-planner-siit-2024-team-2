@@ -46,6 +46,7 @@ public class WebSocketManager {
     }
 
     public void connect() {
+        if (stompClient != null && stompClient.isConnected()) return;
         stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, url);
         List<StompHeader> headers = new ArrayList<>();
         if (jwtTokenProvider != null) {
@@ -75,7 +76,13 @@ public class WebSocketManager {
     }
 
     private void scheduleReconnect() {
-        new Handler(Looper.getMainLooper()).postDelayed(this::connect, RECONNECT_DELAY_MS);
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            if (stompClient != null) {
+                stompClient.disconnect();
+                compositeDisposable.clear();
+            }
+            connect();
+        }, RECONNECT_DELAY_MS);
     }
 
     public void close() {

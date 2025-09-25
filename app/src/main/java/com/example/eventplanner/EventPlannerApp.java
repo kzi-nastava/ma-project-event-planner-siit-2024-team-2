@@ -18,7 +18,7 @@ public class EventPlannerApp extends Application {
 
         ClientUtils.init(this);
         webSocketManager = new WebSocketManager(
-                "ws://" + BuildConfig.IP_ADDR + "/socket/websocket",
+                "ws://" + BuildConfig.IP_ADDR + ":8080/socket/websocket",
                 () -> JwtUtils.getJwtToken(getApplicationContext())
         );
         webSocketManager.connect();
