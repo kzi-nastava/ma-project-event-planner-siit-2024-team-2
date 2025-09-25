@@ -25,6 +25,9 @@ public class AllServiceProductsViewModel extends ViewModel {
     @Getter
     @Setter
     private int currentPage = 1;
+
+    private final MutableLiveData<PagedModel<ServiceProductSummaryDto>> serviceProducts = new MutableLiveData<>();
+    private final MutableLiveData<ServiceProductFilteringValuesDto> filteringValues = new MutableLiveData<>();
     public AllServiceProductsViewModel(){
         searchText = new MutableLiveData<>();
         queryHint = new MutableLiveData<>();
@@ -52,18 +55,25 @@ public class AllServiceProductsViewModel extends ViewModel {
         profileRepository.removeFavoriteServiceProduct(userId, productId).observeForever(favoriteActionSuccess::setValue);
     }
 
-    public LiveData<PagedModel<ServiceProductSummaryDto>> getServiceProductSummaries(
+    public void fetchServiceProductSummaries(
             Integer page, Integer size, String sortBy, SortDirection sortDirection, String name,
             String description, ServiceProductDType type, List<Long> categoryIds, Boolean available,
             Boolean visible, Integer minPrice, Integer maxPrice, List<Long> availableEventTypeIds,
             Long serviceProductProviderId, Float minDuration, Float maxDuration, Boolean automaticReserved) {
-        return serviceProductRepository.getServiceProductSummaries(page, size, sortBy, sortDirection, name,
+        serviceProductRepository.getServiceProductSummaries(page, size, sortBy, sortDirection, name,
                 description, type, categoryIds, available, visible, minPrice, maxPrice,
                 availableEventTypeIds, serviceProductProviderId, minDuration, maxDuration,
-                automaticReserved);
+                automaticReserved
+        ).observeForever(result -> {
+            if (result != null)
+                serviceProducts.setValue(result);
+        });
     }
 
-    public LiveData<ServiceProductFilteringValuesDto> getFilteringValues() {
-        return serviceProductRepository.getFilteringValues();
+    public void fetchFilteringValues() {
+        serviceProductRepository.getFilteringValues().observeForever(result -> {
+            if (result != null)
+                filteringValues.setValue(result);
+        };
     }
 }
