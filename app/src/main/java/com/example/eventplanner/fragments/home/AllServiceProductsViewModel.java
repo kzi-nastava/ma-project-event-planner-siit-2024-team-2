@@ -11,6 +11,7 @@ import com.example.eventplanner.dto.serviceproduct.ServiceProductSummaryDto;
 import com.example.eventplanner.model.utils.PagedModel;
 import com.example.eventplanner.model.utils.ServiceProductDType;
 import com.example.eventplanner.model.utils.SortDirection;
+import com.example.eventplanner.utils.ObserverTracker;
 
 import java.util.List;
 
@@ -26,8 +27,11 @@ public class AllServiceProductsViewModel extends ViewModel {
     @Setter
     private int currentPage = 1;
 
+    @Getter
     private final MutableLiveData<PagedModel<ServiceProductSummaryDto>> serviceProducts = new MutableLiveData<>();
+    @Getter
     private final MutableLiveData<ServiceProductFilteringValuesDto> filteringValues = new MutableLiveData<>();
+    private final ObserverTracker tracker = new ObserverTracker();
     public AllServiceProductsViewModel(){
         searchText = new MutableLiveData<>();
         queryHint = new MutableLiveData<>();
@@ -48,11 +52,11 @@ public class AllServiceProductsViewModel extends ViewModel {
 
     // Favorite service products
     public void addFavoriteServiceProduct(long userId, long productId) {
-        profileRepository.addFavoriteServiceProduct(userId, productId).observeForever(favoriteActionSuccess::setValue);
+        tracker.observeOnce(profileRepository.addFavoriteServiceProduct(userId, productId), favoriteActionSuccess::setValue);
     }
 
     public void removeFavoriteServiceProduct(long userId, long productId) {
-        profileRepository.removeFavoriteServiceProduct(userId, productId).observeForever(favoriteActionSuccess::setValue);
+        tracker.observeOnce(profileRepository.removeFavoriteServiceProduct(userId, productId), favoriteActionSuccess::setValue);
     }
 
     public void fetchServiceProductSummaries(
@@ -60,20 +64,20 @@ public class AllServiceProductsViewModel extends ViewModel {
             String description, ServiceProductDType type, List<Long> categoryIds, Boolean available,
             Boolean visible, Integer minPrice, Integer maxPrice, List<Long> availableEventTypeIds,
             Long serviceProductProviderId, Float minDuration, Float maxDuration, Boolean automaticReserved) {
-        serviceProductRepository.getServiceProductSummaries(page, size, sortBy, sortDirection, name,
-                description, type, categoryIds, available, visible, minPrice, maxPrice,
-                availableEventTypeIds, serviceProductProviderId, minDuration, maxDuration,
-                automaticReserved
-        ).observeForever(result -> {
-            if (result != null)
-                serviceProducts.setValue(result);
-        });
+        tracker.observeOnce(
+            serviceProductRepository.getServiceProductSummaries(page, size, sortBy, sortDirection, name,
+                    description, type, categoryIds, available, visible, minPrice, maxPrice,
+                    availableEventTypeIds, serviceProductProviderId, minDuration, maxDuration,
+                    automaticReserved), serviceProducts, true);
     }
 
     public void fetchFilteringValues() {
-        serviceProductRepository.getFilteringValues().observeForever(result -> {
-            if (result != null)
-                filteringValues.setValue(result);
-        };
+        tracker.observeOnce(serviceProductRepository.getFilteringValues(), filteringValues, true);
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        tracker.clear();
     }
 }

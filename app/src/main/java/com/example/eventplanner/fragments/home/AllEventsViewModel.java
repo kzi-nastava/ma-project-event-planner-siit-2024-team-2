@@ -33,11 +33,7 @@ public class AllEventsViewModel extends ViewModel {
     private final MutableLiveData<List<EventType>> eventTypes = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<List<Integer>> maxAttendancesRange = new MutableLiveData<>(new ArrayList<>());
 
-    private final ObserverTracker tracker;
-    public AllEventsViewModel() {
-        super();
-        tracker = new ObserverTracker();
-    }
+    private final ObserverTracker tracker = new ObserverTracker();
 
     public LiveData<String> getHint() { return queryHint; }
     public LiveData<String> getSearchText() { return searchText; }
@@ -94,11 +90,11 @@ public class AllEventsViewModel extends ViewModel {
     }
 
     public void fetchEventTypes() {
-        tracker.observeOnce(eventRepository.getEventTypes(), eventTypes, false);
+        tracker.observeOnce(eventRepository.getEventTypes(), eventTypes, true);
     }
 
     public void fetchAttendancesRange() {
-        tracker.observeOnce(eventRepository.getMaxAttendancesRange(), maxAttendancesRange, false);
+        tracker.observeOnce(eventRepository.getMaxAttendancesRange(), maxAttendancesRange, true);
     }
 
     @Override

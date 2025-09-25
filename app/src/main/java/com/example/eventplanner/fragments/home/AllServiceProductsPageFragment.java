@@ -25,15 +25,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.eventplanner.R;
-import com.example.eventplanner.adapters.EventAdapter;
 import com.example.eventplanner.adapters.ServiceProductAdapter;
 import com.example.eventplanner.clients.utils.ClientUtils;
 import com.example.eventplanner.clients.utils.UserIdUtils;
 import com.example.eventplanner.databinding.FragmentAllServiceProductsPageBinding;
-import com.example.eventplanner.dto.event.EventSummaryDto;
 import com.example.eventplanner.dto.serviceproduct.ServiceProductFilteringValuesDto;
 import com.example.eventplanner.dto.serviceproduct.ServiceProductSummaryDto;
-import com.example.eventplanner.fragments.event.EventDetailsFragment;
 import com.example.eventplanner.fragments.services.ServiceProductDetailsFragment;
 import com.example.eventplanner.model.event.EventType;
 import com.example.eventplanner.model.serviceproduct.ServiceProductCategory;
@@ -98,7 +95,7 @@ public class AllServiceProductsPageFragment extends Fragment {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 viewModel.setSearchText(query);
-                fetchServiceProducts();
+                fetchServiceProductsWithFilters();
                 return true;
             }
             @Override
@@ -110,7 +107,7 @@ public class AllServiceProductsPageFragment extends Fragment {
                 return false;
             }
         });
-        viewModel.getSearchText().observe(getViewLifecycleOwner(), text -> fetchServiceProducts());
+        viewModel.getSearchText().observe(getViewLifecycleOwner(), text -> fetchServiceProductsWithFilters());
 
 
         recyclerView = binding.recyclerViewServiceProducts;
@@ -145,9 +142,33 @@ public class AllServiceProductsPageFragment extends Fragment {
 
         progressIndicator = binding.progressServiceProducts;
 
+        viewModel.getServiceProducts().observe(getViewLifecycleOwner(),
+                response -> {
+                    serviceProducts.clear();
+                    if (response != null)
+                    {
+                        serviceProducts.addAll(response.getContent());
+                        int previousTotalPages = pageMetadata == null ? 0 : pageMetadata.getTotalPages();
+                        pageMetadata = response.getPage();
+                        if (previousTotalPages != pageMetadata.getTotalPages())
+                            pagination.changeTotalPages(pageMetadata.getTotalPages());
+                        progressIndicator.setVisibility(View.GONE);
+                    }
+                    adapter.notifyDataSetChanged();
+                });
+
+        viewModel.getFilteringValues().observe(getViewLifecycleOwner(),
+                response -> {
+                    filteringValues = null;
+                    if (response != null) {
+                        filteringValues = response;
+                        binding.btnFilter.setEnabled(true); // we can now filter since everything loaded
+                    }
+                });
+
         Button filter = binding.btnFilter;
         filter.setEnabled(false); // wait until serviceProduct types load
-        fetchFilteringValues();
+        viewModel.fetchFilteringValues();
         filter.setOnClickListener(v -> {
             if (bottomSheetDialog == null) {
                 bottomSheetDialog = new BottomSheetDialog(requireActivity(), R.style.FullScreenBottomSheetDialog);
@@ -255,7 +276,7 @@ public class AllServiceProductsPageFragment extends Fragment {
                         maxDuration = null;
                     }
 
-                    fetchServiceProducts();
+                    fetchServiceProductsWithFilters();
                 });
 
                 bottomSheetDialog.setContentView(dialogView);
@@ -278,10 +299,10 @@ public class AllServiceProductsPageFragment extends Fragment {
         pagination.setOnPaginateListener(newPage -> {
             currentPage = newPage;
             viewModel.setCurrentPage(currentPage);
-            fetchServiceProducts();
+            fetchServiceProductsWithFilters();
         });
 
-        fetchServiceProducts();
+        fetchServiceProductsWithFilters();
 
         return root;
     }
@@ -300,7 +321,7 @@ public class AllServiceProductsPageFragment extends Fragment {
                     if (currentSelectedIndex != lastSpinnerSelection) {
                         lastSpinnerSelection = currentSelectedIndex;
                         currentSelectedIndex = position;
-                        fetchServiceProducts();
+                        fetchServiceProductsWithFilters();
                     }
                 }
 
@@ -316,7 +337,7 @@ public class AllServiceProductsPageFragment extends Fragment {
             pagination = new Pagination(getContext(), totalPages, binding.paginationServiceProducts);
             pagination.setOnPaginateListener(newPage -> {
                 currentPage = newPage;
-                fetchServiceProducts();
+                fetchServiceProductsWithFilters();
             });
 
             currentPage = viewModel.getCurrentPage();
@@ -331,7 +352,7 @@ public class AllServiceProductsPageFragment extends Fragment {
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private void fetchServiceProducts(){
+    private void fetchServiceProductsWithFilters(){
         String sortBy = null, selectedSort;
         SortDirection sortDirection = null;
         if (spinnerSort != null) {
@@ -346,46 +367,14 @@ public class AllServiceProductsPageFragment extends Fragment {
             automaticReservation = null;
         }
 
-        Call<PagedModel<ServiceProductSummaryDto>> call = ClientUtils.serviceProductService.getServiceProductSummaries(
+        serviceProducts.clear();
+        progressIndicator.setVisibility(View.VISIBLE);
+        adapter.notifyDataSetChanged(); // it's safer to use data set changed here, and is performance insignificant.
+
+        viewModel.fetchServiceProductSummaries(
                 currentPage-1, pageSize, sortBy, sortDirection,
                 viewModel.getSearchText().getValue(), null,
                 spType, categories, true, true, minPrice,
                 maxPrice, eventTypes, null, minDuration, maxDuration, automaticReservation);
-
-        serviceProducts.clear();
-        progressIndicator.setVisibility(View.VISIBLE);
-        adapter.notifyDataSetChanged(); // it's will be safer to use data set changed here, and is performance insignificant.
-
-        call.enqueue(new SimpleCallback<>(
-            response -> {
-                serviceProducts.clear();
-                if (response.body() != null)
-                {
-                    serviceProducts.addAll(response.body().getContent());
-                    int previousTotalPages = pageMetadata == null ? 0 : pageMetadata.getTotalPages();
-                    pageMetadata = response.body().getPage();
-                    if (previousTotalPages != pageMetadata.getTotalPages())
-                        pagination.changeTotalPages(pageMetadata.getTotalPages());
-                    progressIndicator.setVisibility(View.GONE);
-                }
-                adapter.notifyDataSetChanged();
-            },
-            error -> {}
-        ));
-    }
-
-    private void fetchFilteringValues() {
-        Call<ServiceProductFilteringValuesDto> call = ClientUtils.serviceProductService.getFilteringValues();
-
-        call.enqueue(new SimpleCallback<>(
-            response -> {
-                filteringValues = null;
-                if (response.body() != null) {
-                    filteringValues = response.body();
-                    binding.btnFilter.setEnabled(true); // we can now filter events since everything loaded
-                }
-            },
-            error -> {}
-        ));
     }
 }
