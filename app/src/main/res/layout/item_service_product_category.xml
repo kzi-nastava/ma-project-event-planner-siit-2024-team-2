@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="8dp">
+
+    <CheckBox
+        android:id="@+id/checkBoxCategory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <!-- NOTE: id must be textViewCategoryName to match adapter -->
+    <TextView
+        android:id="@+id/textViewCategoryName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginStart="8dp"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:text="Category name" />
+</LinearLayout>

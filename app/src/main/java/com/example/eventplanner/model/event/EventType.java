@@ -22,6 +22,7 @@ import lombok.Setter;
 public class EventType implements Parcelable, Serializable {
     private Long id;
     private String name;
+    private String description;
     private List<ServiceProduct> recommendedServiceProducts;
 
     protected EventType(Parcel in) {

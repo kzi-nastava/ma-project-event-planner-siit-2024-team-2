@@ -1,4 +1,4 @@
-package com.example.eventplanner.clients.repositories;
+package com.example.eventplanner.clients.repositories.event;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
