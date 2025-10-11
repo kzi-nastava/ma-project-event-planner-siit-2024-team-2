@@ -40,4 +40,6 @@
     <string name="my_events">My Events</string>
     <string name="event_types">Event Types</string>
     <string name="new_event_type">New Event Type</string>
+    <string name="new_product">New Product</string>
+    <string name="my_products">My Products</string>
 </resources>

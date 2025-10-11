@@ -50,15 +50,18 @@ public class EventTypeAdapter extends RecyclerView.Adapter<EventTypeAdapter.View
     }
 
     @Override
-    public void onBindViewHolder(@NonNull EventTypeAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         EventType dto = items.get(position);
         holder.name.setText(dto.getName());
-        holder.description.setText("Event type");
+        holder.description.setText(dto.getDescription());
 
-        holder.btnEdit.setOnClickListener(v -> listener.onEditClick(dto));
-        holder.btnDelete.setOnClickListener(v -> listener.onDeleteClick(dto));
+        holder.btnEdit.setOnClickListener(v -> {
+            if (listener != null) listener.onEditClick(dto);
+        });
+        holder.btnDelete.setOnClickListener(v -> {
+            if (listener != null) listener.onDeleteClick(dto);
+        });
     }
-
     @Override
     public int getItemCount() {
         return items.size();
