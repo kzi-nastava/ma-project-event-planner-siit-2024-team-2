@@ -54,21 +54,28 @@ public class EventTypeListFragment extends Fragment {
             public void onEditClick(EventType dto) {
                 Bundle args = new Bundle();
                 args.putLong("id", dto.getId());
-                Toast.makeText(getContext(), "Editing event type: " + dto.getName(), Toast.LENGTH_LONG).show();
-                //NavController navController = Navigation.findNavController(requireActivity(), R.id.fragment_nav_content_main);
-                //navController.navigate(R.id.fragment_create_edit_event_type, args);
+                NavController navController = Navigation.findNavController(requireActivity(), R.id.fragment_nav_content_main);
+                navController.navigate(R.id.fragment_create_edit_event_type, args);
             }
 
             @Override
             public void onDeleteClick(EventType dto) {
-                deleteEventType(dto.getId());
+                new com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
+                        .setTitle("Delete Event Type")
+                        .setMessage("Are you sure you want to delete \"" + dto.getName() + "\"?")
+                        .setPositiveButton("Delete", (dialog, which) -> {
+                            deleteEventType(dto.getId());
+                            dialog.dismiss();
+                        })
+                        .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                        .show();
             }
         });
         recyclerView.setAdapter(adapter);
 
         fabAdd.setOnClickListener(v -> {
-            //NavController navController = Navigation.findNavController(requireActivity(), R.id.fragment_nav_content_main);
-            //navController.navigate(R.id.fragment_create_edit_event_type);
+            NavController navController = Navigation.findNavController(requireActivity(), R.id.fragment_nav_content_main);
+            navController.navigate(R.id.fragment_create_edit_event_type);
         });
 
         loadEventTypes();

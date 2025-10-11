@@ -19,6 +19,12 @@
     </fragment>
 
     <fragment
+        android:id="@+id/fragment_create_edit_event_type"
+        android:name="com.example.eventplanner.fragments.eventtype.CreateEditEventTypeFragment"
+        android:label="Create or Edit Event Type"
+        tools:layout="@layout/fragment_create_edit_event_type" />
+
+    <fragment
         android:id="@+id/nav_events"
         android:name="com.example.eventplanner.fragments.home.AllEventsPageFragment"
         android:label="@string/events"
@@ -67,6 +73,13 @@
         android:id="@+id/nav_event_types"
         android:name="com.example.eventplanner.fragments.eventtype.EventTypeListFragment"
         android:label="Event Types"
+        tools:layout="@layout/fragment_event_type_list">
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_create_event_type"
+        android:name="com.example.eventplanner.fragments.eventtype.NewEventTypeFragment"
+        android:label="New Event Type"
         tools:layout="@layout/fragment_event_type_list">
     </fragment>
 
