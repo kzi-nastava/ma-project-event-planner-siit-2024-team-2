@@ -24,6 +24,14 @@
         android:title="@string/event_types" />
 
     <item
+        android:id="@+id/nav_fragment_create_product"
+        android:title="@string/new_product" />
+
+    <item
+        android:id="@+id/nav_my_products"
+        android:title="@string/my_products" />
+
+    <item
         android:id="@+id/nav_service_products"
         android:title="@string/services_and_products" />
 

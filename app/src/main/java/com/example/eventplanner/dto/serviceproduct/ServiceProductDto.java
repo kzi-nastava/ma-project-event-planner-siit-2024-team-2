@@ -12,6 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ServiceProductDto {
+    protected long id;
 	protected long categoryId;
     protected boolean available;
     protected boolean visible;

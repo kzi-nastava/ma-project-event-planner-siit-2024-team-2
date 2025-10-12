@@ -12,11 +12,7 @@
         android:label="Home"
         tools:layout="@layout/fragment_home"
         app:popUpToInclusive="true"
-        >
-        <action
-            android:id="@+id/action_nav_home_self"
-            app:destination="@id/nav_home" />
-    </fragment>
+        />
 
     <fragment
         android:id="@+id/fragment_create_edit_event_type"
@@ -91,6 +87,18 @@
         app:popUpTo="@+id/nav_home"
         app:popUpToInclusive="true"
         />
+
+    <fragment
+        android:id="@+id/nav_fragment_create_product"
+        android:name="com.example.eventplanner.fragments.services.CreateProductFragment"
+        android:label="Create Product"
+        tools:layout="@layout/fragment_create_product" />
+
+    <fragment
+        android:id="@+id/nav_my_products"
+        android:name="com.example.eventplanner.fragments.services.ProductListFragment"
+        android:label="My Products"
+        tools:layout="@layout/fragment_create_product" />
 
     <fragment
         android:id="@+id/nav_service_products"

@@ -56,4 +56,8 @@ public class ServiceProductCategory implements Parcelable, Serializable {
         }
         dest.writeString(name);
     }
+    @Override
+    public String toString() {
+        return this.getName();
+    }
 }
