@@ -35,4 +35,14 @@ public class UserRoleUtils {
         editor.remove(USER_ROLE_KEY);
         editor.apply();
     }
+
+    public static boolean hasAnyRole(Context context, UserRole... roles) {
+        UserRole userRole = UserRole.valueOf(getUserRole(context));
+        if (userRole == null) return false;
+
+        for (UserRole role : roles) {
+            if (role == userRole) return true;
+        }
+        return false;
+    }
 }
