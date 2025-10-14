@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.example.eventplanner.views.SimpleCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/text_card_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Card title"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                />
+            <TextView
+                android:id="@+id/text_card_subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Card subtitle"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:textColor="?android:attr/textColorSecondary"
+                />
+            <TextView
+                android:id="@+id/text_card_body"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Card body"
+                android:maxLines="4"
+                android:ellipsize="end"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:textColor="?android:attr/textColorSecondary"
+                />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_read_more"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/read_more"
+                android:layout_marginStart="-12dp"
+                android:visibility="gone"
+                style="@style/Widget.Material3.Button.TextButton"/>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_read_less"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/read_less"
+                android:layout_marginStart="-12dp"
+                android:visibility="gone"
+                style="@style/Widget.Material3.Button.TextButton"/>
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_gravity="end"
+            android:orientation="horizontal">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_card_action_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="Button 1"
+                style="@style/Widget.Material3.Button.OutlinedButton"/>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_card_action_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Button 2"
+                style="@style/Widget.Material3.Button.OutlinedButton"/>
+        </LinearLayout>
+    </LinearLayout>
+</com.example.eventplanner.views.SimpleCardView>
