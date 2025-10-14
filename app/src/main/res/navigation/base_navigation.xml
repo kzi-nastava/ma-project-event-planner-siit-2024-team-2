@@ -27,6 +27,14 @@
         />
 
     <fragment
+        android:id="@+id/nav_notifications"
+        android:name="com.example.eventplanner.fragments.communication.NotificationsFragment"
+        android:label="@string/notifications"
+        tools:layout="@layout/fragment_notifications"
+        app:popUpToInclusive="true"
+        />
+
+    <fragment
         android:id="@+id/editEventFragment"
         android:name="com.example.eventplanner.fragments.event.EditEventFragment"
         android:label="Edit Event" >

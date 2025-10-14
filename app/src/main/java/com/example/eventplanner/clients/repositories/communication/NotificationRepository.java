@@ -5,8 +5,8 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.eventplanner.clients.services.communication.NotificationService;
 import com.example.eventplanner.clients.utils.ClientUtils;
-import com.example.eventplanner.dto.user.NotificationDto;
-import com.example.eventplanner.model.user.Notification;
+import com.example.eventplanner.dto.communication.NotificationDto;
+import com.example.eventplanner.model.communication.Notification;
 import com.example.eventplanner.model.utils.PagedModel;
 import com.example.eventplanner.utils.SimpleCallback;
 

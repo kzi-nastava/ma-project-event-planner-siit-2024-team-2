@@ -1,7 +1,7 @@
 package com.example.eventplanner.clients.services.communication;
 
-import com.example.eventplanner.dto.user.NotificationDto;
-import com.example.eventplanner.model.user.Notification;
+import com.example.eventplanner.dto.communication.NotificationDto;
+import com.example.eventplanner.model.communication.Notification;
 import com.example.eventplanner.model.utils.PagedModel;
 
 import java.util.List;
