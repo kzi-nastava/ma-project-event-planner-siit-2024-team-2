@@ -3,7 +3,7 @@ package com.example.eventplanner.fragments.home;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.eventplanner.clients.repositories.EventRepository;
+import com.example.eventplanner.clients.repositories.event.EventRepository;
 import com.example.eventplanner.clients.repositories.serviceproduct.ServiceProductRepository;
 import com.example.eventplanner.dto.event.EventSummaryDto;
 import com.example.eventplanner.dto.serviceproduct.ServiceProductSummaryDto;

@@ -1,28 +1,56 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+
     <item
         android:id="@+id/nav_home"
         android:title="@string/home" />
-
-    <item
-        android:id="@+id/nav_events"
-        android:title="@string/events" />
-
-    <item
-        android:id="@+id/nav_service_products"
-        android:title="@string/services_and_products" />
 
     <item
         android:id="@+id/nav_notifications"
         android:title="@string/notifications" />
 
     <item
+        android:id="@+id/nav_events"
+        android:title="@string/events" />
+
+    <item
         android:id="@+id/nav_my_events"
         android:title="@string/my_events" />
 
     <item
-        android:id="@+id/nav_create_event"
+        android:id="@+id/nav_fragment_create_event"
         android:title="@string/new_event" />
 
+    <item
+        android:id="@+id/nav_create_event_type"
+        android:title="@string/new_event_type" />
+
+    <item
+        android:id="@+id/nav_event_types"
+        android:title="@string/event_types" />
+
+    <item
+        android:id="@+id/nav_fragment_create_product"
+        android:title="@string/new_product" />
+
+    <item
+        android:id="@+id/nav_fragment_my_products"
+        android:title="@string/my_products" />
+
+    <item
+        android:id="@+id/nav_service_products"
+        android:title="@string/services_and_products" />
+
+    <item
+        android:id="@+id/nav_services"
+        android:title="@string/services" />
+
+    <item
+        android:id="@+id/nav_edit_service"
+        android:title="@string/new_service" />
+
+    <item
+        android:id="@+id/nav_fragment_profile"
+        android:title="@string/profile" />
 
     <item
         android:id="@+id/nav_settings"
@@ -31,17 +59,5 @@
     <item
         android:id="@+id/nav_logout"
         android:title="@string/logout" />
-
-    <item
-        android:id="@+id/nav_profile"
-        android:title="@string/profile" />
-
-    <item
-        android:id="@+id/nav_services"
-        android:title="Services" />
-
-    <item
-        android:id="@+id/nav_edit_service"
-        android:title="New service" />
 
 </menu>

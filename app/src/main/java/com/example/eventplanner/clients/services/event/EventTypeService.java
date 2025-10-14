@@ -1,5 +1,8 @@
 package com.example.eventplanner.clients.services.event;
 
+import com.example.eventplanner.dto.event.CreateEventTypeDto;
+import com.example.eventplanner.dto.event.EventDto;
+import com.example.eventplanner.dto.event.EventSummaryDto;
 import com.example.eventplanner.dto.event.EventTypeDto;
 import com.example.eventplanner.model.event.EventType;
 
@@ -26,11 +29,11 @@ public interface EventTypeService {
 
     @Headers({"Content-Type:application/json"})
     @POST("event-types")
-    Call<EventType> createEventType(@Body EventTypeDto eventTypeDto);
+    Call<EventType> createEventType(@Body CreateEventTypeDto eventTypeDto);
 
     @Headers({"Content-Type:application/json"})
     @PUT("event-types/{id}")
-    Call<EventType> updateEventType(@Path("id") Long id, @Body EventTypeDto eventTypeDto);
+    Call<EventType> updateEventType(@Path("id") Long id, @Body CreateEventTypeDto eventTypeDto);
 
     @Headers({"Content-Type:application/json"})
     @DELETE("event-types/{id}")

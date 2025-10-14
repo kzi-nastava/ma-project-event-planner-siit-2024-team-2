@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.eventplanner.clients.repositories.EventRepository;
+import com.example.eventplanner.clients.repositories.event.EventRepository;
 import com.example.eventplanner.clients.repositories.user.ProfileRepository;
 import com.example.eventplanner.dto.event.EventSummaryDto;
 import com.example.eventplanner.model.event.EventType;
