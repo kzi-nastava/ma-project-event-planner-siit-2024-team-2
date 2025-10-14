@@ -1,11 +1,16 @@
 package com.example.eventplanner.views;
 
 import android.content.Context;
+import android.text.Layout;
 import android.text.Spanned;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.TextView;
+
+import androidx.core.view.ViewCompat;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
@@ -90,15 +95,38 @@ public class SimpleCardView extends MaterialCardView {
 
     private void bodyUpdated() {
         bodyText.post(() -> {
-            if (bodyText.getLineCount() > COLLAPSED_MAX_LINES) {
-                readMoreButton.setVisibility(VISIBLE);
+            Layout layout = bodyText.getLayout();
+            if (layout == null) {
+                bodyText.post(this::updateReadMoreVisibility);
             } else {
-                readMoreButton.setVisibility(GONE);
-                readLessButton.setVisibility(GONE);
+                updateReadMoreVisibility();
             }
         });
     }
 
+    private void updateReadMoreVisibility() {
+        Layout layout = bodyText.getLayout();
+        if (layout == null) {
+            readMoreButton.setVisibility(GONE);
+            readLessButton.setVisibility(GONE);
+            return;
+        }
+
+        boolean ellipsized = false;
+        for (int i = 0; i < layout.getLineCount(); i++) {
+            if (layout.getEllipsisCount(i) > 0) {
+                ellipsized = true;
+                break;
+            }
+        }
+        if (ellipsized) {
+            Log.d("SimpleCardView", "Set readMoreButton visibility to VISIBLE");
+            readMoreButton.setVisibility(VISIBLE);
+        } else {
+            readMoreButton.setVisibility(GONE);
+            readLessButton.setVisibility(GONE);
+        }
+    }
 
     public void setActionButton1(String text, View.OnClickListener listener) {
         actionButton1.setVisibility(View.VISIBLE);
