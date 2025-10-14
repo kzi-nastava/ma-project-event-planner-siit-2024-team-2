@@ -4,10 +4,14 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Toast;
 
 import com.example.eventplanner.adapters.SimpleCardAdapter;
@@ -57,12 +61,15 @@ public class NotificationsFragment extends Fragment {
         pagination.setOnPaginateListener(newPage -> {
             currentPage = newPage;
             viewModel.setCurrentPage(currentPage);
-            viewModel.fetchNotifications(currentPage, pageSize, Instant.now().toString());
+            fetchNotification();
         });
 
         adapter = new SimpleCardAdapter<>(notifications,
             "Dismiss", this::dismiss
         );
+        RecyclerView recyclerView = binding.recyclerViewNotifications;
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         viewModel.getNotifications().observe(getViewLifecycleOwner(), value -> {
             notifications.clear();
@@ -88,14 +95,35 @@ public class NotificationsFragment extends Fragment {
             }
         });
 
-        viewModel.fetchNotifications(currentPage - 1, pageSize, Instant.now().toString());
+        fetchNotification();
 
         return root;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (binding.paginationNotifications.getChildCount() == 0) {
+            int totalPages = pageMetadata == null ? 0 : pageMetadata.getTotalPages();
+            pagination = new Pagination(getContext(), totalPages, binding.paginationNotifications);
+            pagination.setOnPaginateListener(newPage -> {
+                currentPage = newPage;
+                fetchNotification();
+            });
+
+            currentPage = viewModel.getCurrentPage();
+            pagination.toPage(currentPage);
+        }
     }
 
     private void dismiss(Notification notification) {
         notification.setHidden(true);
         adapter.notifyItemChanged(notifications.indexOf(notification));
         viewModel.dismissNotification(notification.getId());
+    }
+
+    private void fetchNotification() {
+        viewModel.fetchNotifications(currentPage - 1, pageSize, Instant.now().toString());
     }
 }

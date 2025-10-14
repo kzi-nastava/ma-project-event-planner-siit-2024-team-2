@@ -25,6 +25,7 @@ public class NotificationsViewModel extends ViewModel {
     private final MutableLiveData<Pair<Long, Boolean>> notificationDismissed = new MutableLiveData<>();
     private final ObserverTracker tracker = new ObserverTracker();
     @Setter
+    @Getter
     private int currentPage = 1;
 
     public void fetchNotifications(Integer page, Integer size, String sentAt) {

@@ -1,5 +1,7 @@
 package com.example.eventplanner.adapters;
 
+import android.text.Spanned;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.eventplanner.R;
 import com.example.eventplanner.model.utils.SimpleCardElement;
+import com.example.eventplanner.utils.FormatUtil;
 import com.example.eventplanner.views.SimpleCardView;
 
 import java.util.ArrayList;
@@ -24,6 +27,7 @@ public class SimpleCardAdapter<T extends SimpleCardElement> extends RecyclerView
     private List<T> localDataSet;
     private final Consumer<T> action1, action2;
     private final String action1Text, action2Text;
+    private int bottomMargin = 0;
 
     public SimpleCardAdapter(List<T> dataSet, String action1Text, Consumer<T> action1) {
         this(dataSet, action1Text, action1, null, null);
@@ -60,19 +64,34 @@ public class SimpleCardAdapter<T extends SimpleCardElement> extends RecyclerView
         T element = localDataSet.get(position);
         SimpleCardView view = holder.view;
 
-        view.setTitle(element.getTitle());
+        Spanned title = FormatUtil.markdownToSpanned(element.getTitle());
+        view.setTitle(title);
         view.setSubtitle(element.getSubtitle());
-        view.setBody(element.getBody());
+        Spanned body = FormatUtil.markdownToSpanned(element.getBody());
+        view.setBody(body);
         view.setActionButton1(action1Text, v -> action1.accept(element));
         if (action2Text != null && action2 != null)
             view.setActionButton2(action2Text, v -> action2.accept(element));
         else
             view.hideActionButton2();
 
-        if (element.isHidden())
+        RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) view.getLayoutParams();
+
+        if (view.getTag(R.id.original_bottom_margin) == null)
+            view.setTag(R.id.original_bottom_margin, params.bottomMargin);
+        int originalBottomMargin = (int) view.getTag(R.id.original_bottom_margin);
+
+        if (element.isHidden()) {
+            params.height = 0;
+            params.bottomMargin = 0;
             view.setVisibility(View.GONE);
-        else
+        }
+        else {
+            params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+            params.bottomMargin = originalBottomMargin;
             view.setVisibility(View.VISIBLE);
+        }
+        view.setLayoutParams(params);
     }
 
     @Override

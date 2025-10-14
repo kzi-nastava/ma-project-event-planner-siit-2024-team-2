@@ -1,6 +1,7 @@
 package com.example.eventplanner.views;
 
 import android.content.Context;
+import android.text.Spanned;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,21 +20,23 @@ public class SimpleCardView extends MaterialCardView {
 
     public SimpleCardView(Context context) {
         super(context);
-        init(context);
     }
 
     public SimpleCardView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(context);
     }
 
     public SimpleCardView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context);
     }
 
-    private void init(Context context) {
-        LayoutInflater.from(context).inflate(R.layout.view_simple_card, this, true);
+    @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+        init();
+    }
+
+    private void init() {
 
         titleText = findViewById(R.id.text_card_title);
         subtitleText = findViewById(R.id.text_card_subtitle);
@@ -67,12 +70,25 @@ public class SimpleCardView extends MaterialCardView {
         titleText.setText(title);
     }
 
+    public void setTitle(Spanned title) {
+        titleText.setText(title);
+    }
+
     public void setSubtitle(String subtitle) {
         subtitleText.setText(subtitle);
     }
 
     public void setBody(String body) {
         bodyText.setText(body);
+        bodyUpdated();
+    }
+
+    public void setBody(Spanned body) {
+        bodyText.setText(body);
+        bodyUpdated();
+    }
+
+    private void bodyUpdated() {
         bodyText.post(() -> {
             if (bodyText.getLineCount() > COLLAPSED_MAX_LINES) {
                 readMoreButton.setVisibility(VISIBLE);
@@ -82,6 +98,7 @@ public class SimpleCardView extends MaterialCardView {
             }
         });
     }
+
 
     public void setActionButton1(String text, View.OnClickListener listener) {
         actionButton1.setVisibility(View.VISIBLE);

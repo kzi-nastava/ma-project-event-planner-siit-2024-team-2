@@ -1,11 +1,21 @@
 package com.example.eventplanner.activities;
 
+import android.app.PendingIntent;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.SystemClock;
+import android.text.Html;
+import android.text.Spanned;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -16,13 +26,18 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.ui.NavigationUI;
 
+import com.example.eventplanner.EventPlannerApp;
 import com.example.eventplanner.R;
+import com.example.eventplanner.clients.utils.UserIdUtils;
 import com.example.eventplanner.databinding.ActivityHomeBinding;
+import com.example.eventplanner.fragments.communication.NotificationsFragment;
+import com.example.eventplanner.utils.FormatUtil;
 import com.google.android.material.navigation.NavigationView;
 
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 public class HomeActivity extends AppCompatActivity {
     private ActivityHomeBinding binding;
@@ -56,6 +71,7 @@ public class HomeActivity extends AppCompatActivity {
         actionBarDrawerToggle.syncState();
         topLevelDestinations.add(R.id.nav_settings);
         navController = Navigation.findNavController(this, R.id.fragment_nav_content_main);
+
         navController.addOnDestinationChangedListener((navController, navDestination, bundle) -> {
             int id = navDestination.getId();
             boolean isTopLevelDestination = topLevelDestinations.contains(id);
@@ -80,8 +96,21 @@ public class HomeActivity extends AppCompatActivity {
                 .Builder(R.id.nav_home, R.id.nav_logout, R.id.nav_settings, R.id.nav_language)
                 .setOpenableLayout(drawer)
                 .build();
+
         NavigationUI.setupWithNavController(navigationView, navController);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
+
+        if (getIntent().getBooleanExtra("com.example.event_planner.navigateToNotifications", false))
+            navController.navigate(R.id.nav_notifications);
+
+        subscribeToNotifications();
+    }
+
+    @Override
+    protected void onNewIntent(@NonNull Intent intent) {
+        super.onNewIntent(intent);
+        if (intent.getBooleanExtra("com.example.event_planner.navigateToNotifications", false))
+            navController.navigate(R.id.nav_notifications);
     }
 
     @Override
@@ -100,5 +129,34 @@ public class HomeActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         navController = Navigation.findNavController(this, R.id.fragment_nav_content_main);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration) || super.onSupportNavigateUp();
+    }
+
+    private void subscribeToNotifications() {
+        long userId = UserIdUtils.getUserId(this);
+        if (userId != -1) {
+            EventPlannerApp.getWebSocketManager().getChannel("notifications", "", Long.toString(userId))
+                    .observe(this, wsMessage -> {
+                        Intent intent = new Intent(this, HomeActivity.class);
+                        intent.putExtra("com.example.event_planner.navigateToNotifications", true);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
+
+                        Spanned title = FormatUtil.markdownToSpanned(wsMessage.getTitle());
+                        Spanned body = FormatUtil.markdownToSpanned(wsMessage.getMessage());
+                        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "notifications")
+                                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                                .setContentTitle(title)
+                                .setContentText(body)
+                                .setContentIntent(pendingIntent)
+                                .setAutoCancel(true)
+                                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                            ActivityCompat.requestPermissions(this, new String[] { android.Manifest.permission.POST_NOTIFICATIONS }, 1);
+                            return;
+                        }
+                        NotificationManagerCompat.from(this).notify((int)(SystemClock.uptimeMillis() % Integer.MAX_VALUE), builder.build());
+                    });
+        }
     }
 }
