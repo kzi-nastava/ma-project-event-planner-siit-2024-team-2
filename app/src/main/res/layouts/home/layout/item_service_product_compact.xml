@@ -7,7 +7,7 @@
     android:layout_height="330dp">
 
     <ImageView
-        android:id="@+id/image_eo_profile_picture"
+        android:id="@+id/image_spp_profile_picture"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_marginStart="16dp"
@@ -19,83 +19,83 @@
         tools:src="@drawable/profile_picture" />
 
     <TextView
-        android:id="@+id/text_eo_username"
+        android:id="@+id/text_spp_username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="16dp"
         android:ems="10"
-        android:text="Petar Jović"
+        android:text="Username"
         android:textSize="22sp"
-        app:layout_constraintStart_toEndOf="@+id/image_eo_profile_picture"
+        app:layout_constraintStart_toEndOf="@+id/image_spp_profile_picture"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/text_eo_email"
+        android:id="@+id/text_spp_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="22dp"
         android:layout_marginTop="7dp"
-        android:text="petar.jovic@gmail.com"
-        app:layout_constraintStart_toEndOf="@+id/image_eo_profile_picture"
-        app:layout_constraintTop_toBottomOf="@+id/text_eo_username" />
+        android:text="Email"
+        app:layout_constraintStart_toEndOf="@+id/image_spp_profile_picture"
+        app:layout_constraintTop_toBottomOf="@+id/text_spp_username" />
 
     <TextView
-        android:id="@+id/text_event_name"
+        android:id="@+id/text_service_product_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:text="Perin rođendan"
+        android:text="Service Product Name"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/image_eo_profile_picture" />
+        app:layout_constraintTop_toBottomOf="@+id/image_spp_profile_picture" />
 
     <TextView
-        android:id="@+id/text_event_date"
+        android:id="@+id/text_service_product_price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="6dp"
-        android:text="7th of February, 2025"
+        android:text="Price"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_event_name" />
+        app:layout_constraintTop_toBottomOf="@+id/text_service_product_name" />
 
     <TextView
-        android:id="@+id/text_event_description"
+        android:id="@+id/text_service_product_description"
         android:layout_width="match_parent"
         android:layout_height="90dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginTop="19dp"
         android:lineSpacingExtra="4sp"
-        android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor"
+        android:text="Description"
         android:textSize="16sp"
         android:ellipsize="end"
         android:maxLines="4"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_event_date" />
+        app:layout_constraintTop_toBottomOf="@+id/text_service_product_price" />
 
     <Button
-        android:id="@+id/btn_event_more_info"
+        android:id="@+id/btn_service_product_more_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="15dp"
         android:layout_marginBottom="20dp"
-        android:text="More info"
-        app:layout_constraintTop_toBottomOf="@id/text_event_description"
+        android:text="@string/more_info"
+        app:layout_constraintTop_toBottomOf="@id/text_service_product_description"
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageButton
-        android:id="@+id/btn_event_heart"
+        android:id="@+id/btn_service_product_heart"
         android:layout_width="36dp"
         android:layout_height="36dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:layout_marginTop="2dp"
         android:background="@drawable/heart_empty"
-        app:layout_constraintTop_toTopOf="@id/btn_event_more_info"
+        app:layout_constraintTop_toTopOf="@id/btn_service_product_more_info"
         app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
