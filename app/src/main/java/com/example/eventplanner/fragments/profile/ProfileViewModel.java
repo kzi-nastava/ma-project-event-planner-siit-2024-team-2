@@ -1,18 +1,27 @@
 package com.example.eventplanner.fragments.profile;
 
+import android.util.Log;
+
+import androidx.annotation.StringRes;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
+import com.example.eventplanner.EventPlannerApp;
+import com.example.eventplanner.R;
 import com.example.eventplanner.clients.repositories.user.ProfileRepository;
 import com.example.eventplanner.dto.event.EventSummaryDto;
 import com.example.eventplanner.dto.serviceproduct.ServiceProductSummaryDto;
 import com.example.eventplanner.dto.user.CompanyInfoDto;
 import com.example.eventplanner.dto.user.UserDto;
 import com.example.eventplanner.dto.user.UserInfoDto;
+import com.example.eventplanner.utils.JsonLog;
+import com.example.eventplanner.utils.ObserverTracker;
 
 import java.util.List;
+
+import lombok.Getter;
 
 public class ProfileViewModel extends ViewModel {
 
@@ -32,14 +41,23 @@ public class ProfileViewModel extends ViewModel {
    // Update results
    private final MutableLiveData<Boolean> updateSuccess = new MutableLiveData<>();
    public LiveData<Boolean> getUpdateSuccess() { return updateSuccess; }
+
+   @Getter
+   private final MutableLiveData<Integer> updateMessageResource = new MutableLiveData<>();
    //Favorite results
    private final MutableLiveData<Boolean> favoriteActionSuccess = new MutableLiveData<>();
+   private ObserverTracker tracker = new ObserverTracker();
    public LiveData<Boolean> getFavoriteActionSuccess() { return favoriteActionSuccess; }
+
+   public void resetMessages() {
+      updateMessageResource.setValue(null);
+      updateSuccess.setValue(null);
+   }
 
    // ---- Loaders ----
    public void loadUser(long userId) {
       LiveData<UserDto> source = profileRepository.getUserData(userId);
-      source.observeForever(u -> {
+      tracker.observeOnce(source, u -> {
          if (u != null) {
             user.setValue(u);
          }
@@ -58,16 +76,16 @@ public class ProfileViewModel extends ViewModel {
    }
 
    public void loadFavoriteEvents(long userId) {
-      profileRepository.getFavoriteEvents(userId).observeForever(favoriteEvents::setValue);
+      tracker.observeOnce(profileRepository.getFavoriteEvents(userId), favoriteEvents::setValue);
    }
 
    public void loadFavoriteServiceProducts(long userId) {
-      profileRepository.getFavoriteServiceProducts(userId).observeForever(favoriteServiceProducts::setValue);
+      tracker.observeOnce(profileRepository.getFavoriteServiceProducts(userId), favoriteServiceProducts::setValue);
    }
 
    // ---- Actions ----
    public void updatePersonalInfo(long userId, UserInfoDto info) {
-      profileRepository.updatePersonalInfo(userId, info).observeForever(updatedUser -> {
+      tracker.observeOnce(profileRepository.updatePersonalInfo(userId, info), updatedUser -> {
          boolean success = updatedUser != null;
          updateSuccess.setValue(success);
          if (success) {
@@ -77,7 +95,7 @@ public class ProfileViewModel extends ViewModel {
    }
 
    public void updateCompanyInfo(long userId, CompanyInfoDto companyInfo) {
-      profileRepository.updateCompanyInfo(userId, companyInfo).observeForever(updatedCompany -> {
+      tracker.observeOnce(profileRepository.updateCompanyInfo(userId, companyInfo), updatedCompany -> {
          boolean success = updatedCompany != null;
          updateSuccess.setValue(success);
          if (success && user.getValue() != null) {
@@ -89,8 +107,34 @@ public class ProfileViewModel extends ViewModel {
    }
 
    public void changePassword(long userId, String oldPassword, String newPassword) {
-      profileRepository.changePassword(userId, oldPassword, newPassword).observeForever(success -> {
+      tracker.observeOnce(profileRepository.changePassword(userId, oldPassword, newPassword), success -> {
          updateSuccess.setValue(Boolean.TRUE.equals(success));
+      });
+   }
+
+   public void muteNotifications(long userId) {
+      tracker.observeOnce(profileRepository.muteNotifications(userId), success -> {
+         updateMessageResource.setValue(success
+                 ? R.string.you_will_no_longer_receive_notifications
+                 : R.string.failed_to_mute_notifications);
+         if (success && user.getValue() != null) {
+            UserDto current = user.getValue();
+            current.setMutedNotifications(true);
+            user.setValue(current);
+         }
+      });
+   }
+
+   public void unmuteNotifications(long userId) {
+      tracker.observeOnce(profileRepository.unmuteNotifications(userId), success -> {
+         updateMessageResource.setValue(success
+               ? R.string.you_will_receive_notifications_again
+               : R.string.failed_to_unmute_notifications);
+         if (success && user.getValue() != null) {
+            UserDto current = user.getValue();
+            current.setMutedNotifications(false);
+            user.setValue(current);
+         }
       });
    }
 
@@ -102,19 +146,25 @@ public class ProfileViewModel extends ViewModel {
 
    // Favorite events
    public void addFavoriteEvent(long userId, long eventId) {
-      profileRepository.addFavoriteEvent(userId, eventId).observeForever(favoriteActionSuccess::setValue);
+      tracker.observeOnce(profileRepository.addFavoriteEvent(userId, eventId), favoriteActionSuccess::setValue);
    }
 
    public void removeFavoriteEvent(long userId, long eventId) {
-      profileRepository.removeFavoriteEvent(userId, eventId).observeForever(favoriteActionSuccess::setValue);
+      tracker.observeOnce(profileRepository.removeFavoriteEvent(userId, eventId), favoriteActionSuccess::setValue);
    }
 
    // Favorite service products
    public void addFavoriteServiceProduct(long userId, long productId) {
-      profileRepository.addFavoriteServiceProduct(userId, productId).observeForever(favoriteActionSuccess::setValue);
+      tracker.observeOnce(profileRepository.addFavoriteServiceProduct(userId, productId), favoriteActionSuccess::setValue);
    }
 
    public void removeFavoriteServiceProduct(long userId, long productId) {
-      profileRepository.removeFavoriteServiceProduct(userId, productId).observeForever(favoriteActionSuccess::setValue);
+      tracker.observeOnce(profileRepository.removeFavoriteServiceProduct(userId, productId), favoriteActionSuccess::setValue);
+   }
+
+   @Override
+   protected void onCleared() {
+      super.onCleared();
+      tracker.clear();
    }
 }

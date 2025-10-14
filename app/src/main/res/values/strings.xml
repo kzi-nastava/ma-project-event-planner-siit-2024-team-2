@@ -44,4 +44,9 @@
     <string name="notifications">Notifications</string>
     <string name="channel_name">Notifications</string>
     <string name="channel_description">Notifications channel</string>
+    <string name="receive_notifications">Receive notifications</string>
+    <string name="you_will_no_longer_receive_notifications">You\'ll no longer receive notifications</string>
+    <string name="you_will_receive_notifications_again">You\'ll receive notifications again</string>
+    <string name="failed_to_mute_notifications">Failed to mute notifications</string>
+    <string name="failed_to_unmute_notifications">Failed to unmute notifications</string>
 </resources>
