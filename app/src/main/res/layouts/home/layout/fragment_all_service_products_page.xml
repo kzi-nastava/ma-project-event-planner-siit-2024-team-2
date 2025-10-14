@@ -70,7 +70,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linear2"
         app:layout_constraintBottom_toTopOf="@+id/pagination_service_products"
-        tools:listitem="@layout/fragment_service_product_compact" />
+        tools:listitem="@layout/item_service_product_compact" />
 
     <FrameLayout
         android:layout_width="match_parent"

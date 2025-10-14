@@ -29,4 +29,10 @@ public class HomeViewModel extends ViewModel {
     public void fetchTopServiceProducts() {
         tracker.observeOnce(serviceProductRepository.getTop5(), topServiceProducts, true);
     }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        tracker.clear();
+    }
 }

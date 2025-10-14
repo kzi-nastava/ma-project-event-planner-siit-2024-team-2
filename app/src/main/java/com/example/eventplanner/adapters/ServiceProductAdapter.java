@@ -11,13 +11,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.eventplanner.R;
-import com.example.eventplanner.dto.event.EventSummaryDto;
 import com.example.eventplanner.dto.serviceproduct.ServiceProductSummaryDto;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import lombok.Getter;
@@ -63,7 +59,7 @@ public class ServiceProductAdapter extends RecyclerView.Adapter<ServiceProductAd
     @Override
     public ServiceProductAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
         View view = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.fragment_service_product_compact, viewGroup, false);
+                .inflate(R.layout.item_service_product_compact, viewGroup, false);
         return new ServiceProductAdapter.ViewHolder(view);
     }
 
