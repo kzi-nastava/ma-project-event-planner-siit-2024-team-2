@@ -36,7 +36,9 @@ import com.example.eventplanner.clients.utils.UserIdUtils;
 import com.example.eventplanner.clients.utils.UserRoleUtils;
 import com.example.eventplanner.databinding.ActivityHomeBinding;
 import com.example.eventplanner.fragments.communication.NotificationsFragment;
+import com.example.eventplanner.model.utils.UserRole;
 import com.example.eventplanner.utils.FormatUtil;
+import com.example.eventplanner.utils.JsonLog;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.HashSet;
@@ -51,10 +53,10 @@ public class HomeActivity extends AppCompatActivity {
     private NavigationView navigationView;
     private NavController navController;
     private Toolbar toolbar;
+    private Menu toolbarMenu;
     private ActionBarDrawerToggle drawerToggle;
     private final Set<Integer> topLevelDestinations = new HashSet<>();
 
-    // Define which routes require authentication
     private final Set<Integer> protectedDestinations = new HashSet<>();
 
     @Override
@@ -74,8 +76,7 @@ public class HomeActivity extends AppCompatActivity {
 
         // Top-level destinations
         topLevelDestinations.add(R.id.nav_home);
-        topLevelDestinations.add(R.id.nav_settings);
-        topLevelDestinations.add(R.id.nav_language);
+        topLevelDestinations.add(R.id.nav_website);
         topLevelDestinations.add(R.id.nav_logout);
 
         // Protected routes — user must be logged in
@@ -128,7 +129,10 @@ public class HomeActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(android.view.Menu menu) {
-        getMenuInflater().inflate(R.menu.toolbar_menu, menu);
+        if (UserRoleUtils.getUserRole(this) == null)
+            getMenuInflater().inflate(R.menu.toolbar_menu_guest, menu);
+        else
+            getMenuInflater().inflate(R.menu.toolbar_menu, menu);
         return true;
     }
 
@@ -149,7 +153,6 @@ public class HomeActivity extends AppCompatActivity {
     private void setupMenuVisibility() {
         Menu menu = navigationView.getMenu();
 
-        // Example role loading — adapt to your system
         String role = UserRoleUtils.getUserRole(this);
 
         for (int i = 0; i < menu.size(); i++) {
@@ -159,9 +162,13 @@ public class HomeActivity extends AppCompatActivity {
         // Common for all users
         menu.findItem(R.id.nav_home).setVisible(true);
         menu.findItem(R.id.nav_logout).setVisible(true);
-        menu.findItem(R.id.nav_fragment_profile).setVisible(true);
 
-        if (role == null) return;
+        if (role == null) {
+            menu.findItem(R.id.nav_logout).setTitle(R.string.login);
+            return;
+        }
+
+        menu.findItem(R.id.nav_fragment_profile).setVisible(true);
 
         switch (role) {
             case "ADMIN":

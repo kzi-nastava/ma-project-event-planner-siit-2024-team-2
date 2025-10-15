@@ -53,4 +53,5 @@
     <string name="you_will_receive_notifications_again">You\'ll receive notifications again</string>
     <string name="failed_to_mute_notifications">Failed to mute notifications</string>
     <string name="failed_to_unmute_notifications">Failed to unmute notifications</string>
+    <string name="website">Website</string>
 </resources>
