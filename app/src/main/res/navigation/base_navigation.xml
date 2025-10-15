@@ -13,27 +13,22 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/nav_notifications"
-        android:name="com.example.eventplanner.fragments.communication.NotificationsFragment"
-        android:label="@string/notifications"
-        tools:layout="@layout/fragment_notifications" />
-
-    <fragment
-        android:id="@+id/nav_website"
-        android:label="@string/website"
-        android:name="com.example.eventplanner.fragments.NavWebsiteFragment">
-
-        <argument
-            android:name="url"
-            app:argType="string"
-            android:defaultValue="http://94.130.185.169:4200/home"/>
-    </fragment>
-
-    <fragment
         android:id="@+id/nav_events"
         android:name="com.example.eventplanner.fragments.home.AllEventsPageFragment"
         android:label="@string/events"
         tools:layout="@layout/fragment_all_events_page" />
+
+    <fragment
+        android:id="@+id/nav_service_products"
+        android:name="com.example.eventplanner.fragments.home.AllServiceProductsPageFragment"
+        android:label="@string/services_and_products"
+        tools:layout="@layout/fragment_all_service_products_page" />
+
+    <fragment
+        android:id="@+id/nav_notifications"
+        android:name="com.example.eventplanner.fragments.communication.NotificationsFragment"
+        android:label="@string/notifications"
+        tools:layout="@layout/fragment_notifications" />
 
     <fragment
         android:id="@+id/nav_my_events"
@@ -72,12 +67,6 @@
         tools:layout="@layout/fragment_product_list" />
 
     <fragment
-        android:id="@+id/nav_service_products"
-        android:name="com.example.eventplanner.fragments.home.AllServiceProductsPageFragment"
-        android:label="@string/services_and_products"
-        tools:layout="@layout/fragment_all_service_products_page" />
-
-    <fragment
         android:id="@+id/nav_services"
         android:name="com.example.eventplanner.fragments.services.ServicesPageFragment"
         android:label="@string/services"
@@ -100,6 +89,17 @@
         android:name="com.example.eventplanner.fragments.login.LogoutFragment"
         android:label="@string/logout"
         tools:layout="@layout/fragment_login" />
+
+    <fragment
+        android:id="@+id/nav_website"
+        android:label="@string/website"
+        android:name="com.example.eventplanner.fragments.NavWebsiteFragment">
+
+        <argument
+            android:name="url"
+            app:argType="string"
+            android:defaultValue="http://94.130.185.169:4200/home"/>
+    </fragment>
 
     <fragment
         android:id="@+id/select_location_fragment"

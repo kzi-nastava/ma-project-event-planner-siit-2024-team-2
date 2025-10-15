@@ -5,12 +5,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.eventplanner.R;
+import com.example.eventplanner.clients.utils.ImageUtil;
 import com.example.eventplanner.dto.event.EventSummaryDto;
 
 import java.text.SimpleDateFormat;
@@ -44,6 +47,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
         private final TextView eoUsername, eoEmail, eventName, eventDate, eventDescription;
         private final Button moreInfo;
         private final ImageButton heart;
+        private final ImageView profilePicture;
 
         public ViewHolder(View view) {
             super(view);
@@ -54,6 +58,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
             eventDescription = view.findViewById(R.id.text_event_description);
             moreInfo = view.findViewById(R.id.btn_event_more_info);
             heart = view.findViewById(R.id.btn_event_heart);
+            profilePicture = view.findViewById(R.id.image_eo_profile_picture);
         }
     }
 
@@ -98,6 +103,15 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
             );
             if (listener != null) listener.onHeartClick(dto, newState);
         });
+
+        String imageName = dto.getCreatorProfilePicture();
+        if (imageName != null && !imageName.isEmpty()) {
+            Glide.with(holder.itemView)
+                    .load(ImageUtil.getImageUrl(imageName))
+                    .placeholder(R.drawable.profile_picture)
+                    .into(holder.profilePicture);
+        } else
+            holder.profilePicture.setImageResource(R.drawable.profile_picture);
     }
 
     @Override

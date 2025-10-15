@@ -76,10 +76,13 @@ public class HomeActivity extends AppCompatActivity {
 
         // Top-level destinations
         topLevelDestinations.add(R.id.nav_home);
+        topLevelDestinations.add(R.id.nav_events);
+        topLevelDestinations.add(R.id.nav_service_products);
         topLevelDestinations.add(R.id.nav_website);
         topLevelDestinations.add(R.id.nav_logout);
 
         // Protected routes — user must be logged in
+        protectedDestinations.add(R.id.nav_notifications);
         protectedDestinations.add(R.id.nav_fragment_create_product);
         protectedDestinations.add(R.id.nav_fragment_my_products);
         protectedDestinations.add(R.id.nav_fragment_create_event);
@@ -161,14 +164,16 @@ public class HomeActivity extends AppCompatActivity {
 
         // Common for all users
         menu.findItem(R.id.nav_home).setVisible(true);
-        menu.findItem(R.id.nav_logout).setVisible(true);
+        menu.findItem(R.id.nav_events).setVisible(true);
+        menu.findItem(R.id.nav_service_products).setVisible(true);
 
         if (role == null) {
             menu.findItem(R.id.nav_logout).setTitle(R.string.login);
             return;
         }
 
-        menu.findItem(R.id.nav_fragment_profile).setVisible(true);
+        // Authenticated users
+        menu.findItem(R.id.nav_notifications).setVisible(true);
 
         switch (role) {
             case "ADMIN":
