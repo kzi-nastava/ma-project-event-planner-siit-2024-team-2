@@ -99,6 +99,14 @@ public class MyEventsFragment extends Fragment {
                         .setNegativeButton("Cancel", null)
                         .show();
             }
+
+            @Override
+            public void onAgenda(int position, long eventId) {
+                Bundle args = new Bundle();
+                args.putLong("eventId", eventId);
+                NavController navController = Navigation.findNavController(requireActivity(), R.id.fragment_nav_content_main);
+                navController.navigate(R.id.agendaFragment, args);
+            }
         });
         recyclerView.setAdapter(adapter);
 
