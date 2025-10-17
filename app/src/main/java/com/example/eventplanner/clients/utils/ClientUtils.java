@@ -9,6 +9,7 @@ import com.example.eventplanner.clients.interceptors.UnauthorizedInterceptor;
 import com.example.eventplanner.clients.services.auth.AuthService;
 import com.example.eventplanner.clients.services.communication.InvitationService;
 import com.example.eventplanner.clients.services.communication.NotificationService;
+import com.example.eventplanner.clients.services.event.AgendaService;
 import com.example.eventplanner.clients.services.event.EventService;
 import com.example.eventplanner.clients.services.event.EventTypeService;
 import com.example.eventplanner.clients.services.order.BookingService;
@@ -75,6 +76,7 @@ public class ClientUtils {
         eventService = retrofit.create(EventService.class);
         eventTypeService = retrofit.create(EventTypeService.class);
         invitationService = retrofit.create(InvitationService.class);
+        agendaService = retrofit.create(AgendaService.class);
 
         // Order
         bookingService = retrofit.create(BookingService.class);
@@ -100,6 +102,7 @@ public class ClientUtils {
     public static EventService eventService;
     public static EventTypeService eventTypeService;
     public static InvitationService invitationService;
+    public static AgendaService agendaService;
 
     // Order
     public static BookingService bookingService;

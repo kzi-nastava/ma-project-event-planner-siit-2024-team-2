@@ -153,6 +153,28 @@
     </fragment>
 
     <fragment
+        android:id="@+id/create_activity_fragment"
+        android:name="com.example.eventplanner.fragments.event.CreateActivityFragment"
+        android:label="Create Activity"
+        tools:layout="@layout/fragment_create_activity" />
+
+    <fragment
+        android:id="@+id/editActivityFragment"
+        android:name="com.example.eventplanner.fragments.event.EditActivityFragment"
+        android:label="Edit Activity"
+        tools:layout="@layout/fragment_edit_activity" />
+
+    <fragment
+        android:id="@+id/agendaFragment"
+        android:name="com.example.eventplanner.fragments.event.AgendaFragment"
+        android:label="Agenda"
+        tools:layout="@layout/fragment_agenda">
+        <argument
+            android:name="eventId"
+            app:argType="long" />
+    </fragment>
+
+    <fragment
         android:id="@+id/editEventFragment"
         android:name="com.example.eventplanner.fragments.event.EditEventFragment"
         android:label="Edit Event">

@@ -1,5 +1,6 @@
 package com.example.eventplanner.dto.event;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import lombok.AllArgsConstructor;
@@ -11,10 +12,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ActivityDto {
+public class ActivityDto implements Serializable {
+    private Long id;
     private String name;
-    private Date activityStart;
-    private Date activityEnd;
+    private Long activityStart;
+    private Long activityEnd;
     private String description;
     private String location;
 }
