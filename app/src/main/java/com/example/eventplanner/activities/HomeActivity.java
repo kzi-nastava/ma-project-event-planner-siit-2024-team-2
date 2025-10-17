@@ -7,6 +7,9 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.text.Spanned;
 import android.view.Menu;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -21,8 +24,11 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.bumptech.glide.Glide;
 import com.example.eventplanner.EventPlannerApp;
 import com.example.eventplanner.R;
+import com.example.eventplanner.clients.repositories.user.ProfileRepository;
+import com.example.eventplanner.clients.utils.ImageUtil;
 import com.example.eventplanner.clients.utils.UserIdUtils;
 import com.example.eventplanner.clients.utils.UserRoleUtils;
 import com.example.eventplanner.databinding.ActivityHomeBinding;
@@ -43,6 +49,7 @@ public class HomeActivity extends AppCompatActivity {
     private final Set<Integer> topLevelDestinations = new HashSet<>();
 
     private final Set<Integer> protectedDestinations = new HashSet<>();
+    private final ProfileRepository profileRepository = new ProfileRepository();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +108,8 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         setupMenuVisibility();
+
+        setupHeader();
 
         if (getIntent().getBooleanExtra("com.example.event_planner.navigateToNotifications", false))
             navController.navigate(R.id.nav_notifications);
@@ -182,6 +191,27 @@ public class HomeActivity extends AppCompatActivity {
                 // base access
                 break;
         }
+    }
+
+    private void setupHeader() {
+        View navigationViewHeaderView = navigationView.getHeaderView(0);
+        ImageView profilePicture = navigationViewHeaderView.findViewById(R.id.nav_header_image);
+        TextView profileName = navigationViewHeaderView.findViewById(R.id.nav_header_name);
+
+        profileRepository.getUserData(UserIdUtils.getUserId(this)).observe(this, profile -> {
+            String imageName = profile.getImageEncodedName();
+            if (imageName != null && !imageName.isBlank())
+                Glide.with(this)
+                        .load(ImageUtil.getImageUrl(imageName))
+                        .placeholder(R.drawable.profile_picture)
+                        .into(profilePicture);
+            else
+                profilePicture.setImageResource(R.drawable.profile_picture);
+
+            String first = profile.getFirstName() == null ? "" : profile.getFirstName();
+            String last = profile.getLastName() == null ? "" : profile.getLastName();
+            profileName.setText(first + " " + last);
+        });
     }
 
 
