@@ -23,6 +23,7 @@ public class MyEventAdapter extends RecyclerView.Adapter<MyEventAdapter.EventVie
    public interface OnEventActionListener {
       void onViewDetails(int position, long eventId);
       void onDelete(int position, long eventId);
+      void onAgenda(int position, long eventId);
    }
 
    public MyEventAdapter(List<EventSummaryDto> events, OnEventActionListener listener) {
@@ -51,6 +52,9 @@ public class MyEventAdapter extends RecyclerView.Adapter<MyEventAdapter.EventVie
       holder.delete.setOnClickListener(v ->
               listener.onDelete(position, event.getId())
       );
+      holder.agenda.setOnClickListener(v ->
+              listener.onAgenda(position, event.getId())
+      );
    }
 
    @Override
@@ -60,7 +64,7 @@ public class MyEventAdapter extends RecyclerView.Adapter<MyEventAdapter.EventVie
 
    static class EventViewHolder extends RecyclerView.ViewHolder {
       TextView title, date;
-      Button viewDetails, delete;
+      Button viewDetails, delete, agenda;
 
       EventViewHolder(View itemView) {
          super(itemView);
@@ -68,6 +72,7 @@ public class MyEventAdapter extends RecyclerView.Adapter<MyEventAdapter.EventVie
          date = itemView.findViewById(R.id.text_event_date);
          viewDetails = itemView.findViewById(R.id.btn_view_details);
          delete = itemView.findViewById(R.id.btn_delete_event);
+         agenda = itemView.findViewById(R.id.btn_event_agenda);
       }
    }
 
