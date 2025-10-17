@@ -3,17 +3,24 @@ package com.example.eventplanner.clients.utils;
 import android.content.Context;
 
 import com.example.eventplanner.BuildConfig;
+import com.example.eventplanner.clients.deserializers.ServiceProductDeserializer;
 import com.example.eventplanner.clients.interceptors.JwtInterceptor;
 import com.example.eventplanner.clients.interceptors.UnauthorizedInterceptor;
 import com.example.eventplanner.clients.services.auth.AuthService;
+import com.example.eventplanner.clients.services.communication.InvitationService;
+import com.example.eventplanner.clients.services.communication.NotificationService;
 import com.example.eventplanner.clients.services.event.AgendaService;
 import com.example.eventplanner.clients.services.event.EventService;
 import com.example.eventplanner.clients.services.event.EventTypeService;
 import com.example.eventplanner.clients.services.order.BookingService;
 import com.example.eventplanner.clients.services.serviceproduct.ProductService;
+import com.example.eventplanner.clients.services.serviceproduct.ServiceService;
 import com.example.eventplanner.clients.services.user.*;
 import com.example.eventplanner.clients.services.serviceproduct.ServiceProductCategoryService;
 import com.example.eventplanner.clients.services.serviceproduct.ServiceProductService;
+import com.example.eventplanner.model.serviceproduct.ServiceProduct;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.util.concurrent.TimeUnit;
 
@@ -37,12 +44,13 @@ public class ClientUtils {
     }
 
     private static OkHttpClient getClient(Context context){
+        JwtTokenProvider jwtTokenProvider = () -> JwtUtils.getJwtToken(context);
         return new OkHttpClient.Builder()
                 .connectTimeout(120, TimeUnit.SECONDS)
                 .readTimeout(120, TimeUnit.SECONDS)
                 .writeTimeout(120, TimeUnit.SECONDS)
                 .addInterceptor(getLoggingInterceptor())
-                .addInterceptor(new JwtInterceptor(context))
+                .addInterceptor(new JwtInterceptor(jwtTokenProvider))
                 .addInterceptor(new UnauthorizedInterceptor(context))
                 .addInterceptor(chain -> {
                     Request request = chain.request().newBuilder()
@@ -54,15 +62,20 @@ public class ClientUtils {
     }
 
     public static void init(Context context) {
+        Gson gson = new GsonBuilder()
+//                .registerTypeAdapter(ServiceProduct.class, new ServiceProductDeserializer())
+                .create();
+
         retrofit = new Retrofit.Builder()
                 .baseUrl(SERVICE_API_PATH)
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .client(getClient(context))
                 .build();
 
         // Event
         eventService = retrofit.create(EventService.class);
         eventTypeService = retrofit.create(EventTypeService.class);
+        invitationService = retrofit.create(InvitationService.class);
         agendaService = retrofit.create(AgendaService.class);
 
         // Order
@@ -72,6 +85,7 @@ public class ClientUtils {
         serviceProductService = retrofit.create(ServiceProductService.class);
         serviceProductCategoryService = retrofit.create(ServiceProductCategoryService.class);
         productService = retrofit.create(ProductService.class);
+        serviceService = retrofit.create(ServiceService.class);
 
         // User
         userService = retrofit.create(UserService.class);
@@ -79,11 +93,15 @@ public class ClientUtils {
 
         // Auth
         authService = retrofit.create(AuthService.class);
+
+        // Communication
+        notificationService = retrofit.create(NotificationService.class);
     }
 
     // Event
     public static EventService eventService;
     public static EventTypeService eventTypeService;
+    public static InvitationService invitationService;
     public static AgendaService agendaService;
 
     // Order
@@ -93,6 +111,7 @@ public class ClientUtils {
     public static ServiceProductService serviceProductService;
     public static ServiceProductCategoryService serviceProductCategoryService;
     public static ProductService productService;
+    public static ServiceService serviceService;
 
     // User
     public static UserService userService;
@@ -100,4 +119,7 @@ public class ClientUtils {
 
     // Auth
     public static AuthService authService;
+
+    // Communication
+    public static NotificationService notificationService;
 }

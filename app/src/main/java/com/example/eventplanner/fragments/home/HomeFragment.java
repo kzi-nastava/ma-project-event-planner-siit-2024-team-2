@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -34,13 +35,14 @@ import java.util.List;
 import retrofit2.Call;
 
 public class HomeFragment extends Fragment {
-    FragmentHomeBinding binding;
-    EventAdapter eventAdapter;
-    ServiceProductAdapter serviceProductAdapter;
-    RecyclerView recyclerViewEvents, recyclerViewServiceProducts;
-    RelativeLayout progressContainerEvents, progressContainerServiceProducts;
-    List<EventSummaryDto> events = new ArrayList<>();
-    List<ServiceProductSummaryDto> serviceProducts = new ArrayList<>();
+    private FragmentHomeBinding binding;
+    private EventAdapter eventAdapter;
+    private ServiceProductAdapter serviceProductAdapter;
+    private RecyclerView recyclerViewEvents, recyclerViewServiceProducts;
+    private RelativeLayout progressContainerEvents, progressContainerServiceProducts;
+    private List<EventSummaryDto> events = new ArrayList<>();
+    private List<ServiceProductSummaryDto> serviceProducts = new ArrayList<>();
+    private HomeViewModel viewModel;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -51,6 +53,7 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+        viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
 
         recyclerViewEvents = binding.recyclerViewEvents;
         recyclerViewEvents.setLayoutManager(new LinearLayoutManager(this.getContext(), RecyclerView.HORIZONTAL, false));
@@ -62,7 +65,7 @@ public class HomeFragment extends Fragment {
                 args.putLong("eventId", event.getId());
                 detailsFragment.setArguments(args);                  // Navigate using NavController from a view inside the fragment
                 NavController navController = Navigation.findNavController(requireActivity(), R.id.fragment_nav_content_main);
-                navController.navigate(R.id.fragment_event_details, args);
+                navController.navigate(R.id.action_home_to_event_details, args);
             }
             @Override
             public void onHeartClick(EventSummaryDto event, boolean isFavorite) {
@@ -111,7 +114,7 @@ public class HomeFragment extends Fragment {
                 args.putLong("serviceProductId", serviceProduct.getId());
                 detailsFragment.setArguments(args);                  // Navigate using NavController from a view inside the fragment
                 NavController navController = Navigation.findNavController(requireActivity(), R.id.fragment_nav_content_main);
-                navController.navigate(R.id.fragment_service_product_details, args);
+                navController.navigate(R.id.action_home_to_service_product_details, args);
             }
             @Override
             public void onHeartClick(ServiceProductSummaryDto event, boolean isFavorite) {
@@ -124,40 +127,26 @@ public class HomeFragment extends Fragment {
         progressContainerEvents = binding.progressContainerEvents;
         progressContainerServiceProducts = binding.progressContainerServiceProducts;
 
-        fetchTop5Events();
-        fetchTop5ServiceProducts();
-
-        return root;
-    }
-    @SuppressLint("NotifyDataSetChanged")
-    private void fetchTop5Events(){
-        Call<List<EventSummaryDto>> call = ClientUtils.eventService.getTop5();
-
-        call.enqueue(new SimpleCallback<>(
-                response -> {
+        viewModel.getTopEvents().observe(getViewLifecycleOwner(),
+                value -> {
                     events.clear();
-                    if (response.body() != null)
-                        events.addAll(response.body());
+                    if (value != null)
+                        events.addAll(value);
                     progressContainerEvents.setVisibility(View.GONE);
                     eventAdapter.notifyDataSetChanged();
-                },
-                error -> {}
-        ));
-    }
-    @SuppressLint("NotifyDataSetChanged")
-    private void fetchTop5ServiceProducts(){
-        Call<List<ServiceProductSummaryDto>> call = ClientUtils.serviceProductService.getTop5();
-
-        call.enqueue(new SimpleCallback<>(
-                response -> {
+        });
+        viewModel.getTopServiceProducts().observe(getViewLifecycleOwner(),
+                value -> {
                     serviceProducts.clear();
-                    if (response.body() != null)
-                        serviceProducts.addAll(response.body());
+                    if (value != null)
+                        serviceProducts.addAll(value);
                     progressContainerServiceProducts.setVisibility(View.GONE);
                     serviceProductAdapter.notifyDataSetChanged();
-                },
-                error -> {}
-        ));
+                });
+        viewModel.fetchTopEvents();
+        viewModel.fetchTopServiceProducts();
+
+        return root;
     }
     private void onClick(long id) {
         Toast.makeText(getContext(), "id: " + id, Toast.LENGTH_LONG).show();

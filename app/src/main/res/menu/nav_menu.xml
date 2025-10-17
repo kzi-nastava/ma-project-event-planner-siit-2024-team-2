@@ -9,6 +9,14 @@
         android:title="@string/events" />
 
     <item
+        android:id="@+id/nav_service_products"
+        android:title="@string/services_and_products" />
+
+    <item
+        android:id="@+id/nav_notifications"
+        android:title="@string/notifications" />
+
+    <item
         android:id="@+id/nav_my_events"
         android:title="@string/my_events" />
 
@@ -33,27 +41,10 @@
         android:title="@string/my_products" />
 
     <item
-        android:id="@+id/nav_service_products"
-        android:title="@string/services_and_products" />
-
-    <item
         android:id="@+id/nav_services"
         android:title="@string/services" />
 
     <item
         android:id="@+id/nav_edit_service"
         android:title="@string/new_service" />
-
-    <item
-        android:id="@+id/nav_fragment_profile"
-        android:title="@string/profile" />
-
-    <item
-        android:id="@+id/nav_settings"
-        android:title="@string/settings" />
-
-    <item
-        android:id="@+id/nav_logout"
-        android:title="@string/logout" />
-
 </menu>

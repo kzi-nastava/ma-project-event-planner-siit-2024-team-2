@@ -2,6 +2,7 @@ package com.example.eventplanner.fragments.profile;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,7 @@ import com.bumptech.glide.Glide;
 import com.example.eventplanner.R;
 import com.example.eventplanner.adapters.FavoriteEventsAdapter;
 import com.example.eventplanner.adapters.FavoriteServiceProductsAdapter;
+import com.example.eventplanner.clients.utils.ImageUtil;
 import com.example.eventplanner.clients.utils.UserIdUtils;
 import com.example.eventplanner.clients.utils.UserRoleUtils;
 import com.example.eventplanner.dto.event.EventSummaryDto;
@@ -34,7 +36,8 @@ import com.example.eventplanner.dto.user.CompanyInfoDto;
 import com.example.eventplanner.dto.user.UserDto;
 import com.example.eventplanner.dto.user.UserInfoDto;
 import com.example.eventplanner.fragments.event.EventDetailsFragment;
-import com.example.eventplanner.fragments.profile.ProfileViewModel;
+import com.example.eventplanner.fragments.services.ServiceProductDetailsFragment;
+import com.google.android.material.materialswitch.MaterialSwitch;
 
 import java.util.ArrayList;
 
@@ -55,6 +58,8 @@ public class ProfileFragment extends Fragment {
     private RecyclerView rvFavoriteEvents, rvFavoriteServiceProducts;
     private FavoriteEventsAdapter eventsAdapter;
     private FavoriteServiceProductsAdapter productsAdapter;
+
+    private MaterialSwitch switchReceiveNotifications;
 
     private Uri selectedImageUri;
     private ProfileViewModel profileViewModel;
@@ -117,6 +122,8 @@ public class ProfileFragment extends Fragment {
         rvFavoriteEvents = view.findViewById(R.id.rvFavoriteEvents);
         rvFavoriteServiceProducts = view.findViewById(R.id.rvFavoriteServiceProducts);
 
+        switchReceiveNotifications = view.findViewById(R.id.switchReceiveNotifications);
+
         // --- ViewModel ---
         profileViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
 
@@ -132,7 +139,7 @@ public class ProfileFragment extends Fragment {
                 detailsFragment.setArguments(args);
 
                 NavController navController = Navigation.findNavController(requireActivity(), R.id.fragment_nav_content_main);
-                navController.navigate(R.id.fragment_event_details, args);
+                navController.navigate(R.id.action_profile_to_event_details, args);
             }
 
             @Override
@@ -150,9 +157,14 @@ public class ProfileFragment extends Fragment {
         productsAdapter = new FavoriteServiceProductsAdapter();
         productsAdapter.setOnServiceProductClickListener(new FavoriteServiceProductsAdapter.OnServiceProductClickListener() {
             @Override
-            public void onMoreInfoClick(ServiceProductSummaryDto product) {
-                // Navigate to product details
-                Toast.makeText(getContext(), "More info: " + product.getName(), Toast.LENGTH_SHORT).show();
+            public void onMoreInfoClick(ServiceProductSummaryDto serviceProduct) {
+                ServiceProductDetailsFragment detailsFragment = new ServiceProductDetailsFragment();
+                Bundle args = new Bundle();
+                args.putLong("serviceProductId", serviceProduct.getId());
+                detailsFragment.setArguments(args);
+
+                NavController navController = Navigation.findNavController(requireActivity(), R.id.fragment_nav_content_main);
+                navController.navigate(R.id.action_profile_to_service_product_details, args);
             }
 
             @Override
@@ -180,13 +192,19 @@ public class ProfileFragment extends Fragment {
             else productsAdapter.setServiceProducts(new ArrayList<>());
         });
 
-        // optional: observe operation results (updates etc.)
+        profileViewModel.resetMessages();
         profileViewModel.getUpdateSuccess().observe(getViewLifecycleOwner(), success -> {
             if (success != null && success) {
                 Toast.makeText(getContext(), "Operation successful", Toast.LENGTH_SHORT).show();
                 // reload user data so UI is fresh
                 if (userId != -1) profileViewModel.loadUser(userId);
             }
+        });
+
+        profileViewModel.getUpdateMessageResource().observe(getViewLifecycleOwner(), resId -> {
+            if (resId == null)
+                return;
+            Toast.makeText(getContext(), resId, Toast.LENGTH_SHORT).show();
         });
 
         // --- click listeners ---
@@ -239,6 +257,16 @@ public class ProfileFragment extends Fragment {
             else Toast.makeText(getContext(), "User not logged in", Toast.LENGTH_SHORT).show();
         });
 
+        switchReceiveNotifications.setOnClickListener((switchView) -> {
+            if (userId == -1)
+                return;
+            if (switchReceiveNotifications.isChecked())
+                profileViewModel.unmuteNotifications(userId);
+            else
+                profileViewModel.muteNotifications(userId);
+        });
+
+
         // --- load data once ---
         if (userId != -1) {
             profileViewModel.loadUser(userId);
@@ -281,14 +309,22 @@ public class ProfileFragment extends Fragment {
             etCompanyAddress.setText(user.getCompanyAddress() == null ? "" : user.getCompanyAddress());
 
         // profile picture
-        if (user.getProfilePictureUrl() != null && !user.getProfilePictureUrl().isEmpty()) {
+        if (user.getImageEncodedName() != null && !user.getImageEncodedName().isEmpty()) {
             Glide.with(requireContext())
-                    .load(user.getProfilePictureUrl())
+                    .load(ImageUtil.getImageUrl(user.getImageEncodedName()))
                     .placeholder(R.drawable.profile_picture)
                     .into(ivProfilePicture);
         } else {
             ivProfilePicture.setImageResource(R.drawable.profile_picture);
         }
+
+        switchReceiveNotifications.setChecked(!user.isMutedNotifications());
+    }
+
+    @Override
+    public void onResume() {
+        profileViewModel.resetMessages();
+        super.onResume();
     }
 
 }

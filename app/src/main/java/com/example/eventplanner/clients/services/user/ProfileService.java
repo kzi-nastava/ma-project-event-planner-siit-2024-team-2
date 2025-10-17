@@ -67,6 +67,11 @@ public interface ProfileService {
     @DELETE("users/{userId}/favorite-service-products/{productId}")
     Call<Void> removeFavoriteServiceProduct(@Path("userId") long userId, @Path("productId") long productId);
 
+    @POST("users/{userId}/mute-notifications")
+    Call<Void> muteNotifications(@Path("userId") long userId);
+
+    @DELETE("users/{userId}/mute-notifications")
+    Call<Void> unmuteNotifications(@Path("userId") long userId);
 
     // Helper body classes
     class ImageNameBody {

@@ -69,7 +69,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linear2"
         app:layout_constraintBottom_toTopOf="@+id/pagination_events"
-        tools:listitem="@layout/fragment_event_compact" />
+        tools:listitem="@layout/item_event_compact" />
 
     <FrameLayout
         android:layout_width="match_parent"

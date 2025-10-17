@@ -35,7 +35,7 @@ public class MyEventAdapter extends RecyclerView.Adapter<MyEventAdapter.EventVie
    @Override
    public EventViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
       View view = LayoutInflater.from(parent.getContext())
-              .inflate(R.layout.fragment_event_compact_my, parent, false);
+              .inflate(R.layout.item_event_compact_my, parent, false);
       return new EventViewHolder(view);
    }
 

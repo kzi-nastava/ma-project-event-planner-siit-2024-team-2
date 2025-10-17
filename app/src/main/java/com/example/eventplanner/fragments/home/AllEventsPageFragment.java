@@ -1,9 +1,6 @@
 package com.example.eventplanner.fragments.home;
 
-import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,7 +24,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.eventplanner.R;
 import com.example.eventplanner.adapters.EventAdapter;
-import com.example.eventplanner.adapters.MyEventAdapter;
 import com.example.eventplanner.clients.utils.ClientUtils;
 import com.example.eventplanner.clients.utils.UserIdUtils;
 import com.example.eventplanner.databinding.FragmentAllEventsPageBinding;
@@ -36,7 +32,6 @@ import com.example.eventplanner.fragments.event.EventDetailsFragment;
 import com.example.eventplanner.model.event.EventType;
 import com.example.eventplanner.model.utils.City;
 import com.example.eventplanner.model.utils.PageMetadata;
-import com.example.eventplanner.model.utils.PagedModel;
 import com.example.eventplanner.model.utils.SortDirection;
 import com.example.eventplanner.pagination.Pagination;
 import com.example.eventplanner.utils.JsonUtils;
@@ -100,7 +95,7 @@ public class AllEventsPageFragment extends Fragment {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 viewModel.setSearchText(query);
-                fetchEvents();
+                fetchEventsWithFilters();
                 return true;
             }
             @Override
@@ -112,7 +107,7 @@ public class AllEventsPageFragment extends Fragment {
                 return false;
             }
         });
-        viewModel.getSearchText().observe(getViewLifecycleOwner(), text -> fetchEvents());
+        viewModel.getSearchText().observe(getViewLifecycleOwner(), text -> fetchEventsWithFilters());
 
 
         recyclerView = binding.recyclerViewEvents;
@@ -125,9 +120,8 @@ public class AllEventsPageFragment extends Fragment {
                 args.putLong("eventId", event.getId());
                 detailsFragment.setArguments(args);
 
-                // Navigate using NavController from a view inside the fragment
                 NavController navController = Navigation.findNavController(requireActivity(), R.id.fragment_nav_content_main);
-                navController.navigate(R.id.fragment_event_details, args);
+                navController.navigate(R.id.action_all_events_page_to_event_details, args);
             }
 
             @Override
@@ -150,13 +144,53 @@ public class AllEventsPageFragment extends Fragment {
             }
             adapter.notifyDataSetChanged();
         });
+        viewModel.getEvents().observe(getViewLifecycleOwner(), response -> {
+            events.clear();
+            if (response != null) {
+                events.addAll(response.getContent());
+
+                // Mark favorites using ViewModel
+                List<Long> favIds = viewModel.getFavoriteEventIds().getValue();
+                if (favIds != null) {
+                    for (EventSummaryDto e : events) {
+                        e.setFavorite(favIds.contains(e.getId()));
+                    }
+                }
+
+                int previousTotalPages = pageMetadata == null ? 0 : pageMetadata.getTotalPages();
+                pageMetadata = response.getPage();
+                if (previousTotalPages != pageMetadata.getTotalPages())
+                    pagination.changeTotalPages(pageMetadata.getTotalPages());
+            }
+            progressIndicator.setVisibility(View.GONE);
+            adapter.notifyDataSetChanged();
+        });
+        viewModel.getEventTypes().observe(getViewLifecycleOwner(), response -> {
+            eventTypes.clear();
+            if (response != null) {
+                eventTypes.addAll(response);
+                eventTypes.sort(Comparator.comparing(EventType::getName));
+                fetchedTypes = true;
+                if (fetchedMaxAttendances)
+                    binding.btnFilter.setEnabled(true); // we can now filter events since everything loaded
+            }
+        });
+        viewModel.getMaxAttendancesRange().observe(getViewLifecycleOwner(), response -> {
+            fullMaxAttendancesRange.clear();
+            if (response != null) {
+                fullMaxAttendancesRange.addAll(response);
+                fetchedMaxAttendances = true;
+                if (fetchedTypes)
+                    binding.btnFilter.setEnabled(true); // we can now filter events since everything loaded
+            }
+        });
 
         progressIndicator = binding.progressEvents;
 
         Button filter = binding.btnFilter;
         filter.setEnabled(false); // wait until event types load
-        fetchEventTypes();
-        fetchAttendancesRange();
+        viewModel.fetchEventTypes();
+        viewModel.fetchAttendancesRange();
         filter.setOnClickListener(v -> {
             if (bottomSheetDialog == null) {
                 bottomSheetDialog = new BottomSheetDialog(requireActivity(), R.style.FullScreenBottomSheetDialog);
@@ -239,7 +273,7 @@ public class AllEventsPageFragment extends Fragment {
                         maxDate = null;
                     }
 
-                    fetchEvents();
+                    fetchEventsWithFilters();
                 });
 
                 bottomSheetDialog.setContentView(dialogView);
@@ -262,10 +296,10 @@ public class AllEventsPageFragment extends Fragment {
         pagination.setOnPaginateListener(newPage -> {
             currentPage = newPage;
             viewModel.setCurrentPage(currentPage);
-            fetchEvents();
+            fetchEventsWithFilters();
         });
 
-        fetchEvents();
+        fetchEventsWithFilters();
 
         return root;
     }
@@ -284,7 +318,7 @@ public class AllEventsPageFragment extends Fragment {
                     if (currentSelectedIndex != lastSpinnerSelection) {
                         lastSpinnerSelection = currentSelectedIndex;
                         currentSelectedIndex = position;
-                        fetchEvents();
+                        fetchEventsWithFilters();
                     }
                 }
 
@@ -300,7 +334,7 @@ public class AllEventsPageFragment extends Fragment {
             pagination = new Pagination(getContext(), totalPages, binding.paginationEvents);
             pagination.setOnPaginateListener(newPage -> {
                 currentPage = newPage;
-                fetchEvents();
+                fetchEventsWithFilters();
             });
 
             currentPage = viewModel.getCurrentPage();
@@ -314,8 +348,7 @@ public class AllEventsPageFragment extends Fragment {
         binding = null;
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    private void fetchEvents() {
+    private void fetchEventsWithFilters() {
         String sortBy = null, selectedSort;
         SortDirection sortDirection = null;
         if (spinnerSort != null) {
@@ -325,77 +358,16 @@ public class AllEventsPageFragment extends Fragment {
                     .equals("descending") ? SortDirection.DESC : SortDirection.ASC;
         }
 
-        Call<PagedModel<EventSummaryDto>> call = ClientUtils.eventService.getEventSummaries(
+        events.clear();
+        adapter.notifyDataSetChanged();
+        progressIndicator.setVisibility(View.VISIBLE);
+
+        viewModel.fetchEvents(
                 currentPage - 1, pageSize, sortBy, sortDirection,
                 viewModel.getSearchText().getValue(), null,
                 types, minMaxAttendances, maxMaxAttendances, true, latitudes,
                 longitudes, maxDistance, minDate, maxDate
         );
-
-        progressIndicator.setVisibility(View.VISIBLE);
-        events.clear();
-        adapter.notifyDataSetChanged();
-
-        call.enqueue(new SimpleCallback<>(
-                response -> {
-                    events.clear();
-                    if (response.body() != null) {
-                        events.addAll(response.body().getContent());
-
-                        // Mark favorites using ViewModel
-                        List<Long> favIds = viewModel.getFavoriteEventIds().getValue();
-                        if (favIds != null) {
-                            for (EventSummaryDto e : events) {
-                                e.setFavorite(favIds.contains(e.getId()));
-                            }
-                        }
-
-                        int previousTotalPages = pageMetadata == null ? 0 : pageMetadata.getTotalPages();
-                        pageMetadata = response.body().getPage();
-                        if (previousTotalPages != pageMetadata.getTotalPages())
-                            pagination.changeTotalPages(pageMetadata.getTotalPages());
-                    }
-                    progressIndicator.setVisibility(View.GONE);
-                    adapter.notifyDataSetChanged();
-                },
-                error -> {}
-        ));
-    }
-
-
-    private void fetchEventTypes(){
-        Call<List<EventType>> call = ClientUtils.eventTypeService.getAllEventTypes();
-
-        call.enqueue(new SimpleCallback<>(
-            response -> {
-                eventTypes.clear();
-                if (response.body() != null) {
-                    eventTypes.addAll(response.body());
-                    eventTypes.sort(Comparator.comparing(EventType::getName));
-                    fetchedTypes = true;
-                    if (fetchedMaxAttendances)
-                        binding.btnFilter.setEnabled(true); // we can now filter events since everything loaded
-                }
-            },
-            error -> {}
-        ));
-    }
-
-    private void fetchAttendancesRange() {
-        Call<List<Integer>> call = ClientUtils.eventService.getMaxAttendancesRange();
-
-        call.enqueue(new SimpleCallback<> (
-            response -> {
-                fullMaxAttendancesRange.clear();
-                if (response.body() != null) {
-                    fullMaxAttendancesRange.addAll(response.body());
-                    fetchedMaxAttendances = true;
-                    if (fetchedTypes)
-                        binding.btnFilter.setEnabled(true); // we can now filter events since everything loaded
-                }
-            },
-            error -> {}
-        ));
     }
 
     private City[] loadCities() {

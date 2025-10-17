@@ -2,8 +2,6 @@ package com.example.eventplanner.clients.services.serviceproduct;
 
 import com.example.eventplanner.dto.serviceproduct.ServiceProductCategoryDto;
 import com.example.eventplanner.model.serviceproduct.ServiceProductCategory;
-import com.example.eventplanner.model.utils.PagedModel;
-import com.example.eventplanner.model.utils.SortDirection;
 
 import java.util.List;
 
@@ -16,7 +14,6 @@ import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
-import retrofit2.http.Query;
 
 public interface ServiceProductCategoryService {
     @Headers({"Content-Type:application/json"})
