@@ -54,4 +54,10 @@
     <string name="failed_to_mute_notifications">Failed to mute notifications</string>
     <string name="failed_to_unmute_notifications">Failed to unmute notifications</string>
     <string name="website">Website</string>
+    <string name="specifics">Specifics: </string>
+    <string name="reservation_deadline">Reservation deadline: </string>
+    <string name="cancellation_deadline">Cancellation deadline: </string>
+    <string name="duration">Duration: </string>
+    <string name="automatic_reservation_ability">Automatic reservation ability: </string>
+    <string name="number_days">%1$d days</string>
 </resources>

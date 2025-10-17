@@ -36,6 +36,7 @@ import com.example.eventplanner.dto.user.CompanyInfoDto;
 import com.example.eventplanner.dto.user.UserDto;
 import com.example.eventplanner.dto.user.UserInfoDto;
 import com.example.eventplanner.fragments.event.EventDetailsFragment;
+import com.example.eventplanner.fragments.services.ServiceProductDetailsFragment;
 import com.google.android.material.materialswitch.MaterialSwitch;
 
 import java.util.ArrayList;
@@ -138,7 +139,7 @@ public class ProfileFragment extends Fragment {
                 detailsFragment.setArguments(args);
 
                 NavController navController = Navigation.findNavController(requireActivity(), R.id.fragment_nav_content_main);
-                navController.navigate(R.id.fragment_event_details, args);
+                navController.navigate(R.id.action_profile_to_event_details, args);
             }
 
             @Override
@@ -156,9 +157,14 @@ public class ProfileFragment extends Fragment {
         productsAdapter = new FavoriteServiceProductsAdapter();
         productsAdapter.setOnServiceProductClickListener(new FavoriteServiceProductsAdapter.OnServiceProductClickListener() {
             @Override
-            public void onMoreInfoClick(ServiceProductSummaryDto product) {
-                // Navigate to product details
-                Toast.makeText(getContext(), "More info: " + product.getName(), Toast.LENGTH_SHORT).show();
+            public void onMoreInfoClick(ServiceProductSummaryDto serviceProduct) {
+                ServiceProductDetailsFragment detailsFragment = new ServiceProductDetailsFragment();
+                Bundle args = new Bundle();
+                args.putLong("serviceProductId", serviceProduct.getId());
+                detailsFragment.setArguments(args);
+
+                NavController navController = Navigation.findNavController(requireActivity(), R.id.fragment_nav_content_main);
+                navController.navigate(R.id.action_profile_to_service_product_details, args);
             }
 
             @Override

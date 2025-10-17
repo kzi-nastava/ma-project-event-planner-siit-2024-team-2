@@ -65,7 +65,7 @@ public class HomeFragment extends Fragment {
                 args.putLong("eventId", event.getId());
                 detailsFragment.setArguments(args);                  // Navigate using NavController from a view inside the fragment
                 NavController navController = Navigation.findNavController(requireActivity(), R.id.fragment_nav_content_main);
-                navController.navigate(R.id.fragment_event_details, args);
+                navController.navigate(R.id.action_home_to_event_details, args);
             }
             @Override
             public void onHeartClick(EventSummaryDto event, boolean isFavorite) {
@@ -114,7 +114,7 @@ public class HomeFragment extends Fragment {
                 args.putLong("serviceProductId", serviceProduct.getId());
                 detailsFragment.setArguments(args);                  // Navigate using NavController from a view inside the fragment
                 NavController navController = Navigation.findNavController(requireActivity(), R.id.fragment_nav_content_main);
-                navController.navigate(R.id.fragment_service_product_details, args);
+                navController.navigate(R.id.action_home_to_service_product_details, args);
             }
             @Override
             public void onHeartClick(ServiceProductSummaryDto event, boolean isFavorite) {

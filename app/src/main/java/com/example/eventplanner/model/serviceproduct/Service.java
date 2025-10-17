@@ -9,6 +9,7 @@ import com.example.eventplanner.model.event.EventType;
 import com.example.eventplanner.model.user.ServiceProductProvider;
 
 import java.io.Serializable;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,6 +28,7 @@ public class Service extends ServiceProduct implements Parcelable, Serializable 
     private int reservationDaysDeadline;
     private int cancellationDaysDeadline;
     private boolean hasAutomaticReservation;
+    private List<String> imageEncodedNames;
 
     public Service(Parcel in) {
         if (in.readByte() == 0) {
@@ -44,6 +46,7 @@ public class Service extends ServiceProduct implements Parcelable, Serializable 
         images = in.createStringArrayList();
         availableEventTypes = in.createTypedArrayList(EventType.CREATOR);
         serviceProductProvider = in.readParcelable(ServiceProductProvider.class.getClassLoader());
+        dtype = in.readString();
         specifies = in.readString();
         duration = in.readFloat();
         minEngagementDuration = in.readFloat();
@@ -51,6 +54,7 @@ public class Service extends ServiceProduct implements Parcelable, Serializable 
         reservationDaysDeadline = in.readInt();
         cancellationDaysDeadline = in.readInt();
         hasAutomaticReservation = in.readByte() != 0;
+        imageEncodedNames = in.createStringArrayList();
     }
 
     public static final Creator<Service> CREATOR = new Creator<Service>() {
@@ -88,6 +92,7 @@ public class Service extends ServiceProduct implements Parcelable, Serializable 
         dest.writeStringList(images);
         dest.writeTypedList(availableEventTypes);
         dest.writeParcelable(serviceProductProvider, flags);
+        dest.writeString(dtype);
         dest.writeString(specifies);
         dest.writeFloat(duration);
         dest.writeFloat(minEngagementDuration);
@@ -95,5 +100,6 @@ public class Service extends ServiceProduct implements Parcelable, Serializable 
         dest.writeInt(reservationDaysDeadline);
         dest.writeInt(cancellationDaysDeadline);
         dest.writeByte((byte) (hasAutomaticReservation ? 1 : 0));
+        dest.writeStringList(imageEncodedNames);
     }
 }

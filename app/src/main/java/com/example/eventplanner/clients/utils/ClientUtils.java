@@ -3,6 +3,7 @@ package com.example.eventplanner.clients.utils;
 import android.content.Context;
 
 import com.example.eventplanner.BuildConfig;
+import com.example.eventplanner.clients.deserializers.ServiceProductDeserializer;
 import com.example.eventplanner.clients.interceptors.JwtInterceptor;
 import com.example.eventplanner.clients.interceptors.UnauthorizedInterceptor;
 import com.example.eventplanner.clients.services.auth.AuthService;
@@ -12,9 +13,13 @@ import com.example.eventplanner.clients.services.event.EventService;
 import com.example.eventplanner.clients.services.event.EventTypeService;
 import com.example.eventplanner.clients.services.order.BookingService;
 import com.example.eventplanner.clients.services.serviceproduct.ProductService;
+import com.example.eventplanner.clients.services.serviceproduct.ServiceService;
 import com.example.eventplanner.clients.services.user.*;
 import com.example.eventplanner.clients.services.serviceproduct.ServiceProductCategoryService;
 import com.example.eventplanner.clients.services.serviceproduct.ServiceProductService;
+import com.example.eventplanner.model.serviceproduct.ServiceProduct;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.util.concurrent.TimeUnit;
 
@@ -56,9 +61,13 @@ public class ClientUtils {
     }
 
     public static void init(Context context) {
+        Gson gson = new GsonBuilder()
+//                .registerTypeAdapter(ServiceProduct.class, new ServiceProductDeserializer())
+                .create();
+
         retrofit = new Retrofit.Builder()
                 .baseUrl(SERVICE_API_PATH)
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .client(getClient(context))
                 .build();
 
@@ -74,6 +83,7 @@ public class ClientUtils {
         serviceProductService = retrofit.create(ServiceProductService.class);
         serviceProductCategoryService = retrofit.create(ServiceProductCategoryService.class);
         productService = retrofit.create(ProductService.class);
+        serviceService = retrofit.create(ServiceService.class);
 
         // User
         userService = retrofit.create(UserService.class);
@@ -98,6 +108,7 @@ public class ClientUtils {
     public static ServiceProductService serviceProductService;
     public static ServiceProductCategoryService serviceProductCategoryService;
     public static ProductService productService;
+    public static ServiceService serviceService;
 
     // User
     public static UserService userService;

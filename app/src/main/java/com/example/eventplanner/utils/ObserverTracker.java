@@ -68,5 +68,6 @@ public class ObserverTracker {
      */
     public void clear() {
         observers.forEach(RemovingObserver::stopObserving);
+        observers.clear();
     }
 }

@@ -3,28 +3,20 @@ package com.example.eventplanner.activities;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.text.Html;
 import android.text.Spanned;
-import android.util.Log;
 import android.view.Menu;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
-import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
@@ -32,18 +24,13 @@ import androidx.navigation.ui.NavigationUI;
 import com.example.eventplanner.EventPlannerApp;
 import com.example.eventplanner.R;
 import com.example.eventplanner.clients.utils.UserIdUtils;
-import com.example.eventplanner.clients.utils.UserIdUtils;
 import com.example.eventplanner.clients.utils.UserRoleUtils;
 import com.example.eventplanner.databinding.ActivityHomeBinding;
-import com.example.eventplanner.fragments.communication.NotificationsFragment;
-import com.example.eventplanner.model.utils.UserRole;
 import com.example.eventplanner.utils.FormatUtil;
-import com.example.eventplanner.utils.JsonLog;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -53,8 +40,6 @@ public class HomeActivity extends AppCompatActivity {
     private NavigationView navigationView;
     private NavController navController;
     private Toolbar toolbar;
-    private Menu toolbarMenu;
-    private ActionBarDrawerToggle drawerToggle;
     private final Set<Integer> topLevelDestinations = new HashSet<>();
 
     private final Set<Integer> protectedDestinations = new HashSet<>();
@@ -87,18 +72,18 @@ public class HomeActivity extends AppCompatActivity {
         protectedDestinations.add(R.id.nav_fragment_my_products);
         protectedDestinations.add(R.id.nav_fragment_create_event);
         protectedDestinations.add(R.id.nav_fragment_profile);
+        protectedDestinations.add(R.id.nav_services);
+        protectedDestinations.add(R.id.nav_edit_service);
+        protectedDestinations.add(R.id.nav_create_event_type);
+        protectedDestinations.add(R.id.nav_event_types);
 
-        appBarConfiguration = new AppBarConfiguration.Builder(topLevelDestinations)
+        Set<Integer> combinedDestinations = new HashSet<>();
+        combinedDestinations.addAll(topLevelDestinations);
+        combinedDestinations.addAll(protectedDestinations);
+
+        appBarConfiguration = new AppBarConfiguration.Builder(combinedDestinations)
                 .setOpenableLayout(drawerLayout)
                 .build();
-
-        // Drawer toggle
-        drawerToggle = new ActionBarDrawerToggle(
-                this, drawerLayout, toolbar,
-                R.string.navigation_drawer_open, R.string.navigation_drawer_close
-        );
-        drawerLayout.addDrawerListener(drawerToggle);
-        drawerToggle.syncState();
 
         // Setup navigation UI
         NavigationUI.setupWithNavController(navigationView, navController);

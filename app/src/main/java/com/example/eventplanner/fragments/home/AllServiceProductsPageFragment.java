@@ -120,9 +120,8 @@ public class AllServiceProductsPageFragment extends Fragment {
                 args.putLong("serviceProductId", serviceProduct.getId());
                 detailsFragment.setArguments(args);
 
-                // Navigate using NavController from a view inside the fragment
                 NavController navController = Navigation.findNavController(requireActivity(), R.id.fragment_nav_content_main);
-                navController.navigate(R.id.fragment_service_product_details, args);
+                navController.navigate(R.id.action_all_service_products_page_to_service_product_details, args);
             }
 
             @Override
@@ -374,7 +373,7 @@ public class AllServiceProductsPageFragment extends Fragment {
         viewModel.fetchServiceProductSummaries(
                 currentPage-1, pageSize, sortBy, sortDirection,
                 viewModel.getSearchText().getValue(), null,
-                spType, categories, true, true, minPrice,
+                spType, categories, null, true, minPrice,
                 maxPrice, eventTypes, null, minDuration, maxDuration, automaticReservation);
     }
 }

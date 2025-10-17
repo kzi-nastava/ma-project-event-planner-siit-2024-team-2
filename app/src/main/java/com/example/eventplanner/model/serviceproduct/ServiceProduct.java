@@ -31,6 +31,7 @@ public class ServiceProduct implements Parcelable, Serializable {
     protected List<String> images;
     protected List<EventType> availableEventTypes;
     protected ServiceProductProvider serviceProductProvider;
+    protected String dtype;
 
     protected ServiceProduct() {}
 
@@ -50,6 +51,7 @@ public class ServiceProduct implements Parcelable, Serializable {
         images = in.createStringArrayList();
         availableEventTypes = in.createTypedArrayList(EventType.CREATOR);
         serviceProductProvider = in.readParcelable(ServiceProductProvider.class.getClassLoader());
+        dtype = in.readString();
     }
 
     public static final Creator<ServiceProduct> CREATOR = new Creator<ServiceProduct>() {
@@ -87,5 +89,6 @@ public class ServiceProduct implements Parcelable, Serializable {
         dest.writeStringList(images);
         dest.writeTypedList(availableEventTypes);
         dest.writeParcelable(serviceProductProvider, flags);
+        dest.writeString(dtype);
     }
 }

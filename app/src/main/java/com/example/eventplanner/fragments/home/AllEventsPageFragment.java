@@ -120,9 +120,8 @@ public class AllEventsPageFragment extends Fragment {
                 args.putLong("eventId", event.getId());
                 detailsFragment.setArguments(args);
 
-                // Navigate using NavController from a view inside the fragment
                 NavController navController = Navigation.findNavController(requireActivity(), R.id.fragment_nav_content_main);
-                navController.navigate(R.id.fragment_event_details, args);
+                navController.navigate(R.id.action_all_events_page_to_event_details, args);
             }
 
             @Override
