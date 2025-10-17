@@ -54,7 +54,7 @@ public class ServicesPageFragment extends Fragment {
         parcel.writeByte((byte) 1); // Indicates that `id` is not null
         parcel.writeLong(12345L); // Example ID
 
-        ServiceProductCategory serviceProductCategory = new ServiceProductCategory(1L, "catering");
+        ServiceProductCategory serviceProductCategory = new ServiceProductCategory(1L, "catering", "");
         parcel.writeParcelable(serviceProductCategory, 0); // Example for `category`
 
         parcel.writeByte((byte) 1); // `available` as true

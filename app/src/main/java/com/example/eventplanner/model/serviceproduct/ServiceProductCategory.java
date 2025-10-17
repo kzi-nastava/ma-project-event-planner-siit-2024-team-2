@@ -19,6 +19,7 @@ import lombok.Setter;
 public class ServiceProductCategory implements Parcelable, Serializable {
     private Long id;
     private String name;
+    private String description;
 
     public ServiceProductCategory(Parcel in) {
         if (in.readByte() == 0) {

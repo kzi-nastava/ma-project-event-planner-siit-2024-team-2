@@ -137,6 +137,7 @@ public class HomeActivity extends AppCompatActivity {
             case "ADMIN":
                 menu.findItem(R.id.nav_event_types).setVisible(true);
                 menu.findItem(R.id.nav_create_event_type).setVisible(true);
+                menu.findItem(R.id.nav_fragment_category).setVisible(true);
                 break;
 
             case "SERVICE_PRODUCT_PROVIDER":
