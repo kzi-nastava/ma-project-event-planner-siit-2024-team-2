@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +28,7 @@ import com.bumptech.glide.Glide;
 import com.example.eventplanner.R;
 import com.example.eventplanner.adapters.FavoriteEventsAdapter;
 import com.example.eventplanner.adapters.FavoriteServiceProductsAdapter;
+import com.example.eventplanner.clients.utils.AuthUtils;
 import com.example.eventplanner.clients.utils.ImageUtil;
 import com.example.eventplanner.clients.utils.UserIdUtils;
 import com.example.eventplanner.clients.utils.UserRoleUtils;
@@ -49,6 +51,7 @@ public class ProfileFragment extends Fragment {
     private EditText etFirstName, etLastName, etPhone, etAddress;
     private EditText etOldPassword, etNewPassword, etConfirmPassword;
     private Button btnUpdatePersonalInfo, btnChangePassword, btnDeactivateAccount;
+    private LinearLayout layoutChangePassword;
 
     // Company fields
     private EditText etCompanyName, etCompanyAddress;
@@ -93,7 +96,6 @@ public class ProfileFragment extends Fragment {
             layoutCompanyInfo.setVisibility(View.GONE);
         }
 
-        // --- find views ---
         ivProfilePicture = view.findViewById(R.id.ivProfilePicture);
         btnUploadPicture = view.findViewById(R.id.btnUploadPicture);
         btnRemovePicture = view.findViewById(R.id.btnRemovePicture);
@@ -113,6 +115,8 @@ public class ProfileFragment extends Fragment {
         btnChangePassword = view.findViewById(R.id.btnChangePassword);
         btnDeactivateAccount = view.findViewById(R.id.btnDeactivateAccount);
 
+        layoutChangePassword = view.findViewById(R.id.layoutChangePassword);
+
         // company fields
         etCompanyName = view.findViewById(R.id.etCompanyName);
         etCompanyAddress = view.findViewById(R.id.etCompanyAddress);
@@ -124,10 +128,8 @@ public class ProfileFragment extends Fragment {
 
         switchReceiveNotifications = view.findViewById(R.id.switchReceiveNotifications);
 
-        // --- ViewModel ---
         profileViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
 
-        // --- setup adapters & recyclers ---
         eventsAdapter = new FavoriteEventsAdapter();
         eventsAdapter.setOnEventClickListener(new FavoriteEventsAdapter.OnEventClickListener() {
             @Override
@@ -179,7 +181,6 @@ public class ProfileFragment extends Fragment {
         rvFavoriteServiceProducts.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
         rvFavoriteServiceProducts.setAdapter(productsAdapter);
 
-        // --- observe LiveData ---
         profileViewModel.getUser().observe(getViewLifecycleOwner(), this::populateUserData);
 
         profileViewModel.getFavoriteEvents().observe(getViewLifecycleOwner(), events -> {
@@ -207,17 +208,22 @@ public class ProfileFragment extends Fragment {
             Toast.makeText(getContext(), resId, Toast.LENGTH_SHORT).show();
         });
 
-        // --- click listeners ---
+        profileViewModel.getUpdateMessageText().observe(getViewLifecycleOwner(), text -> {
+            if (text == null)
+                return;
+            Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
+        });
+
         ivProfilePicture.setOnClickListener(v -> pickImageLauncher.launch("image/*"));
 
         btnUploadPicture.setOnClickListener(v -> {
-            // TODO: upload image via viewModel/repository -> image service + profileService.uploadProfilePicture
-            Toast.makeText(getContext(), "Upload image not implemented yet", Toast.LENGTH_SHORT).show();
+            if (selectedImageUri != null) {
+                profileViewModel.uploadProfilePicture(userId, getContext(), selectedImageUri);
+            }
         });
 
         btnRemovePicture.setOnClickListener(v -> {
-            // call repository to remove image (optional)
-            Toast.makeText(getContext(), "Remove picture not implemented yet", Toast.LENGTH_SHORT).show();
+            profileViewModel.removeProfilePicture(userId);
         });
 
         btnUpdatePersonalInfo.setOnClickListener(v -> {
@@ -267,7 +273,6 @@ public class ProfileFragment extends Fragment {
         });
 
 
-        // --- load data once ---
         if (userId != -1) {
             profileViewModel.loadUser(userId);
             profileViewModel.loadFavoriteEvents(userId);
@@ -289,17 +294,7 @@ public class ProfileFragment extends Fragment {
 
         etFirstName.setText(user.getFirstName() == null ? "" : user.getFirstName());
         etLastName.setText(user.getLastName() == null ? "" : user.getLastName());
-        // DTO may have getPhone() or getPhoneNumber(); try getPhone() first:
-        try {
-            etPhone.setText(user.getPhoneNumber() == null ? "" : user.getPhoneNumber());
-        } catch (NoSuchMethodError e) {
-            // fallback if your DTO uses getPhoneNumber()
-            try {
-                etPhone.setText((String) UserDto.class.getMethod("getPhoneNumber").invoke(user));
-            } catch (Exception ignored) {
-                etPhone.setText("");
-            }
-        }
+        etPhone.setText(user.getPhoneNumber() == null ? "" : user.getPhoneNumber());
         etAddress.setText(user.getAddress() == null ? "" : user.getAddress());
 
         // company
@@ -319,6 +314,8 @@ public class ProfileFragment extends Fragment {
         }
 
         switchReceiveNotifications.setChecked(!user.isMutedNotifications());
+        if (AuthUtils.isAuthenticatedUser(getContext()))
+            layoutChangePassword.setVisibility(View.GONE);
     }
 
     @Override

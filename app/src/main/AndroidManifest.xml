@@ -44,6 +44,23 @@
         <activity
             android:name=".activities.RegisterActivity"
             android:exported="false" />
+        <activity
+            android:name=".activities.AcceptInvitationActivity"
+            android:exported="true"
+            android:theme="@style/Theme.EventPlanner">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="http"
+                      android:host="94.130.185.169"
+                      android:port="4200"
+                      android:pathPrefix="/accept-invitation" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activities.UpgradeAccountActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

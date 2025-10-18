@@ -11,7 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Invitation {
     private long id;
-    private Event event;
+    private Event eventDto;
     private String email;
     private String token;
     private boolean accepted;

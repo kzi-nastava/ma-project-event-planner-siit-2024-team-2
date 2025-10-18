@@ -1,5 +1,8 @@
 package com.example.eventplanner.fragments.profile;
 
+import android.content.Context;
+import android.net.Uri;
+import android.util.Base64;
 import android.util.Log;
 
 import androidx.annotation.StringRes;
@@ -10,6 +13,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.eventplanner.EventPlannerApp;
 import com.example.eventplanner.R;
+import com.example.eventplanner.clients.repositories.serviceproduct.ImageRepository;
 import com.example.eventplanner.clients.repositories.user.ProfileRepository;
 import com.example.eventplanner.dto.event.EventSummaryDto;
 import com.example.eventplanner.dto.serviceproduct.ServiceProductSummaryDto;
@@ -19,6 +23,8 @@ import com.example.eventplanner.dto.user.UserInfoDto;
 import com.example.eventplanner.utils.JsonLog;
 import com.example.eventplanner.utils.ObserverTracker;
 
+import java.io.File;
+import java.io.InputStream;
 import java.util.List;
 
 import lombok.Getter;
@@ -26,6 +32,7 @@ import lombok.Getter;
 public class ProfileViewModel extends ViewModel {
 
    private final ProfileRepository profileRepository = new ProfileRepository();
+   private final ImageRepository imageRepository = new ImageRepository();
 
    // User data
    private final MutableLiveData<UserDto> user = new MutableLiveData<>();
@@ -44,6 +51,8 @@ public class ProfileViewModel extends ViewModel {
 
    @Getter
    private final MutableLiveData<Integer> updateMessageResource = new MutableLiveData<>();
+   @Getter
+   private final MutableLiveData<String> updateMessageText = new MutableLiveData<>();
    //Favorite results
    private final MutableLiveData<Boolean> favoriteActionSuccess = new MutableLiveData<>();
    private ObserverTracker tracker = new ObserverTracker();
@@ -160,6 +169,27 @@ public class ProfileViewModel extends ViewModel {
 
    public void removeFavoriteServiceProduct(long userId, long productId) {
       tracker.observeOnce(profileRepository.removeFavoriteServiceProduct(userId, productId), favoriteActionSuccess::setValue);
+   }
+
+   public void uploadProfilePicture(long userId, Context context, Uri imageUri) {
+      tracker.observeOnce(imageRepository.uploadImage(context, imageUri), result -> {
+         if (result == null) return;
+         if (result.first != null) {
+            byte[] nameBytes = Base64.decode(result.first, Base64.DEFAULT);
+            String name = new String(nameBytes);
+            tracker.observeOnce(profileRepository.uploadProfilePicture(userId, name), success -> {
+               updateSuccess.setValue(success != null);
+            });
+         }
+         else if (result.second != null)
+            updateMessageText.setValue(result.second);
+      });
+   }
+
+   public void removeProfilePicture(long userId) {
+      tracker.observeOnce(profileRepository.removeProfilePicture(userId), success -> {
+         updateSuccess.setValue(success != null);
+      });
    }
 
    @Override

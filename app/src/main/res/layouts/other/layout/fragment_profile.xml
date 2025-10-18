@@ -2,6 +2,8 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:padding="16dp">
 
     <LinearLayout
@@ -10,20 +12,28 @@
         android:orientation="vertical">
 
         <!-- Profile Picture -->
-        <ImageView
-            android:id="@+id/ivProfilePicture"
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/image_holder"
             android:layout_width="120dp"
             android:layout_height="120dp"
-            android:src="@drawable/profile_picture"
             android:layout_gravity="center_horizontal"
-            android:scaleType="centerCrop"
-            android:contentDescription="Profile Picture" />
+            android:cropToPadding="false"
+            app:cardCornerRadius="60dp">
 
+            <ImageView
+                android:id="@+id/ivProfilePicture"
+                android:src="@drawable/profile_picture"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:contentDescription="@string/profile_picture"/>
+        </androidx.cardview.widget.CardView>
         <Button
             android:id="@+id/btnUploadPicture"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Upload New Picture"
+            android:text="@string/upload_new_picture"
             android:layout_gravity="center_horizontal"
             android:visibility="gone" />
 
@@ -31,7 +41,7 @@
             android:id="@+id/btnRemovePicture"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Remove Picture"
+            android:text="@string/remove_picture"
             android:layout_gravity="center_horizontal"
             android:visibility="gone" />
 
@@ -40,7 +50,7 @@
             android:id="@+id/tvName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Full Name"
+            android:text="@string/full_name"
             android:textSize="20sp"
             android:layout_marginTop="16dp"
             android:layout_gravity="center_horizontal"/>
@@ -57,13 +67,13 @@
             android:id="@+id/etFirstName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="First Name"/>
+            android:hint="@string/first_name"/>
 
         <EditText
             android:id="@+id/etLastName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Last Name"/>
+            android:hint="@string/last_name"/>
 
         <EditText
             android:id="@+id/etPhone"
@@ -142,6 +152,12 @@
             android:layout_height="wrap_content"/>
 
         <!-- Change Password -->
+        <LinearLayout
+            android:id="@+id/layoutChangePassword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
         <EditText
             android:id="@+id/etOldPassword"
             android:layout_width="match_parent"
@@ -169,6 +185,7 @@
             android:layout_height="wrap_content"
             android:text="Change Password"
             android:layout_gravity="center_horizontal"/>
+        </LinearLayout>
 
         <com.google.android.material.materialswitch.MaterialSwitch
             android:id="@+id/switchReceiveNotifications"
