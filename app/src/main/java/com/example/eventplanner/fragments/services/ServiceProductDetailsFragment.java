@@ -30,6 +30,7 @@ import com.example.eventplanner.dto.serviceproduct.ServiceDto;
 import com.example.eventplanner.dto.serviceproduct.ServiceProductSummaryDto;
 import com.example.eventplanner.model.serviceproduct.Service;
 import com.example.eventplanner.model.serviceproduct.ServiceProduct;
+import com.example.eventplanner.model.user.ServiceProductProvider;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 
@@ -41,7 +42,7 @@ import lombok.Getter;
 
 public class ServiceProductDetailsFragment extends Fragment {
 
-   private ServiceProductSummaryDto serviceProduct;
+   private ServiceProduct serviceProduct;
    private List<String> images = new ArrayList<>();
    private Long serviceProductId;
 
@@ -126,6 +127,8 @@ public class ServiceProductDetailsFragment extends Fragment {
 
    @SuppressLint("SetTextI18n")
    private void bindData(ServiceProduct dto) {
+      serviceProduct = dto;
+
       tvName.setText(dto.getName());
       tvDescription.setText(dto.getDescription());
       tvCategory.setText(dto.getCategory() != null ? dto.getCategory().getName() : "N/A");
@@ -153,7 +156,8 @@ public class ServiceProductDetailsFragment extends Fragment {
 
    private void setupReportMenu() {
       btnReportMenu.setOnClickListener(v -> {
-         if (serviceProduct == null || serviceProduct.getCreatorEmail() == null) {
+         if (serviceProduct == null || serviceProduct.getServiceProductProvider() == null
+                 || serviceProduct.getServiceProductProvider().getEmail() == null) {
             Toast.makeText(getContext(), "Service provider information not available", Toast.LENGTH_SHORT).show();
             return;
          }
@@ -172,7 +176,8 @@ public class ServiceProductDetailsFragment extends Fragment {
    }
 
    private boolean onReportMenuItemClick(MenuItem item) {
-      if (serviceProduct == null || serviceProduct.getCreatorEmail() == null) {
+      if (serviceProduct == null || serviceProduct.getServiceProductProvider() == null
+              || serviceProduct.getServiceProductProvider().getEmail() == null) {
          return false;
       }
 
@@ -188,23 +193,29 @@ public class ServiceProductDetailsFragment extends Fragment {
    }
 
    private void openReportDialog() {
-      if (serviceProduct == null || serviceProduct.getCreatorEmail() == null) {
+      if (serviceProduct == null)
+         return;
+      ServiceProductProvider provider = serviceProduct.getServiceProductProvider();
+      if (provider == null || provider.getEmail() == null) {
          return;
       }
 
-      String email = serviceProduct.getCreatorEmail();
-      String name = serviceProduct.getCreatorName();
+      String email = provider.getEmail();
+      String firstName = provider.getFirstName() == null ? "" : provider.getFirstName();
+      String lastName = provider.getLastName() == null ? "" : provider.getLastName();
+      String name = firstName.isEmpty() ? email : firstName + " " + lastName;
       
       ReportUserDialog dialog = ReportUserDialog.newInstance(email, name);
       dialog.show(getParentFragmentManager(), "ReportUserDialog");
    }
 
    private void suspendUser() {
-      if (serviceProduct == null || serviceProduct.getCreatorEmail() == null) {
+      if (serviceProduct == null || serviceProduct.getServiceProductProvider() == null
+              || serviceProduct.getServiceProductProvider().getEmail() == null) {
          return;
       }
 
-      String email = serviceProduct.getCreatorEmail();
+      String email = serviceProduct.getServiceProductProvider().getEmail();
       userManagementRepository.suspendUser(email).observe(getViewLifecycleOwner(), success -> {
          if (success != null) {
             if (success) {
