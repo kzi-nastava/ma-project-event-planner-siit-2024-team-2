@@ -5,7 +5,7 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
-import com.example.eventplanner.model.utils.ReviewStatus;
+import com.example.eventplanner.model.event.EventType;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,14 +20,15 @@ public class EventSummaryDto implements Parcelable {
     private long id;
     private String name;
     private String description;
-    private EventTypeDto type;
+    private EventType type;
     private int maxAttendances;
-    private boolean isOpen;
+    private boolean open;
     private double longitude;
     private double latitude;
     private long date;
     private String creatorName;
     private String creatorEmail;
+    private String creatorProfilePicture;
     private boolean favorite;
 
     protected EventSummaryDto(Parcel in) {
@@ -35,12 +36,13 @@ public class EventSummaryDto implements Parcelable {
         name = in.readString();
         description = in.readString();
         maxAttendances = in.readInt();
-        isOpen = in.readByte() != 0;
+        open = in.readByte() != 0;
         longitude = in.readDouble();
         latitude = in.readDouble();
         date = in.readLong();
         creatorName = in.readString();
         creatorEmail = in.readString();
+        creatorProfilePicture = in.readString();
     }
 
     public static final Creator<EventSummaryDto> CREATOR = new Creator<EventSummaryDto>() {
@@ -66,11 +68,12 @@ public class EventSummaryDto implements Parcelable {
         dest.writeString(name);
         dest.writeString(description);
         dest.writeInt(maxAttendances);
-        dest.writeByte((byte) (isOpen ? 1 : 0));
+        dest.writeByte((byte) (open ? 1 : 0));
         dest.writeDouble(longitude);
         dest.writeDouble(latitude);
         dest.writeLong(date);
         dest.writeString(creatorName);
         dest.writeString(creatorEmail);
+        dest.writeString(creatorProfilePicture);
     }
 }

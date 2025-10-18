@@ -3,8 +3,6 @@ package com.example.eventplanner.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
-import android.util.Patterns;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -18,13 +16,8 @@ import com.example.eventplanner.clients.utils.UserIdUtils;
 import com.example.eventplanner.clients.utils.UserRoleUtils;
 import com.example.eventplanner.dto.auth.LoginDto;
 import com.example.eventplanner.dto.auth.LoginResponseDto;
-import com.example.eventplanner.model.event.Event;
-import com.example.eventplanner.utils.JsonLog;
-import com.example.eventplanner.utils.JsonUtils;
 import com.example.eventplanner.utils.SimpleCallback;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import retrofit2.Call;
 

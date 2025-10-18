@@ -4,10 +4,7 @@ import com.example.eventplanner.dto.event.CreateEventTypeDto;
 import com.example.eventplanner.dto.event.EventDto;
 import com.example.eventplanner.dto.event.EventSummaryDto;
 import com.example.eventplanner.dto.event.EventTypeDto;
-import com.example.eventplanner.model.event.Event;
 import com.example.eventplanner.model.event.EventType;
-import com.example.eventplanner.model.utils.PagedModel;
-import com.example.eventplanner.model.utils.SortDirection;
 
 import java.util.List;
 
@@ -20,7 +17,6 @@ import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
-import retrofit2.http.Query;
 
 public interface EventTypeService {
     @Headers({"Content-Type:application/json"})

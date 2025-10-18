@@ -16,7 +16,7 @@
         android:layout_marginBottom="50dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/pagination_my_events"
-        tools:listitem="@layout/fragment_event_compact" />
+        tools:listitem="@layout/item_event_compact" />
 
     <FrameLayout
         android:layout_width="match_parent"

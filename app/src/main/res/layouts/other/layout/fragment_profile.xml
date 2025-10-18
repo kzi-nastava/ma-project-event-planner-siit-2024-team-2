@@ -170,6 +170,12 @@
             android:text="Change Password"
             android:layout_gravity="center_horizontal"/>
 
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/switchReceiveNotifications"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/receive_notifications"/>
+
         <!-- Deactivate Account -->
         <Button
             android:id="@+id/btnDeactivateAccount"

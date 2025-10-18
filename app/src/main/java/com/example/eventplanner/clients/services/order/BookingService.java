@@ -3,7 +3,6 @@ package com.example.eventplanner.clients.services.order;
 import com.example.eventplanner.dto.order.BookingDto;
 import com.example.eventplanner.model.order.Booking;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.http.Body;

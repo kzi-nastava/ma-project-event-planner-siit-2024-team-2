@@ -5,19 +5,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.eventplanner.R;
-import com.example.eventplanner.dto.event.EventSummaryDto;
+import com.example.eventplanner.clients.utils.ImageUtil;
 import com.example.eventplanner.dto.serviceproduct.ServiceProductSummaryDto;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import lombok.Getter;
@@ -46,6 +45,7 @@ public class ServiceProductAdapter extends RecyclerView.Adapter<ServiceProductAd
         private final TextView username, email, name, price, description;
         private final Button moreInfo;
         private final ImageButton heart;
+        private final ImageView profilePicture;
 
         public ViewHolder(View view) {
             super(view);
@@ -56,6 +56,7 @@ public class ServiceProductAdapter extends RecyclerView.Adapter<ServiceProductAd
             description = view.findViewById(R.id.text_service_product_description);
             moreInfo = view.findViewById(R.id.btn_service_product_more_info);
             heart = view.findViewById(R.id.btn_service_product_heart);
+            profilePicture = view.findViewById(R.id.image_spp_profile_picture);
         }
     }
 
@@ -63,7 +64,7 @@ public class ServiceProductAdapter extends RecyclerView.Adapter<ServiceProductAd
     @Override
     public ServiceProductAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
         View view = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.fragment_service_product_compact, viewGroup, false);
+                .inflate(R.layout.item_service_product_compact, viewGroup, false);
         return new ServiceProductAdapter.ViewHolder(view);
     }
 
@@ -99,6 +100,15 @@ public class ServiceProductAdapter extends RecyclerView.Adapter<ServiceProductAd
             );
             if (listener != null) listener.onHeartClick(dto, newState);
         });
+
+        String imageName = dto.getCreatorProfilePicture();
+        if (imageName != null && !imageName.isEmpty()) {
+            Glide.with(holder.itemView)
+                    .load(ImageUtil.getImageUrl(imageName))
+                    .placeholder(R.drawable.profile_picture)
+                    .into(holder.profilePicture);
+        } else
+            holder.profilePicture.setImageResource(R.drawable.profile_picture);
     }
 
     @Override

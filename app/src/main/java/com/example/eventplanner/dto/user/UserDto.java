@@ -1,7 +1,5 @@
 package com.example.eventplanner.dto.user;
 
-import com.google.gson.annotations.SerializedName;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,7 +16,7 @@ public class UserDto {
    private String lastName;
    private String phoneNumber;
    private String address;
-   private String profilePictureUrl;
+   private String imageEncodedName;
    private boolean isCompany;
 
    // For company users
@@ -26,4 +24,5 @@ public class UserDto {
    private String companyDescription;
    private String companyAddress;
 
+   private boolean mutedNotifications = false;
 }

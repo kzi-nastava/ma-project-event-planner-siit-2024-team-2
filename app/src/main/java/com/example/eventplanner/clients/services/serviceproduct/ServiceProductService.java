@@ -7,7 +7,6 @@ import com.example.eventplanner.dto.serviceproduct.ServiceProductDto;
 import com.example.eventplanner.dto.serviceproduct.ServiceProductSummaryDto;
 import com.example.eventplanner.model.serviceproduct.ServiceProduct;
 import com.example.eventplanner.model.utils.PagedModel;
-import com.example.eventplanner.model.utils.SortDirection;
 
 import java.util.List;
 

@@ -7,15 +7,9 @@ import android.os.Looper;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.example.eventplanner.R;
 import com.example.eventplanner.clients.utils.JwtUtils;
-
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class SplashScreenActivity extends AppCompatActivity {
 

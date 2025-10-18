@@ -1,24 +1,38 @@
 package com.example.eventplanner.activities;
 
+import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.SystemClock;
+import android.text.Spanned;
 import android.view.Menu;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
-import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.bumptech.glide.Glide;
+import com.example.eventplanner.EventPlannerApp;
 import com.example.eventplanner.R;
+import com.example.eventplanner.clients.repositories.user.ProfileRepository;
+import com.example.eventplanner.clients.utils.ImageUtil;
 import com.example.eventplanner.clients.utils.UserIdUtils;
 import com.example.eventplanner.clients.utils.UserRoleUtils;
 import com.example.eventplanner.databinding.ActivityHomeBinding;
+import com.example.eventplanner.utils.FormatUtil;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.HashSet;
@@ -32,11 +46,10 @@ public class HomeActivity extends AppCompatActivity {
     private NavigationView navigationView;
     private NavController navController;
     private Toolbar toolbar;
-    private ActionBarDrawerToggle drawerToggle;
     private final Set<Integer> topLevelDestinations = new HashSet<>();
 
-    // Define which routes require authentication
     private final Set<Integer> protectedDestinations = new HashSet<>();
+    private final ProfileRepository profileRepository = new ProfileRepository();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,38 +66,40 @@ public class HomeActivity extends AppCompatActivity {
         // Setup Navigation
         navController = Navigation.findNavController(this, R.id.fragment_nav_content_main);
 
-        // Top-level destinations (no "back" arrow)
+        // Top-level destinations
         topLevelDestinations.add(R.id.nav_home);
-        topLevelDestinations.add(R.id.nav_settings);
-        topLevelDestinations.add(R.id.nav_language);
+        topLevelDestinations.add(R.id.nav_events);
+        topLevelDestinations.add(R.id.nav_service_products);
+        topLevelDestinations.add(R.id.nav_website);
         topLevelDestinations.add(R.id.nav_logout);
 
         // Protected routes — user must be logged in
+        protectedDestinations.add(R.id.nav_notifications);
         protectedDestinations.add(R.id.nav_fragment_create_product);
         protectedDestinations.add(R.id.nav_fragment_my_products);
         protectedDestinations.add(R.id.nav_fragment_create_event);
         protectedDestinations.add(R.id.nav_fragment_profile);
+        protectedDestinations.add(R.id.nav_services);
+        protectedDestinations.add(R.id.nav_edit_service);
+        protectedDestinations.add(R.id.nav_create_event_type);
+        protectedDestinations.add(R.id.nav_event_types);
 
         protectedDestinations.add(R.id.nav_fragment_category);
         protectedDestinations.add(R.id.nav_create_category);
 
-        appBarConfiguration = new AppBarConfiguration.Builder(topLevelDestinations)
+        Set<Integer> combinedDestinations = new HashSet<>();
+        combinedDestinations.addAll(topLevelDestinations);
+        combinedDestinations.addAll(protectedDestinations);
+
+        appBarConfiguration = new AppBarConfiguration.Builder(combinedDestinations)
                 .setOpenableLayout(drawerLayout)
                 .build();
-
-        // Drawer toggle
-        drawerToggle = new ActionBarDrawerToggle(
-                this, drawerLayout, toolbar,
-                R.string.navigation_drawer_open, R.string.navigation_drawer_close
-        );
-        drawerLayout.addDrawerListener(drawerToggle);
-        drawerToggle.syncState();
 
         // Setup navigation UI
         NavigationUI.setupWithNavController(navigationView, navController);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
 
-        // 🔒 Add route protection
+        // Add route protection
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
             if (protectedDestinations.contains(destination.getId()) && UserIdUtils.getUserId(this) < 0) {
                 // User is not logged in — redirect to LoginActivity
@@ -96,11 +111,28 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         setupMenuVisibility();
+
+        setupHeader();
+
+        if (getIntent().getBooleanExtra("com.example.event_planner.navigateToNotifications", false))
+            navController.navigate(R.id.nav_notifications);
+
+        subscribeToNotifications();
+    }
+
+    @Override
+    protected void onNewIntent(@NonNull Intent intent) {
+        super.onNewIntent(intent);
+        if (intent.getBooleanExtra("com.example.event_planner.navigateToNotifications", false))
+            navController.navigate(R.id.nav_notifications);
     }
 
     @Override
     public boolean onCreateOptionsMenu(android.view.Menu menu) {
-        getMenuInflater().inflate(R.menu.toolbar_menu, menu);
+        if (UserRoleUtils.getUserRole(this) == null)
+            getMenuInflater().inflate(R.menu.toolbar_menu_guest, menu);
+        else
+            getMenuInflater().inflate(R.menu.toolbar_menu, menu);
         return true;
     }
 
@@ -121,20 +153,24 @@ public class HomeActivity extends AppCompatActivity {
     private void setupMenuVisibility() {
         Menu menu = navigationView.getMenu();
 
-        // Example role loading — adapt to your system
         String role = UserRoleUtils.getUserRole(this);
 
-        // Hide everything first (optional)
         for (int i = 0; i < menu.size(); i++) {
             menu.getItem(i).setVisible(false);
         }
 
         // Common for all users
         menu.findItem(R.id.nav_home).setVisible(true);
-        menu.findItem(R.id.nav_logout).setVisible(true);
-        menu.findItem(R.id.nav_fragment_profile).setVisible(true);
+        menu.findItem(R.id.nav_events).setVisible(true);
+        menu.findItem(R.id.nav_service_products).setVisible(true);
 
-        if (role == null) return;
+        if (role == null) {
+            menu.findItem(R.id.nav_logout).setTitle(R.string.login);
+            return;
+        }
+
+        // Authenticated users
+        menu.findItem(R.id.nav_notifications).setVisible(true);
 
         switch (role) {
             case "ADMIN":
@@ -159,6 +195,57 @@ public class HomeActivity extends AppCompatActivity {
             case "AUTHENTICATED":
                 // base access
                 break;
+        }
+    }
+
+    private void setupHeader() {
+        View navigationViewHeaderView = navigationView.getHeaderView(0);
+        ImageView profilePicture = navigationViewHeaderView.findViewById(R.id.nav_header_image);
+        TextView profileName = navigationViewHeaderView.findViewById(R.id.nav_header_name);
+
+        profileRepository.getUserData(UserIdUtils.getUserId(this)).observe(this, profile -> {
+            String imageName = profile.getImageEncodedName();
+            if (imageName != null && !imageName.isBlank())
+                Glide.with(this)
+                        .load(ImageUtil.getImageUrl(imageName))
+                        .placeholder(R.drawable.profile_picture)
+                        .into(profilePicture);
+            else
+                profilePicture.setImageResource(R.drawable.profile_picture);
+
+            String first = profile.getFirstName() == null ? "" : profile.getFirstName();
+            String last = profile.getLastName() == null ? "" : profile.getLastName();
+            profileName.setText(first + " " + last);
+        });
+    }
+
+
+    private void subscribeToNotifications() {
+        long userId = UserIdUtils.getUserId(this);
+        if (userId != -1) {
+            EventPlannerApp.getWebSocketManager().getChannel("notifications", "", Long.toString(userId))
+                    .observe(this, wsMessage -> {
+                        Intent intent = new Intent(this, HomeActivity.class);
+                        intent.putExtra("com.example.event_planner.navigateToNotifications", true);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
+
+                        Spanned title = FormatUtil.markdownToSpanned(wsMessage.getTitle());
+                        Spanned body = FormatUtil.markdownToSpanned(wsMessage.getMessage());
+                        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "notifications")
+                                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                                .setContentTitle(title)
+                                .setContentText(body)
+                                .setContentIntent(pendingIntent)
+                                .setAutoCancel(true)
+                                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                            ActivityCompat.requestPermissions(this, new String[] { android.Manifest.permission.POST_NOTIFICATIONS }, 1);
+                            return;
+                        }
+                        NotificationManagerCompat.from(this).notify((int)(SystemClock.uptimeMillis() % Integer.MAX_VALUE), builder.build());
+                    });
         }
     }
 
