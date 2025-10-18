@@ -3,6 +3,7 @@ package com.example.eventplanner.activities;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.text.Spanned;
@@ -140,7 +141,10 @@ public class HomeActivity extends AppCompatActivity {
 
     private void handleIntent(Intent intent) {
         long eventId = intent.getLongExtra("com.example.eventplanner.navigateToEvent", -1);
-        SuspendedDialogData data = intent.getSerializableExtra("com.example.eventplanner.showSuspension", SuspendedDialogData.class);
+        SuspendedDialogData data = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            data = intent.getSerializableExtra("com.example.eventplanner.showSuspension", SuspendedDialogData.class);
+        }
         if (intent.getBooleanExtra("com.example.eventplanner.navigateToNotifications", false))
             navController.navigate(R.id.nav_notifications);
         else if (eventId != -1) {
