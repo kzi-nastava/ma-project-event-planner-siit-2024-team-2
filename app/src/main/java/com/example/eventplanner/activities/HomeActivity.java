@@ -186,12 +186,6 @@ public class HomeActivity extends AppCompatActivity {
             return;
         }
 
-        if (AuthUtils.isAuthenticatedUser(this)) {
-            menu.findItem(R.id.nav_logout).setTitle(R.string.logout_and_upgrade);
-            menu.findItem(R.id.nav_logout).setVisible(true);
-            return;
-        }
-
         menu.findItem(R.id.nav_notifications).setVisible(true);
 
         switch (role) {
@@ -213,7 +207,8 @@ public class HomeActivity extends AppCompatActivity {
                 break;
 
             case "AUTHENTICATED":
-                // base access
+                menu.findItem(R.id.nav_logout).setTitle(R.string.logout_and_upgrade);
+                menu.findItem(R.id.nav_logout).setVisible(true);
                 break;
         }
     }
@@ -224,6 +219,8 @@ public class HomeActivity extends AppCompatActivity {
         TextView profileName = navigationViewHeaderView.findViewById(R.id.nav_header_name);
 
         profileRepository.getUserData(UserIdUtils.getUserId(this)).observe(this, profile -> {
+            if (profile == null)
+                return;
             String imageName = profile.getImageEncodedName();
             if (imageName != null && !imageName.isBlank())
                 Glide.with(this)
