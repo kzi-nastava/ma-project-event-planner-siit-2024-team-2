@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.eventplanner.R;
 import com.example.eventplanner.clients.utils.ClientUtils;
 import com.example.eventplanner.clients.utils.JwtUtils;
+import com.example.eventplanner.clients.utils.UserEmailUtils;
 import com.example.eventplanner.clients.utils.UserIdUtils;
 import com.example.eventplanner.clients.utils.UserRoleUtils;
 import com.example.eventplanner.dto.auth.LoginDto;
@@ -37,21 +38,28 @@ public class LoginActivity extends AppCompatActivity {
         registerButton = findViewById(R.id.registerButton);
         continueButton = findViewById(R.id.continueWithoutAccount);
 
+        Intent loginIntent = getIntent();
+        String invitationToken = loginIntent.getStringExtra("com.example.eventplanner.retryInvitation");
+
         loginButton.setOnClickListener(v -> {
             if (validateInputs()) {
-                loginUser();
+                loginUser(invitationToken);
             }
         });
+
 
         registerButton.setOnClickListener(v -> {
             Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
             startActivity(intent);
+            finish();
         });
 
         continueButton.setOnClickListener(v -> {
             Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
             startActivity(intent);
+            finish();
         });
+
     }
 
     private boolean validateInputs() {
@@ -71,7 +79,7 @@ public class LoginActivity extends AppCompatActivity {
         return true;
     }
 
-    private void loginUser() {
+    private void loginUser(String invitationToken) {
         String email = emailEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
 
@@ -83,8 +91,12 @@ public class LoginActivity extends AppCompatActivity {
                         JwtUtils.saveJwtToken(this, response.body().getJwt());
                         UserIdUtils.saveUserId(this, response.body().getId());
                         UserRoleUtils.saveUserRole(this, response.body().getRole());
+                        UserEmailUtils.saveUserEmail(this, response.body().getEmail());
 
-                        navigateToHomeScreen();
+                        if (invitationToken != null)
+                            navigateToInvitationScreen(invitationToken);
+                        else
+                            navigateToHomeScreen();
                     } else
                         Toast.makeText(this, "Login failed. Please check your credentials.", Toast.LENGTH_SHORT).show();
                 },
@@ -95,5 +107,13 @@ public class LoginActivity extends AppCompatActivity {
     private void navigateToHomeScreen() {
         Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
         startActivity(intent);
+        finish();
+    }
+
+    private void navigateToInvitationScreen(String token) {
+        Intent intent = new Intent(LoginActivity.this, AcceptInvitationActivity.class);
+        intent.putExtra("token", token);
+        startActivity(intent);
+        finish();
     }
 }

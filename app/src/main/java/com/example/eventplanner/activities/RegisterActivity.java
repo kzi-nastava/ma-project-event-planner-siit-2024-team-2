@@ -14,7 +14,9 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.eventplanner.R;
+import com.example.eventplanner.clients.utils.AuthUtils;
 import com.example.eventplanner.clients.utils.ClientUtils;
+import com.example.eventplanner.clients.utils.UserRoleUtils;
 import com.example.eventplanner.dto.auth.RegisterUserDto;
 import com.example.eventplanner.model.utils.UserRole;
 import com.example.eventplanner.utils.SimpleCallback;
@@ -25,13 +27,15 @@ import retrofit2.Call;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private TextInputEditText firstNameEditText, lastNameEditText, emailEditText, passwordEditText, confirmPasswordEditText, addressEditText, phoneEditText;
+    private TextInputEditText firstNameEditText, lastNameEditText, emailEditText, passwordEditText, confirmPasswordEditText, addressEditText, phoneEditText, companyEmailEditText;
     private ImageView profileImageView;
     private Button uploadProfilePicButton, registerButton;
     private LinearLayout eventOrganizerForm;
     private LinearLayout serviceProviderForm;
     private RadioGroup userTypeRadioGroup;
     private boolean isEventOrganizer = true;
+    private boolean isUpgradeMode = false;
+    private String prefilledEmail = null;
 
 
 
@@ -39,6 +43,16 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registers);
+        
+        Intent intent = getIntent();
+        isUpgradeMode = intent.getBooleanExtra("upgrade_mode", false);
+        if (isUpgradeMode) {
+            String userType = intent.getStringExtra("user_type");
+            if ("serviceProvider".equals(userType)) {
+                isEventOrganizer = false;
+            }
+        }
+        
         profileImageView = findViewById(R.id.profileImageView);
         uploadProfilePicButton = findViewById(R.id.uploadProfilePicButton);
         firstNameEditText = findViewById(R.id.firstNameEditText);
@@ -51,7 +65,10 @@ public class RegisterActivity extends AppCompatActivity {
         registerButton = findViewById(R.id.registerButton);
         eventOrganizerForm = findViewById(R.id.eventOrganizerForm);
         serviceProviderForm = findViewById(R.id.serviceProviderForm);
+        companyEmailEditText = findViewById(R.id.companyEmailEditText);
         userTypeRadioGroup = findViewById(R.id.userTypeRadioGroup);
+        
+        setupUpgradeMode();
         uploadProfilePicButton.setOnClickListener(v -> {
             Toast.makeText(RegisterActivity.this, "Profile picture upload feature coming soon!", Toast.LENGTH_SHORT).show();
         });
@@ -59,8 +76,14 @@ public class RegisterActivity extends AppCompatActivity {
         registerButton.setOnClickListener(v -> {
             if (validateInputs()) {
                 createUser();
-                Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-                startActivity(intent);
+                if (isUpgradeMode) {
+                    Intent homeIntent = new Intent(RegisterActivity.this, HomeActivity.class);
+                    homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(homeIntent);
+                } else {
+                    Intent loginIntent = new Intent(RegisterActivity.this, LoginActivity.class);
+                    startActivity(loginIntent);
+                }
             }
         });
 
@@ -79,10 +102,45 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
     }
+    
+    private void setupUpgradeMode() {
+        if (isUpgradeMode) {
+            if (isEventOrganizer) {
+                userTypeRadioGroup.check(R.id.eventOrganizerRadioButton);
+                eventOrganizerForm.setVisibility(View.VISIBLE);
+                serviceProviderForm.setVisibility(View.GONE);
+            } else {
+                userTypeRadioGroup.check(R.id.serviceProviderRadioButton);
+                eventOrganizerForm.setVisibility(View.GONE);
+                serviceProviderForm.setVisibility(View.VISIBLE);
+            }
+            
+            userTypeRadioGroup.setEnabled(false);
+            userTypeRadioGroup.setVisibility(View.INVISIBLE);
+
+            prefilledEmail = AuthUtils.getUserEmail(this);
+            if (prefilledEmail != null) {
+                if (isEventOrganizer) {
+                    emailEditText.setText(prefilledEmail);
+                    emailEditText.setEnabled(false);
+                } else {
+                    companyEmailEditText.setText(prefilledEmail);
+                    companyEmailEditText.setEnabled(false);
+                }
+            }
+
+            registerButton.setText("Upgrade Account");
+        }
+    }
+    
     private boolean validateInputs() {
         String firstName = firstNameEditText.getText().toString().trim();
         String lastName = lastNameEditText.getText().toString().trim();
-        String email = emailEditText.getText().toString().trim();
+        String email;
+        if (isEventOrganizer)
+            email = emailEditText.getText().toString().trim();
+        else
+            email = companyEmailEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
         String confirmPassword = confirmPasswordEditText.getText().toString().trim();
         String address = addressEditText.getText().toString().trim();
@@ -96,8 +154,11 @@ public class RegisterActivity extends AppCompatActivity {
             lastNameEditText.setError("Last name is required");
             return false;
         }
-        if (TextUtils.isEmpty(email) || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            emailEditText.setError("Valid email is required");
+        if (!isUpgradeMode && (TextUtils.isEmpty(email) || !Patterns.EMAIL_ADDRESS.matcher(email).matches())) {
+            if (isEventOrganizer)
+                emailEditText.setError("Valid email is required");
+            else
+                companyEmailEditText.setError("Valid email is required");
             return false;
         }
         if (TextUtils.isEmpty(password) || password.length() < 6) {
@@ -121,7 +182,11 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void createUser() {
-        String email = emailEditText.getText().toString().trim();
+        String email;
+        if (isEventOrganizer)
+            email = emailEditText.getText().toString().trim();
+        else
+            email = companyEmailEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
         String firstName = firstNameEditText.getText().toString().trim();
         String lastName = lastNameEditText.getText().toString().trim();
@@ -142,23 +207,44 @@ public class RegisterActivity extends AppCompatActivity {
         call.enqueue(new SimpleCallback<>(
                 response -> {
                     if (response != null) {
-                        Toast.makeText(this, "Registration successful", Toast.LENGTH_SHORT).show();
-                        navigateToSignIn();
-                    } else
-                        Toast.makeText(this, "Registration failed", Toast.LENGTH_SHORT).show();
+                        if (isUpgradeMode) {
+                            Toast.makeText(this, "Account upgraded successfully!", Toast.LENGTH_SHORT).show();
+                            UserRoleUtils.saveUserRole(this, isEventOrganizer ? UserRole.EVENT_ORGANIZER : UserRole.SERVICE_PRODUCT_PROVIDER);
+                            navigateToHomeScreen();
+                        } else {
+                            Toast.makeText(this, "Registration successful", Toast.LENGTH_SHORT).show();
+                        }
+                        if (!isUpgradeMode) {
+                            navigateToSignIn();
+                        }
+                    } else {
+                        if (isUpgradeMode) {
+                            Toast.makeText(this, "Failed to upgrade account", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(this, "Registration failed", Toast.LENGTH_SHORT).show();
+                        }
+                    }
                 },
-                error -> Toast.makeText(this, "Registration failed", Toast.LENGTH_SHORT).show()
+                error -> {
+                    if (isUpgradeMode) {
+                        Toast.makeText(this, "Failed to upgrade account", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(this, "Registration failed", Toast.LENGTH_SHORT).show();
+                    }
+                }
         ));
 
-        Toast.makeText(this, "User " + firstName + " " + lastName + " registered successfully!", Toast.LENGTH_SHORT).show();
-
-        resetFields();
+        if (!isUpgradeMode) {
+            Toast.makeText(this, "User " + firstName + " " + lastName + " registered successfully!", Toast.LENGTH_SHORT).show();
+            resetFields();
+        }
     }
 
     private void resetFields() {
         firstNameEditText.setText("");
         lastNameEditText.setText("");
         emailEditText.setText("");
+        companyEmailEditText.setText("");
         passwordEditText.setText("");
         confirmPasswordEditText.setText("");
         addressEditText.setText("");
@@ -168,5 +254,11 @@ public class RegisterActivity extends AppCompatActivity {
     private void navigateToSignIn()  {
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
+        finish();
+    }
+    private void navigateToHomeScreen()  {
+        Intent intent = new Intent(this, HomeActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

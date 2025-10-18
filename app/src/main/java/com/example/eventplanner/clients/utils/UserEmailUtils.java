@@ -3,36 +3,36 @@ package com.example.eventplanner.clients.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-public class UserIdUtils {
+public class UserEmailUtils {
    public static final String PREF_NAME = "app_prefs";
-   public static final String USER_ID_KEY = "user_id";
-   private static long cachedUserId = -1;
+   public static final String USER_EMAIL_KEY = "user_email";
+   private static String cachedUserEmail = null;
 
-   private UserIdUtils() {}
+   private UserEmailUtils() {}
 
-   public static long getUserId(Context context) {
-      if (cachedUserId >= 0) {
-         return cachedUserId;
+   public static String getUserEmail(Context context) {
+      if (cachedUserEmail != null) {
+         return cachedUserEmail;
       }
       SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-      return sharedPreferences.getLong(USER_ID_KEY, -1);
+      return sharedPreferences.getString(USER_EMAIL_KEY, null);
    }
 
-   public static void saveUserId(Context context, long id) {
-      cachedUserId = id;
+   public static void saveUserEmail(Context context, String email) {
+      cachedUserEmail = email;
       if (context == null) return;
       SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
       SharedPreferences.Editor editor = sharedPreferences.edit();
-      editor.putLong(USER_ID_KEY, id);
+      editor.putString(USER_EMAIL_KEY, email);
       editor.apply();
    }
 
-   public static void clearUserId(Context context) {
-      cachedUserId = -1;
+   public static void clearUserEmail(Context context) {
+      cachedUserEmail = null;
       if (context == null) return;
       SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
       SharedPreferences.Editor editor = sharedPreferences.edit();
-      editor.remove(USER_ID_KEY);
+      editor.remove(USER_EMAIL_KEY);
       editor.apply();
    }
 }
