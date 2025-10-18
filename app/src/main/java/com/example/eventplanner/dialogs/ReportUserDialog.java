@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -84,6 +85,10 @@ public class ReportUserDialog extends DialogFragment {
             EditText etReason = dialog.findViewById(R.id.etReportReason);
             Button btnCancel = dialog.findViewById(R.id.btnCancel);
             Button btnReport = dialog.findViewById(R.id.btnReport);
+            TextView tvReportUser = dialog.findViewById(R.id.tvReportUser);
+            if (tvReportUser != null && reportedName != null) {
+                tvReportUser.setText(String.format("Report %s", reportedName));
+            }
 
             if (btnCancel != null) {
                 btnCancel.setOnClickListener(v -> dialog.dismiss());

@@ -30,6 +30,8 @@ import com.example.eventplanner.databinding.FragmentAllEventsPageBinding;
 import com.example.eventplanner.databinding.FragmentEventDetailsBinding;
 import com.example.eventplanner.dialogs.ReportUserDialog;
 import com.example.eventplanner.model.event.Event;
+import com.example.eventplanner.model.user.BaseUser;
+import com.example.eventplanner.model.user.EventOrganizer;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 
@@ -185,9 +187,12 @@ public class EventDetailsFragment extends Fragment {
             return;
         }
 
+        BaseUser eo = currentEvent.getEventOrganizerDto();
         String email = currentEvent.getEventOrganizerDto().getEmail();
-        String name = currentEvent.getEventOrganizerDto().getFirstName() + " " + currentEvent.getEventOrganizerDto().getLastName();
-        
+        String firstName = eo.getFirstName() == null ? "" : eo.getFirstName();
+        String lastName = eo.getLastName() == null ? "" : eo.getLastName();
+        String name = firstName.isEmpty() ? email : firstName + " " + lastName;
+
         ReportUserDialog dialog = ReportUserDialog.newInstance(email, name);
         dialog.show(getParentFragmentManager(), "ReportUserDialog");
     }

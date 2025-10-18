@@ -87,6 +87,7 @@ public class HomeActivity extends AppCompatActivity {
 
         protectedDestinations.add(R.id.nav_fragment_category);
         protectedDestinations.add(R.id.nav_create_category);
+        protectedDestinations.add(R.id.nav_admin_user_reports);
 
         Set<Integer> combinedDestinations = new HashSet<>();
         combinedDestinations.addAll(topLevelDestinations);
@@ -197,6 +198,7 @@ public class HomeActivity extends AppCompatActivity {
                 menu.findItem(R.id.nav_create_event_type).setVisible(true);
                 menu.findItem(R.id.nav_fragment_category).setVisible(true);
                 menu.findItem(R.id.nav_create_category).setVisible(true);
+                menu.findItem(R.id.nav_admin_user_reports).setVisible(true);
                 break;
 
             case "SERVICE_PRODUCT_PROVIDER":

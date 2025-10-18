@@ -57,6 +57,10 @@
         android:title="@string/new_service" />
 
     <item
+        android:id="@+id/nav_admin_user_reports"
+        android:title="User Reports" />
+
+    <item
         android:id="@+id/nav_logout"
         android:title="@string/logout" />
 
