@@ -8,6 +8,8 @@ public class JwtUtils {
     public static final String JWT_TOKEN_KEY = "jwt_token";
     private static String cachedJwtToken = null;
 
+    private JwtUtils() {}
+
     public static String getJwtToken(Context context) {
         if (cachedJwtToken != null) {
             return cachedJwtToken;

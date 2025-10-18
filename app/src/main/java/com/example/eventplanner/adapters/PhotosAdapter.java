@@ -47,7 +47,7 @@ public class PhotosAdapter extends RecyclerView.Adapter<PhotosAdapter.PhotoViewH
             ImageView closeButton = dialog.findViewById(R.id.close_button);
             Uri photoDialogUri = photoList.get(position);
 
-            imageView.setImageURI(photoDialogUri); // Replace with your image loading logic
+            imageView.setImageURI(photoDialogUri);
             closeButton.setOnClickListener(view -> dialog.dismiss());
 
             dialog.show();

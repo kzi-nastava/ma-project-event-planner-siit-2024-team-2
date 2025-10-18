@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:gravity="center_horizontal"
+        android:gravity="start"
         android:spacing="12dp">
 
         <!-- Event Name -->
@@ -58,7 +58,7 @@
             android:layout_height="wrap_content"
             android:text="Event Type"
             android:textStyle="bold"
-            android:layout_marginTop="8dp"/>
+            android:layout_marginTop="10dp"/>
 
         <!-- Event Type Spinner -->
         <Spinner
@@ -68,28 +68,75 @@
             android:spinnerMode="dropdown" />
 
         <!-- Date Selector -->
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_select_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:text="Select Date" />
 
         <!-- Location Selector -->
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_select_location"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Select Location" />
 
         <!-- Is Open Checkbox -->
-        <CheckBox
+        <com.google.android.material.checkbox.MaterialCheckBox
             android:id="@+id/cb_is_open"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Open Event" />
+            android:text="Is Open" />
 
+        <LinearLayout
+            android:id="@+id/ll_invitations"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:text="@string/invitations"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="4"
+                    android:layout_marginEnd="10dp"
+                    android:hint="@string/invitee_email">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_invitee_email"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+
+                        android:inputType="text" />
+                </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_confirm_email"
+                    android:layout_weight="1"
+                    android:layout_width="20dp"
+                    android:layout_height="wrap_content"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:text="Add"/>
+            </LinearLayout>
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chip_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </com.google.android.material.chip.ChipGroup>
+
+        </LinearLayout>
         <!-- Submit -->
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_submit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -98,7 +145,7 @@
             android:layout_marginTop="16dp" />
 
         <!-- Cancel -->
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_cancel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

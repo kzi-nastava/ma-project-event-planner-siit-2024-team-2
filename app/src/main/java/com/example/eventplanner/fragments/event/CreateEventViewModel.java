@@ -35,7 +35,7 @@ public class CreateEventViewModel extends ViewModel {
     }
 
     public void createEvent(String name, String description, long typeId, int maxAttendances,
-                            boolean isOpen, double longitude, double latitude, Date date) {
+                            boolean isOpen, double longitude, double latitude, Date date, List<String> emails) {
 
         boolean isValid = !name.isEmpty() && !description.isEmpty() && typeId > 0;
 
@@ -52,14 +52,15 @@ public class CreateEventViewModel extends ViewModel {
                 name,
                 description,
                 typeId,
-                1,
+                1, // backend uses authenticated user's id
                 maxAttendances,
                 isOpen,
                 longitude,
                 latitude,
                 formattedDate,
                 new ArrayList<>(), // activityIds
-                new ArrayList<>()  // budgetIds
+                new ArrayList<>(),  // budgetIds
+                emails
         );
 
         // delegate to repository

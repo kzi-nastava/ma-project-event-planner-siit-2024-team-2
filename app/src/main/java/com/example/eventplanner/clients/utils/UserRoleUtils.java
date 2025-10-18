@@ -10,6 +10,8 @@ public class UserRoleUtils {
     public static final String USER_ROLE_KEY = "user_role";
     private static UserRole cachedUserRole = null;
 
+    private UserRoleUtils() {}
+
     public static String getUserRole(Context context) {
         if (cachedUserRole != null) {
             return cachedUserRole.toString();

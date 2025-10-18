@@ -11,6 +11,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,11 +21,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.eventplanner.R;
 import com.example.eventplanner.activities.SelectLocationActivity;
+import com.example.eventplanner.databinding.FragmentCreateEventBinding;
 import com.example.eventplanner.model.event.EventType;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.checkbox.MaterialCheckBox;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.DateValidatorPointForward;
 import com.google.android.material.datepicker.MaterialDatePicker;
@@ -37,10 +40,12 @@ import java.util.List;
 public class CreateEventFragment extends Fragment {
 
     private CreateEventViewModel viewModel;
+    private FragmentCreateEventBinding binding;
 
-    private TextInputEditText etName, etDescription, etMaxAttendances;
+    private TextInputEditText etName, etDescription, etMaxAttendances, etInviteeEmail;
     private MaterialCheckBox cbIsOpen;
-    private MaterialButton btnSubmit, btnSelectDate, btnSelectLocation;
+    private MaterialButton btnSubmit, btnSelectDate, btnSelectLocation, btnAddEmail;
+    private ChipGroup emailChips;
 
     private Spinner spinnerEventType;
     private TextView tvEventTypeLabel;
@@ -64,7 +69,8 @@ public class CreateEventFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_create_event, container, false);
+        binding = FragmentCreateEventBinding.inflate(inflater, container, false);
+        View root = binding.getRoot();
 
         viewModel = new ViewModelProvider(this).get(CreateEventViewModel.class);
         viewModel.getEventTypes().observe(getViewLifecycleOwner(), types -> {
@@ -87,17 +93,21 @@ public class CreateEventFragment extends Fragment {
             spinnerEventType.setAdapter(spinnerAdapter);
         });
 
-        etName = view.findViewById(R.id.et_event_name);
-        etDescription = view.findViewById(R.id.et_event_description);
-        etMaxAttendances = view.findViewById(R.id.et_event_max_attendances);
+        etName = binding.etEventName;
+        etDescription = binding.etEventDescription;
+        etMaxAttendances = binding.etEventMaxAttendances;
 
-        cbIsOpen = view.findViewById(R.id.cb_is_open);
-        btnSubmit = view.findViewById(R.id.btn_submit);
-        btnSelectLocation = view.findViewById(R.id.btn_select_location);
-        btnSelectDate = view.findViewById(R.id.btn_select_date);
+        cbIsOpen = binding.cbIsOpen;
+        btnSubmit = binding.btnSubmit;
+        btnSelectLocation = binding.btnSelectLocation;
+        btnSelectDate = binding.btnSelectDate;
 
-        spinnerEventType = view.findViewById(R.id.spinner_event_type);
-        tvEventTypeLabel = view.findViewById(R.id.tv_event_type_label);
+        etInviteeEmail = binding.etInviteeEmail;
+        btnAddEmail = binding.btnConfirmEmail;
+        emailChips = binding.chipGroup;
+
+        spinnerEventType = binding.spinnerEventType;
+        tvEventTypeLabel = binding.tvEventTypeLabel;
 
         // Observe creation result
         viewModel.getIsEventCreated().observe(getViewLifecycleOwner(), isSuccess -> {
@@ -108,9 +118,6 @@ public class CreateEventFragment extends Fragment {
                 Toast.makeText(getContext(), "Failed to Create Event!", Toast.LENGTH_SHORT).show();
             }
         });
-
-        // Populate spinner (TODO: replace with real data load)
-        // prepareEventTypes();
 
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(
                 getContext(),
@@ -124,7 +131,6 @@ public class CreateEventFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View selectedView, int position, long id) {
                 selectedTypeId = eventTypeIds.get(position);
-                // clear error when user chooses something
                 tvEventTypeLabel.setError(null);
             }
 
@@ -145,7 +151,35 @@ public class CreateEventFragment extends Fragment {
             locationLauncher.launch(intent);
         });
 
-        return view;
+        cbIsOpen.setOnCheckedChangeListener((btn, checked) -> {
+            btnAddEmail.setEnabled(!checked);
+            etInviteeEmail.setEnabled(!checked);
+        });
+        btnAddEmail.setOnClickListener(v -> {
+            String input = getText(etInviteeEmail);
+            input = input.trim();
+            String[] emails = input.split("[\\s,]+");
+            for(String email : emails)
+                if (TextUtils.isEmpty(email) || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                    if (emails.length == 1)
+                        etInviteeEmail.setError("Email is invalid");
+                    else
+                        etInviteeEmail.setError("Email \"" + email + "\" is invalid");
+                    return;
+                }
+            etInviteeEmail.setError(null);
+            etInviteeEmail.setText("");
+
+            for (String email : emails) {
+                Chip chip = new Chip(getContext());
+                chip.setText(email);
+                chip.setCloseIconVisible(true);
+                chip.setOnCloseIconClickListener(emailChips::removeView);
+                emailChips.addView(chip);
+            }
+        });
+
+        return root;
     }
 
     private void showDatePickerDialog() {
@@ -174,8 +208,17 @@ public class CreateEventFragment extends Fragment {
         Date date = new Date(selectedDateMillis);
         boolean isOpen = cbIsOpen.isChecked();
 
+        List<String> emails = null;
+        if (!isOpen) {
+            emails = new ArrayList<>();
+            for (int i = 0; i < emailChips.getChildCount(); i++) {
+                Chip chip = (Chip) emailChips.getChildAt(i);
+                emails.add(chip.getText().toString());
+            }
+        }
+
         // selectedTypeId is set by spinner
-        viewModel.createEvent(name, description, selectedTypeId, maxAttendances, isOpen, longitude, latitude, date);
+        viewModel.createEvent(name, description, selectedTypeId, maxAttendances, isOpen, longitude, latitude, date, emails);
     }
 
     private boolean validateForm() {
@@ -242,5 +285,9 @@ public class CreateEventFragment extends Fragment {
         // reset date
         selectedDateMillis = -1;
         btnSelectDate.setText("Select Date");
+
+        etInviteeEmail.setText("");
+        etInviteeEmail.setError(null);
+        emailChips.removeAllViews();
     }
 }

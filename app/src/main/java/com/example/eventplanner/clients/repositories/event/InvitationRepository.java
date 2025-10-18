@@ -6,7 +6,9 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.eventplanner.clients.services.communication.InvitationService;
 import com.example.eventplanner.clients.utils.ClientUtils;
 import com.example.eventplanner.dto.event.InvitationDto;
+import com.example.eventplanner.dto.event.InvitationResult;
 import com.example.eventplanner.model.event.Invitation;
+import com.example.eventplanner.clients.utils.InvitationCallback;
 import com.example.eventplanner.utils.SimpleCallback;
 
 import java.util.List;
@@ -54,13 +56,13 @@ public class InvitationRepository {
         return liveData;
     }
 
-    public LiveData<Invitation> acceptInvitation(String token) {
-        MutableLiveData<Invitation> liveData = new MutableLiveData<>();
+    public LiveData<InvitationResult> acceptInvitationWithErrorHandling(String token) {
+        MutableLiveData<InvitationResult> liveData = new MutableLiveData<>();
         Call<Invitation> call = invitationService.acceptInvitation(token);
 
-        call.enqueue(new SimpleCallback<>(
-                response -> liveData.setValue(response != null ? response.body() : null),
-                error -> liveData.setValue(null)
+        call.enqueue(new InvitationCallback<>(
+                invitation -> liveData.setValue(new InvitationResult(invitation)),
+                errorDto -> liveData.setValue(new InvitationResult(errorDto))
         ));
         return liveData;
     }
