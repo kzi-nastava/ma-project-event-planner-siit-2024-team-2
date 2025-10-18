@@ -29,6 +29,7 @@ public class ServiceProductSummaryDto implements Parcelable, Serializable {
     protected String description;
     protected String creatorEmail;
     protected String creatorName;
+    protected String creatorProfilePicture;
     protected boolean favorite;
 
     protected ServiceProductSummaryDto(Parcel in) {
@@ -40,6 +41,7 @@ public class ServiceProductSummaryDto implements Parcelable, Serializable {
         description = in.readString();
         creatorEmail = in.readString();
         creatorName = in.readString();
+        creatorProfilePicture = in.readString();
     }
 
     public static final Creator<ServiceProductSummaryDto> CREATOR = new Creator<ServiceProductSummaryDto>() {
@@ -69,5 +71,6 @@ public class ServiceProductSummaryDto implements Parcelable, Serializable {
         dest.writeString(description);
         dest.writeString(creatorEmail);
         dest.writeString(creatorName);
+        dest.writeString(creatorProfilePicture);
     }
 }

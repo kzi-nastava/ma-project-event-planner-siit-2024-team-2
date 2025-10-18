@@ -1,4 +1,4 @@
-package com.example.eventplanner.dto.user;
+package com.example.eventplanner.dto.communication;
 
 import java.util.Date;
 
@@ -12,8 +12,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class NotificationDto {
+    private String title;
     private String message;
-    private Date dateSent;
     private boolean seen;
+    private boolean dismissed;
     private long userId;
 }

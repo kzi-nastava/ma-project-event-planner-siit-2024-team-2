@@ -66,24 +66,23 @@ public class EditServiceFragment extends Fragment{
 
         Spinner serviceCategory = view.findViewById(R.id.spinner_service_categories);
 
-        TextView serviceName = view.findViewById(R.id.nameEditText);
-        TextView serviceDescription = view.findViewById(R.id.descriptionEditText);
-        TextView serviceSpecifies = view.findViewById(R.id.specifiesEditText);
-        TextView deleteInstruction = view.findViewById(R.id.delete_instruction_text);
+        TextView serviceName = binding.nameEditText;
+        TextView serviceDescription = binding.descriptionEditText;
+        TextView serviceSpecifies = binding.specifiesEditText;
+        TextView deleteInstruction = binding.deleteInstructionText;
 
-        TextView servicePrice = view.findViewById(R.id.priceEditText);
-        TextView serviceDiscount = view.findViewById(R.id.discountEditText);
-        // Check boxes for event types (dynamically)
+        TextView servicePrice = binding.priceEditText;
+        TextView serviceDiscount = binding.discountEditText;
 
-        RadioButton serviceRadioVisibility = view.findViewById(R.id.radio_visibility);
-        RadioButton serviceRadioAvailability = view.findViewById(R.id.radio_availability);
-        TextView serviceDuration = view.findViewById(R.id.durationEditText);
-        TextView serviceCancellationDeadline = view.findViewById(R.id.cancellationDeadlineEditText);
-        TextView serviceReservationDeadline = view.findViewById(R.id.reservationDeadlineEditText);
+        RadioButton serviceRadioVisibility = binding.radioVisibility;
+        RadioButton serviceRadioAvailability = binding.radioAvailability;
+        TextView serviceDuration = binding.durationEditText;
+        TextView serviceCancellationDeadline = binding.cancellationDeadlineEditText;
+        TextView serviceReservationDeadline = binding.reservationDeadlineEditText;
 
-        Button saveBtn = view.findViewById(R.id.btn_save);
-        Button cancelBtn = view.findViewById(R.id.btn_cancel);
-        Button attachPhotoBtn = view.findViewById(R.id.btn_attach_photo);
+        Button saveBtn = binding.btnSave;
+        Button cancelBtn = binding.btnCancel;
+        Button attachPhotoBtn = binding.btnAttachPhoto;
 
         navigateBack(view, saveBtn, true);
         navigateBack(view, cancelBtn, false);

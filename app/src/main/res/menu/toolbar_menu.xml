@@ -2,14 +2,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item android:id="@+id/nav_settings"
-        android:title="@string/settings"
-        android:icon="@drawable/ic_settings"
+    <item android:id="@+id/nav_fragment_profile"
+        android:title="@string/profile"
         android:orderInCategory="100"
         app:showAsAction="never" />
 
-    <item android:id="@+id/nav_language"
-        android:title="@string/language"
+    <item android:id="@+id/nav_logout"
+        android:title="@string/logout"
+        android:orderInCategory="200"
+        app:showAsAction="never" />
+
+    <item android:id="@+id/nav_website"
+        android:title="@string/website"
         android:icon="@drawable/ic_language"
         android:orderInCategory="300"
         app:showAsAction="ifRoom" />

@@ -6,24 +6,13 @@ import com.example.eventplanner.dto.auth.QuickLoginDto;
 import com.example.eventplanner.dto.auth.RegisterServiceProductProviderDto;
 import com.example.eventplanner.dto.auth.RegisterUserDto;
 import com.example.eventplanner.dto.auth.ResetPasswordDto;
-import com.example.eventplanner.dto.event.EventDto;
-import com.example.eventplanner.dto.event.EventSummaryDto;
-import com.example.eventplanner.model.event.Event;
-import com.example.eventplanner.model.utils.PagedModel;
-import com.example.eventplanner.model.utils.SortDirection;
-
-import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
-import retrofit2.http.DELETE;
-import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
-import retrofit2.http.PUT;
 import retrofit2.http.Path;
-import retrofit2.http.Query;
 
 public interface AuthService {
     @Headers({"Content-Type:application/json"})

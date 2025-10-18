@@ -46,7 +46,8 @@ android {
                         'src\\main\\res\\layouts\\serviceproducts',
                         'src\\main\\res\\layouts\\auth',
                         'src\\main\\res\\layouts\\other',
-                        'src\\main\\res\\layouts\\nav'
+                        'src\\main\\res\\layouts\\nav',
+                        'src\\main\\res\\layouts\\communication'
             }
         }
     }
@@ -72,6 +73,9 @@ dependencies {
     implementation libs.osmdroid.android
     implementation libs.osmdroid.geopackage
     implementation libs.commons.lang3
+    implementation libs.stompprotocolandroid
+    implementation libs.rxjava
+    implementation libs.rxandroid
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core

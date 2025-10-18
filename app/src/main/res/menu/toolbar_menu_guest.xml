@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/nav_logout"
+        android:title="@string/login"
+        android:orderInCategory="200"
+        app:showAsAction="never" />
+
+    <item android:id="@+id/nav_website"
+        android:title="@string/website"
+        android:icon="@drawable/ic_language"
+        android:orderInCategory="300"
+        app:showAsAction="ifRoom" />
+
+</menu>

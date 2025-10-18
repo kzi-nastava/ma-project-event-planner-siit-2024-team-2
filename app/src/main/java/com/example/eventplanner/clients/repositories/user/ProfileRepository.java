@@ -162,5 +162,24 @@ public class ProfileRepository {
       return liveData;
    }
 
+   // Notifications
+   public LiveData<Boolean> muteNotifications(long userId) {
+      MutableLiveData<Boolean> liveData = new MutableLiveData<>();
+      profileService.muteNotifications(userId).enqueue(new SimpleCallback<>(
+              response -> liveData.setValue(true),
+              error -> liveData.setValue(false)
+      ));
+      return liveData;
+   }
+
+   public LiveData<Boolean> unmuteNotifications(long userId) {
+      MutableLiveData<Boolean> liveData = new MutableLiveData<>();
+      profileService.unmuteNotifications(userId).enqueue(new SimpleCallback<>(
+              response -> liveData.setValue(true),
+              error -> liveData.setValue(false)
+      ));
+      return liveData;
+   }
+
 
 }

@@ -10,13 +10,44 @@
         android:id="@+id/nav_home"
         android:name="com.example.eventplanner.fragments.home.HomeFragment"
         android:label="@string/home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_home_to_event_details"
+            app:destination="@id/fragment_event_details"
+            app:launchSingleTop="true"/>
+        <action
+            android:id="@+id/action_home_to_service_product_details"
+            app:destination="@id/fragment_service_product_details"
+            app:launchSingleTop="true"/>
+    </fragment>
 
     <fragment
         android:id="@+id/nav_events"
         android:name="com.example.eventplanner.fragments.home.AllEventsPageFragment"
         android:label="@string/events"
-        tools:layout="@layout/fragment_all_events_page" />
+        tools:layout="@layout/fragment_all_events_page">
+        <action
+            android:id="@+id/action_all_events_page_to_event_details"
+            app:destination="@id/fragment_event_details"
+            app:launchSingleTop="true"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_service_products"
+        android:name="com.example.eventplanner.fragments.home.AllServiceProductsPageFragment"
+        android:label="@string/services_and_products"
+        tools:layout="@layout/fragment_all_service_products_page">
+        <action
+            android:id="@+id/action_all_service_products_page_to_service_product_details"
+            app:destination="@id/fragment_service_product_details"
+            app:launchSingleTop="true"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_notifications"
+        android:name="com.example.eventplanner.fragments.communication.NotificationsFragment"
+        android:label="@string/notifications"
+        tools:layout="@layout/fragment_notifications" />
 
     <fragment
         android:id="@+id/nav_my_events"
@@ -67,12 +98,6 @@
         tools:layout="@layout/fragment_product_list" />
 
     <fragment
-        android:id="@+id/nav_service_products"
-        android:name="com.example.eventplanner.fragments.home.AllServiceProductsPageFragment"
-        android:label="@string/services_and_products"
-        tools:layout="@layout/fragment_all_service_products_page" />
-
-    <fragment
         android:id="@+id/nav_services"
         android:name="com.example.eventplanner.fragments.services.ServicesPageFragment"
         android:label="@string/services"
@@ -88,13 +113,33 @@
         android:id="@+id/nav_fragment_profile"
         android:name="com.example.eventplanner.fragments.profile.ProfileFragment"
         android:label="@string/profile"
-        tools:layout="@layout/fragment_profile" />
+        tools:layout="@layout/fragment_profile">
+        <action
+            android:id="@+id/action_profile_to_event_details"
+            app:destination="@id/fragment_event_details"
+            app:launchSingleTop="true"/>
+        <action
+            android:id="@+id/action_profile_to_service_product_details"
+            app:destination="@id/fragment_service_product_details"
+            app:launchSingleTop="true"/>
+    </fragment>
 
     <fragment
         android:id="@+id/nav_logout"
         android:name="com.example.eventplanner.fragments.login.LogoutFragment"
         android:label="@string/logout"
         tools:layout="@layout/fragment_login" />
+
+    <fragment
+        android:id="@+id/nav_website"
+        android:label="@string/website"
+        android:name="com.example.eventplanner.fragments.NavWebsiteFragment">
+
+        <argument
+            android:name="url"
+            app:argType="string"
+            android:defaultValue="http://94.130.185.169:4200/home"/>
+    </fragment>
 
     <fragment
         android:id="@+id/select_location_fragment"

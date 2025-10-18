@@ -6,17 +6,28 @@
     android:layout_width="match_parent"
     android:layout_height="330dp">
 
-    <ImageView
-        android:id="@+id/image_eo_profile_picture"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/image_holder"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:cropToPadding="false"
+        app:cardCornerRadius="30dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/profile_picture"
-        tools:src="@drawable/profile_picture" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/image_eo_profile_picture"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/profile_picture"
+            android:scaleType="centerCrop"
+            tools:src="@drawable/profile_picture" />
+    </androidx.cardview.widget.CardView>
+
 
     <TextView
         android:id="@+id/text_eo_username"
@@ -25,9 +36,9 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="16dp"
         android:ems="10"
-        android:text="Petar Jović"
+        android:text="Username"
         android:textSize="22sp"
-        app:layout_constraintStart_toEndOf="@+id/image_eo_profile_picture"
+        app:layout_constraintStart_toEndOf="@+id/image_holder"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -36,8 +47,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="22dp"
         android:layout_marginTop="7dp"
-        android:text="petar.jovic@gmail.com"
-        app:layout_constraintStart_toEndOf="@+id/image_eo_profile_picture"
+        android:text="Email"
+        app:layout_constraintStart_toEndOf="@+id/image_holder"
         app:layout_constraintTop_toBottomOf="@+id/text_eo_username" />
 
     <TextView
@@ -46,10 +57,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:text="Perin rođendan"
+        android:text="Event Name"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/image_eo_profile_picture" />
+        app:layout_constraintTop_toBottomOf="@+id/image_holder" />
 
     <TextView
         android:id="@+id/text_event_date"
@@ -57,7 +68,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="6dp"
-        android:text="7th of February, 2025"
+        android:text="Date"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text_event_name" />
 
@@ -69,7 +80,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginTop="19dp"
         android:lineSpacingExtra="4sp"
-        android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor"
+        android:text="Description"
         android:textSize="16sp"
         android:ellipsize="end"
         android:maxLines="4"
@@ -83,7 +94,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="15dp"
         android:layout_marginBottom="20dp"
-        android:text="More info"
+        android:text="@string/more_info"
         app:layout_constraintTop_toBottomOf="@id/text_event_description"
         app:layout_constraintStart_toStartOf="parent" />
 

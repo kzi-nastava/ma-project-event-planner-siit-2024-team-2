@@ -4,27 +4,30 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.eventplanner.clients.utils.ClientUtils;
-import com.example.eventplanner.model.event.Event;
+import com.example.eventplanner.clients.repositories.serviceproduct.ServiceProductRepository;
+import com.example.eventplanner.clients.repositories.serviceproduct.ServiceRepository;
 import com.example.eventplanner.model.serviceproduct.ServiceProduct;
-import com.example.eventplanner.utils.SimpleCallback;
-
-import retrofit2.Call;
+import com.example.eventplanner.utils.ObserverTracker;
 
 public class ServiceProductDetailsViewModel extends ViewModel {
 
    private final MutableLiveData<ServiceProduct> serviceProduct = new MutableLiveData<>();
+    private final ServiceProductRepository serviceProductRepository = new ServiceProductRepository();
+    private final ServiceRepository serviceRepository = new ServiceRepository();
+    private final ObserverTracker tracker = new ObserverTracker();
 
-   public LiveData<ServiceProduct> getEventById(long eventId) {
-      Call<ServiceProduct> call = ClientUtils.serviceProductService.getServiceProductById(eventId);
-      call.enqueue(new SimpleCallback<>(
-              response -> {
-                 if (response != null) {
-                    serviceProduct.setValue(response.body());
-                 }
-              },
-              error -> serviceProduct.setValue(null)
-      ));
-      return serviceProduct;
-   }
+    public LiveData<ServiceProduct> getServiceProductById(long id) {
+        tracker.observeOnce(serviceProductRepository.getServiceProductById(id), result -> {
+            if (result.getDtype().equals("Service"))
+                tracker.observeOnce(serviceRepository.getService(id), serviceProduct::setValue);
+            else
+                serviceProduct.setValue(result);
+        });
+        return serviceProduct;
+    }
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        tracker.clear();
+    }
 }
