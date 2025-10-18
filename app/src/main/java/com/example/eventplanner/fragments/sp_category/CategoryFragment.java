@@ -12,6 +12,7 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,9 +22,12 @@ import com.example.eventplanner.R;
 import com.example.eventplanner.adapters.CategoryAdapter;
 import com.example.eventplanner.adapters.EventTypeAdapter;
 import com.example.eventplanner.clients.repositories.event.EventTypeRepository;
+import com.example.eventplanner.clients.repositories.serviceproduct.ProductRepository;
 import com.example.eventplanner.clients.repositories.serviceproduct.ServiceProductCategoryRepository;
+import com.example.eventplanner.dto.serviceproduct.ProductDto;
 import com.example.eventplanner.fragments.eventtype.EventTypeListViewModel;
 import com.example.eventplanner.model.event.EventType;
+import com.example.eventplanner.model.serviceproduct.Product;
 import com.example.eventplanner.model.serviceproduct.ServiceProductCategory;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -37,7 +41,7 @@ public class CategoryFragment extends Fragment {
     private FloatingActionButton fabAdd;
     private CategoryAdapter adapter;
     private List<ServiceProductCategory> categories = new ArrayList<>();
-    private ServiceProductCategoryRepository categoryRepository = new ServiceProductCategoryRepository();
+    private ProductRepository productRepository = new ProductRepository();
 
     @Nullable
     @Override
@@ -61,11 +65,29 @@ public class CategoryFragment extends Fragment {
 
             @Override
             public void onDeleteClick(ServiceProductCategory dto) {
+                productRepository.getAllProducts()
+                    .observe(getViewLifecycleOwner(), products -> {
+                        boolean canDelete = true;
+                        for (ProductDto product : products) {
+                            if (product.getCategoryId() == dto.getId()) {
+                                // Category has products - show error
+                                Toast.makeText(requireContext(),
+                                        "Cannot delete. This category has attached product(s).",
+                                        Toast.LENGTH_LONG).show();
+                                canDelete = false;
+                                break;
+                            }
+                        }
+                        if (canDelete) showDeleteConfirmation(dto);
+                    });
+            }
+
+            private void showDeleteConfirmation(ServiceProductCategory category) {
                 new com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
                         .setTitle("Delete Category")
-                        .setMessage("Are you sure you want to delete \"" + dto.getName() + "\"?")
+                        .setMessage("Are you sure you want to delete \"" + category.getName() + "\"?")
                         .setPositiveButton("Delete", (dialog, which) -> {
-                            deleteCategory(dto.getId());
+                            deleteCategory(category.getId());
                             dialog.dismiss();
                         })
                         .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
