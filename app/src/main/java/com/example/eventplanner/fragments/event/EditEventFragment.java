@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,10 +23,14 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.eventplanner.R;
 import com.example.eventplanner.activities.SelectLocationActivity;
+import com.example.eventplanner.databinding.FragmentCreateEventBinding;
+import com.example.eventplanner.databinding.FragmentEditEventBinding;
 import com.example.eventplanner.model.event.Event;
 import com.example.eventplanner.model.event.EventType;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.checkbox.MaterialCheckBox;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.DateValidatorPointForward;
 import com.google.android.material.datepicker.MaterialDatePicker;
@@ -40,10 +45,12 @@ import java.util.Locale;
 public class EditEventFragment extends Fragment {
 
     private EditEventViewModel viewModel;
+    private FragmentEditEventBinding binding;
 
-    private TextInputEditText etName, etDescription, etMaxAttendances;
+    private TextInputEditText etName, etDescription, etMaxAttendances, etInviteeEmail;
     private MaterialCheckBox cbIsOpen;
-    private MaterialButton btnSubmit, btnSelectDate, btnSelectLocation;
+    private MaterialButton btnSubmit, btnSelectDate, btnSelectLocation, btnAddEmail;
+    private ChipGroup emailChips;
     private Spinner spinnerEventType;
     private TextView tvEventTypeLabel;
 
@@ -75,20 +82,26 @@ public class EditEventFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-
-        View view = inflater.inflate(R.layout.fragment_edit_event, container, false);
+        binding = FragmentEditEventBinding.inflate(inflater, container, false);
+        View root = binding.getRoot();
 
         viewModel = new ViewModelProvider(this).get(EditEventViewModel.class);
 
-        etName = view.findViewById(R.id.et_event_name);
-        etDescription = view.findViewById(R.id.et_event_description);
-        etMaxAttendances = view.findViewById(R.id.et_event_max_attendances);
-        cbIsOpen = view.findViewById(R.id.cb_is_open);
-        btnSubmit = view.findViewById(R.id.btn_submit);
-        btnSelectLocation = view.findViewById(R.id.btn_select_location);
-        btnSelectDate = view.findViewById(R.id.btn_select_date);
-        spinnerEventType = view.findViewById(R.id.spinner_event_type);
-        tvEventTypeLabel = view.findViewById(R.id.tv_event_type_label);
+        etName = binding.etEventName;
+        etDescription = binding.etEventDescription;
+        etMaxAttendances = binding.etEventMaxAttendances;
+        cbIsOpen = binding.cbIsOpen;
+        btnSubmit = binding.btnSubmit;
+        btnSelectLocation = binding.btnSelectLocation;
+        btnSelectDate = binding.btnSelectDate;
+        spinnerEventType = binding.spinnerEventType;
+        tvEventTypeLabel = binding.tvEventTypeLabel;
+
+        btnAddEmail = binding.btnConfirmEmail;
+        etInviteeEmail = binding.etInviteeEmail;
+        emailChips = binding.chipGroup;
+
+        binding.btnCancel.setOnClickListener(v -> requireActivity().onBackPressed());
 
         // Load event types first
         viewModel.getEventTypes().observe(getViewLifecycleOwner(), types -> {
@@ -150,7 +163,36 @@ public class EditEventFragment extends Fragment {
             }
         });
 
-        return view;
+
+        cbIsOpen.setOnCheckedChangeListener((btn, checked) -> {
+            btnAddEmail.setEnabled(!checked);
+            etInviteeEmail.setEnabled(!checked);
+        });
+        btnAddEmail.setOnClickListener(v -> {
+            String input = getText(etInviteeEmail);
+            input = input.trim();
+            String[] emails = input.split("[\\s,]+");
+            for(String email : emails)
+                if (TextUtils.isEmpty(email) || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                    if (emails.length == 1)
+                        etInviteeEmail.setError("Email is invalid");
+                    else
+                        etInviteeEmail.setError("Email \"" + email + "\" is invalid");
+                    return;
+                }
+            etInviteeEmail.setError(null);
+            etInviteeEmail.setText("");
+
+            for (String email : emails) {
+                Chip chip = new Chip(getContext());
+                chip.setText(email);
+                chip.setCloseIconVisible(true);
+                chip.setOnCloseIconClickListener(emailChips::removeView);
+                emailChips.addView(chip);
+            }
+        });
+
+        return root;
     }
 
     private void prefillForm(Event event) {
@@ -176,6 +218,13 @@ public class EditEventFragment extends Fragment {
                 selectedTypeId = event.getType().getId();
             }
         }
+
+        if (event.getInvitationEmails() != null)
+            for (String email : event.getInvitationEmails()) {
+                Chip chip = new Chip(getContext());
+                chip.setText(email);
+                emailChips.addView(chip);
+            }
     }
 
     private void showDatePickerDialog() {
@@ -207,12 +256,21 @@ public class EditEventFragment extends Fragment {
             return;
         }
 
+        List<String> emails = null;
+        if (!isOpen) {
+            emails = new ArrayList<>();
+            for (int i = 0; i < emailChips.getChildCount(); i++) {
+                Chip chip = (Chip) emailChips.getChildAt(i);
+                emails.add(chip.getText().toString());
+            }
+        }
+
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
             Date dateForDto = sdf.parse(sdf.format(new Date(selectedDateMillis)));
 
             viewModel.updateEvent(eventId, name, description, selectedTypeId, maxAttendances,
-                    isOpen, longitude, latitude, dateForDto);
+                    isOpen, longitude, latitude, dateForDto, emails);
         } catch (Exception e) {
             e.printStackTrace();
         }

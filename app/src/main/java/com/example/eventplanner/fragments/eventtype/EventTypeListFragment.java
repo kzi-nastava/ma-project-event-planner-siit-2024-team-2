@@ -84,20 +84,16 @@ public class EventTypeListFragment extends Fragment {
     }
 
     private void loadEventTypes() {
-        // observe LiveData exposed by ViewModel
         viewModel.getEventTypes().observe(getViewLifecycleOwner(), types -> {
             eventTypes.clear();
 
             if (types != null && !types.isEmpty()) {
-                // NOTE: types is List<EventType> (model). If your adapter expects EventTypeDto,
-                // convert/map here. Example below assumes adapter accepts EventType model.
                 eventTypes.addAll(types);
             }
 
             adapter.notifyDataSetChanged();
         });
 
-        // trigger load (this will fetch from the repository)
         viewModel.loadEventTypes();
     }
 

@@ -83,10 +83,8 @@ public class MyEventsFragment extends Fragment {
                             Call<Void> call = ClientUtils.eventService.deleteEvent(eventId);
                             call.enqueue(new SimpleCallback<>(
                                     response -> {
-                                        // Remove by id — safer than relying on 'position' which may become stale
                                         boolean removed = adapter.removeById(eventId);
                                         if (!removed) {
-                                            // fallback: refresh list from backend
                                             fetchMyEvents();
                                         }
                                         Toast.makeText(getContext(), "Event deleted", Toast.LENGTH_SHORT).show();
@@ -150,7 +148,6 @@ public class MyEventsFragment extends Fragment {
 
     @SuppressLint("NotifyDataSetChanged")
     private void fetchMyEvents() {
-        // you can extend sorting/filters later like AllEventsPage
         Call<PagedModel<EventSummaryDto>> call = ClientUtils.eventService.getMyEventSummaries(
                 currentPage - 1,
                 pageSize,
