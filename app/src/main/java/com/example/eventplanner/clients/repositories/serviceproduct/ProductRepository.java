@@ -19,6 +19,15 @@ public class ProductRepository {
         this.productService = ClientUtils.productService;
     }
 
+    public LiveData<List<ProductDto>> getAllProducts() {
+        MutableLiveData<List<ProductDto>> liveData = new MutableLiveData<>();
+        productService.getAllProducts().enqueue(new SimpleCallback<>(
+                response -> liveData.setValue(response != null ? response.body() : new ArrayList<>()),
+                error -> liveData.setValue(new ArrayList<>())
+        ));
+        return liveData;
+    }
+
     public LiveData<List<ProductDto>> getMyProducts() {
         MutableLiveData<List<ProductDto>> liveData = new MutableLiveData<>();
         productService.getMyProducts().enqueue(new SimpleCallback<>(

@@ -11,4 +11,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ServiceProductCategoryDto {
     private String name;
+    private String description;
 }
