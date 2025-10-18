@@ -116,8 +116,8 @@
                 android:layout_height="wrap_content"/>
 
             <EditText
-                android:id="@+id/etCompanyAddress"
-                android:hint="Company Address"
+                android:id="@+id/etCompanyDescription"
+                android:hint="Company Description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 

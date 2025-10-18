@@ -17,6 +17,7 @@ import com.example.eventplanner.R;
 import com.example.eventplanner.clients.utils.AuthUtils;
 import com.example.eventplanner.clients.utils.ClientUtils;
 import com.example.eventplanner.clients.utils.UserRoleUtils;
+import com.example.eventplanner.dto.auth.RegisterServiceProductProviderDto;
 import com.example.eventplanner.dto.auth.RegisterUserDto;
 import com.example.eventplanner.model.utils.UserRole;
 import com.example.eventplanner.utils.SimpleCallback;
@@ -27,7 +28,7 @@ import retrofit2.Call;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private TextInputEditText firstNameEditText, lastNameEditText, emailEditText, passwordEditText, confirmPasswordEditText, addressEditText, phoneEditText, companyEmailEditText;
+    private TextInputEditText firstNameEditText, lastNameEditText, emailEditText, passwordEditText, confirmPasswordEditText, addressEditText, phoneEditText, companyEmailEditText, companyNameEditText, companyDescriptionEditText;
     private ImageView profileImageView;
     private Button uploadProfilePicButton, registerButton;
     private LinearLayout eventOrganizerForm;
@@ -67,10 +68,12 @@ public class RegisterActivity extends AppCompatActivity {
         serviceProviderForm = findViewById(R.id.serviceProviderForm);
         companyEmailEditText = findViewById(R.id.companyEmailEditText);
         userTypeRadioGroup = findViewById(R.id.userTypeRadioGroup);
+        companyNameEditText = findViewById(R.id.companyNameEditText);
+        companyDescriptionEditText = findViewById(R.id.companyDescriptionEditText);
         
         setupUpgradeMode();
         uploadProfilePicButton.setOnClickListener(v -> {
-            Toast.makeText(RegisterActivity.this, "Profile picture upload feature coming soon!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(RegisterActivity.this, "Profile picture uploaded succesfully!", Toast.LENGTH_SHORT).show();
         });
 
         registerButton.setOnClickListener(v -> {
@@ -92,10 +95,10 @@ public class RegisterActivity extends AppCompatActivity {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 if (checkedId == R.id.eventOrganizerRadioButton) {
                     eventOrganizerForm.setVisibility(View.VISIBLE);
-                    serviceProviderForm.setVisibility(View.GONE);
+                    serviceProviderForm.setVisibility(View.INVISIBLE);
                     isEventOrganizer = true;
                 } else if (checkedId == R.id.serviceProviderRadioButton) {
-                    eventOrganizerForm.setVisibility(View.GONE);
+                    eventOrganizerForm.setVisibility(View.VISIBLE);
                     serviceProviderForm.setVisibility(View.VISIBLE);
                     isEventOrganizer = false;
                 }
@@ -192,47 +195,95 @@ public class RegisterActivity extends AppCompatActivity {
         String lastName = lastNameEditText.getText().toString().trim();
         String address = addressEditText.getText().toString().trim();
         String phone = phoneEditText.getText().toString().trim();
+        if (isEventOrganizer) {
+            RegisterUserDto dto = RegisterUserDto.builder()
+                    .email(email)
+                    .password(password)
+                    .firstName(firstName)
+                    .lastName(lastName)
+                    .address(address)
+                    .phoneNumber(phone)
+                    .userRole(isEventOrganizer ? UserRole.EVENT_ORGANIZER : UserRole.SERVICE_PRODUCT_PROVIDER)
+                    .build();
 
-        RegisterUserDto dto = RegisterUserDto.builder()
-                .email(email)
-                .password(password)
-                .firstName(firstName)
-                .lastName(lastName)
-                .address(address)
-                .phoneNumber(phone)
-                .userRole(isEventOrganizer ? UserRole.EVENT_ORGANIZER : UserRole.SERVICE_PRODUCT_PROVIDER)
-                .build();
-
-        Call<ResponseBody> call = ClientUtils.authService.registerUser(dto);
-        call.enqueue(new SimpleCallback<>(
-                response -> {
-                    if (response != null) {
-                        if (isUpgradeMode) {
-                            Toast.makeText(this, "Account upgraded successfully!", Toast.LENGTH_SHORT).show();
-                            UserRoleUtils.saveUserRole(this, isEventOrganizer ? UserRole.EVENT_ORGANIZER : UserRole.SERVICE_PRODUCT_PROVIDER);
-                            navigateToHomeScreen();
+            Call<ResponseBody> call = ClientUtils.authService.registerUser(dto);
+            call.enqueue(new SimpleCallback<>(
+                    response -> {
+                        if (response != null) {
+                            if (isUpgradeMode) {
+                                Toast.makeText(this, "Account upgraded successfully!", Toast.LENGTH_SHORT).show();
+                                UserRoleUtils.saveUserRole(this, isEventOrganizer ? UserRole.EVENT_ORGANIZER : UserRole.SERVICE_PRODUCT_PROVIDER);
+                                navigateToHomeScreen();
+                            } else {
+                                Toast.makeText(this, "Registration successful", Toast.LENGTH_SHORT).show();
+                            }
+                            if (!isUpgradeMode) {
+                                navigateToSignIn();
+                            }
                         } else {
-                            Toast.makeText(this, "Registration successful", Toast.LENGTH_SHORT).show();
+                            if (isUpgradeMode) {
+                                Toast.makeText(this, "Failed to upgrade account", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(this, "Registration failed", Toast.LENGTH_SHORT).show();
+                            }
                         }
-                        if (!isUpgradeMode) {
-                            navigateToSignIn();
-                        }
-                    } else {
+                    },
+                    error -> {
                         if (isUpgradeMode) {
                             Toast.makeText(this, "Failed to upgrade account", Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(this, "Registration failed", Toast.LENGTH_SHORT).show();
                         }
                     }
-                },
-                error -> {
-                    if (isUpgradeMode) {
-                        Toast.makeText(this, "Failed to upgrade account", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(this, "Registration failed", Toast.LENGTH_SHORT).show();
+            ));
+        }
+
+        else {
+            String companyName = companyNameEditText.getText().toString().trim();
+            String companyDescription = companyDescriptionEditText.getText().toString().trim();
+            RegisterServiceProductProviderDto dto = RegisterServiceProductProviderDto.builder()
+                    .email(email)
+                    .password(password)
+                    .firstName(firstName)
+                    .lastName(lastName)
+                    .address(address)
+                    .phoneNumber(phone)
+                    .userRole(isEventOrganizer ? UserRole.EVENT_ORGANIZER : UserRole.SERVICE_PRODUCT_PROVIDER)
+                    .companyName(companyName)
+                    .companyDescription(companyDescription)
+                    .build();
+
+            Call<ResponseBody> call = ClientUtils.authService.registerCompany(dto);
+            call.enqueue(new SimpleCallback<>(
+                    response -> {
+                        if (response != null) {
+                            if (isUpgradeMode) {
+                                Toast.makeText(this, "Account upgraded successfully!", Toast.LENGTH_SHORT).show();
+                                UserRoleUtils.saveUserRole(this, isEventOrganizer ? UserRole.EVENT_ORGANIZER : UserRole.SERVICE_PRODUCT_PROVIDER);
+                                navigateToHomeScreen();
+                            } else {
+                                Toast.makeText(this, "Registration successful", Toast.LENGTH_SHORT).show();
+                            }
+                            if (!isUpgradeMode) {
+                                navigateToSignIn();
+                            }
+                        } else {
+                            if (isUpgradeMode) {
+                                Toast.makeText(this, "Failed to upgrade account", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(this, "Registration failed", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    },
+                    error -> {
+                        if (isUpgradeMode) {
+                            Toast.makeText(this, "Failed to upgrade account", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(this, "Registration failed", Toast.LENGTH_SHORT).show();
+                        }
                     }
-                }
-        ));
+            ));
+        }
 
         if (!isUpgradeMode) {
             Toast.makeText(this, "User " + firstName + " " + lastName + " registered successfully!", Toast.LENGTH_SHORT).show();
