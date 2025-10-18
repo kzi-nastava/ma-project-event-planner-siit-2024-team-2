@@ -56,7 +56,7 @@ public class CategoryFragment extends Fragment {
                 Bundle args = new Bundle();
                 args.putLong("id", dto.getId());
                 NavController navController = Navigation.findNavController(requireActivity(), R.id.fragment_nav_content_main);
-                navController.navigate(R.id.nav_create_event_type, args);
+                navController.navigate(R.id.nav_create_category, args);
             }
 
             @Override
@@ -76,7 +76,7 @@ public class CategoryFragment extends Fragment {
 
         fabAdd.setOnClickListener(v -> {
             NavController navController = Navigation.findNavController(requireActivity(), R.id.fragment_nav_content_main);
-            navController.navigate(R.id.nav_create_event_type);
+            navController.navigate(R.id.nav_create_category);
         });
 
         loadCategories();

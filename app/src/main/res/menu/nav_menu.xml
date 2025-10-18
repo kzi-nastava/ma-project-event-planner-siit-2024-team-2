@@ -25,6 +25,10 @@
         android:title="@string/event_types" />
 
     <item
+        android:id="@+id/nav_create_category"
+        android:title="New category" />
+
+    <item
         android:id="@+id/nav_fragment_category"
         android:title="Categories" />
 

@@ -65,6 +65,9 @@ public class HomeActivity extends AppCompatActivity {
         protectedDestinations.add(R.id.nav_fragment_create_event);
         protectedDestinations.add(R.id.nav_fragment_profile);
 
+        protectedDestinations.add(R.id.nav_fragment_category);
+        protectedDestinations.add(R.id.nav_create_category);
+
         appBarConfiguration = new AppBarConfiguration.Builder(topLevelDestinations)
                 .setOpenableLayout(drawerLayout)
                 .build();
@@ -138,6 +141,7 @@ public class HomeActivity extends AppCompatActivity {
                 menu.findItem(R.id.nav_event_types).setVisible(true);
                 menu.findItem(R.id.nav_create_event_type).setVisible(true);
                 menu.findItem(R.id.nav_fragment_category).setVisible(true);
+                menu.findItem(R.id.nav_create_category).setVisible(true);
                 break;
 
             case "SERVICE_PRODUCT_PROVIDER":

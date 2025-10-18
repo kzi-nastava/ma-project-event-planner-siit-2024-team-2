@@ -43,6 +43,12 @@
         tools:layout="@layout/fragment_event_type_list" />
 
     <fragment
+        android:id="@+id/nav_create_category"
+        android:name="com.example.eventplanner.fragments.sp_category.NewCategoryFragment"
+        android:label="New category"
+        tools:layout="@layout/fragment_new_category" />
+
+    <fragment
         android:id="@+id/nav_fragment_category"
         android:name="com.example.eventplanner.fragments.sp_category.CategoryFragment"
         android:label="Categories"
