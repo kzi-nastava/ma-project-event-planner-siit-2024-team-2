@@ -19,6 +19,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentManager;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -33,6 +34,8 @@ import com.example.eventplanner.clients.utils.ImageUtil;
 import com.example.eventplanner.clients.utils.UserIdUtils;
 import com.example.eventplanner.clients.utils.UserRoleUtils;
 import com.example.eventplanner.databinding.ActivityHomeBinding;
+import com.example.eventplanner.dialogs.SuspendedDialog;
+import com.example.eventplanner.dto.user.SuspendedDialogData;
 import com.example.eventplanner.utils.FormatUtil;
 import com.google.android.material.navigation.NavigationView;
 
@@ -137,6 +140,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private void handleIntent(Intent intent) {
         long eventId = intent.getLongExtra("com.example.eventplanner.navigateToEvent", -1);
+        SuspendedDialogData data = intent.getSerializableExtra("com.example.eventplanner.showSuspension", SuspendedDialogData.class);
         if (intent.getBooleanExtra("com.example.eventplanner.navigateToNotifications", false))
             navController.navigate(R.id.nav_notifications);
         else if (eventId != -1) {
@@ -145,6 +149,10 @@ public class HomeActivity extends AppCompatActivity {
 
             NavController navController = Navigation.findNavController(this, R.id.fragment_nav_content_main);
             navController.navigate(R.id.fragment_event_details, args);
+        } else if (data != null) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            SuspendedDialog dialog = SuspendedDialog.newInstance(data);
+            dialog.show(fragmentManager, "SuspendedDialog");
         }
     }
 

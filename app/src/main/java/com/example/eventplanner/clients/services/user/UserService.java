@@ -13,30 +13,30 @@ import retrofit2.http.Path;
 
 public interface UserService {
 
- @POST("api/users/{email}/suspend")
+ @POST("users/{email}/suspend")
  Call<Void> suspendUser(@Path("email") String email);
 
- @GET("api/users/{userId}/favorite-events")
+ @GET("users/{userId}/favorite-events")
  Call<List<EventSummaryDto>> getFavoriteEvents(@Path("userId") long userId);
 
- @POST("api/users/{userId}/favorite-events/{eventId}")
+ @POST("users/{userId}/favorite-events/{eventId}")
  Call<Void> addFavoriteEvent(@Path("userId") long userId, @Path("eventId") long eventId);
 
- @DELETE("api/users/{userId}/favorite-events/{eventId}")
+ @DELETE("users/{userId}/favorite-events/{eventId}")
  Call<Void> removeFavoriteEvent(@Path("userId") long userId, @Path("eventId") long eventId);
 
- @GET("api/users/{userId}/favorite-service-products")
+ @GET("users/{userId}/favorite-service-products")
  Call<List<ServiceProductSummaryDto>> getFavoriteServiceProducts(@Path("userId") long userId);
 
- @POST("api/users/{userId}/favorite-service-products/{serviceProductId}")
+ @POST("users/{userId}/favorite-service-products/{serviceProductId}")
  Call<Void> addFavoriteServiceProduct(@Path("userId") long userId, @Path("serviceProductId") long serviceProductId);
 
- @DELETE("api/users/{userId}/favorite-service-products/{serviceProductId}")
+ @DELETE("users/{userId}/favorite-service-products/{serviceProductId}")
  Call<Void> removeFavoriteServiceProduct(@Path("userId") long userId, @Path("serviceProductId") long serviceProductId);
 
- @POST("api/users/{userId}/block")
+ @POST("users/{userId}/block")
  Call<Void> blockUser(@Path("userId") long userId);
 
- @DELETE("api/users/{userId}/block")
+ @DELETE("users/{userId}/block")
  Call<Void> unblockUser(@Path("userId") long userId);
 }

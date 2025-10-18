@@ -18,10 +18,14 @@ import com.example.eventplanner.dto.auth.LoginResponseDto;
 import com.example.eventplanner.dto.auth.QuickLoginDto;
 import com.example.eventplanner.dto.event.InvitationErrorDto;
 import com.example.eventplanner.model.event.Invitation;
+import com.example.eventplanner.utils.JsonLog;
 import com.example.eventplanner.utils.ObserverTracker;
 import com.example.eventplanner.utils.SimpleCallback;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
+import java.util.Date;
 
 import retrofit2.Call;
 
@@ -94,8 +98,8 @@ public class AcceptInvitationViewModel extends ViewModel {
     }
 
     private void handleInvitationError(Context context, InvitationErrorDto errorDto, String token) {
-        Log.e("AcceptInvitation", "Failed to accept invitation");
-        
+        Log.d("AcceptInvitation", "Failed to accept invitation");
+
         if (errorDto != null) {
             switch (errorDto.getType()) {
                 case UNAUTHORIZED_QUICK_REGISTRATION:
@@ -141,7 +145,7 @@ public class AcceptInvitationViewModel extends ViewModel {
     private void quickLogin(Context context, String token, Long eventId, boolean justRegistered, boolean isFull) {
         Call<LoginResponseDto> call =
             ClientUtils.authService.quickLogin(new QuickLoginDto(token));
-        
+
         call.enqueue(new SimpleCallback<>(
             response -> {
                 if (response.body() != null) {
@@ -173,29 +177,18 @@ public class AcceptInvitationViewModel extends ViewModel {
                 isLoading.setValue(false);
             },
             error -> {
-                navigateToHome.setValue(true);
-                if (error != null && error.first != null && error.first.body() != null) {
-                    try { // Suspended account
-                        String errorBody = error.first.errorBody().string();
-                        JsonObject errorJson = new JsonParser().parse(errorBody).getAsJsonObject();
-                        if (errorJson.has("suspendedAt")) {
-                            String suspendedAtStr = errorJson.get("suspendedAt").getAsString();
-                            try {
-                                java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", java.util.Locale.getDefault());
-                                java.util.Date suspendedAt = sdf.parse(suspendedAtStr);
-                                SuspendedDialogData data = new SuspendedDialogData(suspendedAt);
-                                showSuspendedDialog.setValue(data);
-                            } catch (Exception parseException) {
-                                errorMessage.setValue("Your account is temporarily suspended");
-                            }
-                        } else {
-                            errorMessage.setValue("Failed to accept invitation");
-                        }
+                if (error != null && error.second != null) {
+                    try {
+                        LoginResponseDto dto = new Gson().fromJson(error.second, LoginResponseDto.class);
+                        SuspendedDialogData data = new SuspendedDialogData(dto.getSuspendedAt());
+                        showSuspendedDialog.setValue(data);
                     } catch (Exception e) {
                         errorMessage.setValue("Failed to accept invitation");
+                        navigateToHome.setValue(true);
                     }
                 } else {
                     errorMessage.setValue("Failed to accept invitation");
+                    navigateToHome.setValue(true);
                 }
                 isLoading.setValue(false);
             }

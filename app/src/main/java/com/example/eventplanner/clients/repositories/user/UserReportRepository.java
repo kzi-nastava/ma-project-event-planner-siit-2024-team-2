@@ -60,7 +60,7 @@ public class UserReportRepository {
         Call<Boolean> call = ClientUtils.userReportService.delete(id);
         
         call.enqueue(new SimpleCallback<>(
-            response -> liveData.setValue(response != null ? response.body() : false),
+            response -> liveData.setValue(true),
             error -> liveData.setValue(false)
         ));
         

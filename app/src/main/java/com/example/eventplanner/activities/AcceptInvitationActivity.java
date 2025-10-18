@@ -130,9 +130,11 @@ public class AcceptInvitationActivity extends AppCompatActivity {
     }
 
     private void showSuspendedDialog(SuspendedDialogData data) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        SuspendedDialog dialog = SuspendedDialog.newInstance(data);
-        dialog.show(fragmentManager, "SuspendedDialog");
+        Intent intent = new Intent(this, HomeActivity.class);
+        intent.putExtra("com.example.eventplanner.showSuspension", data);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
     }
 
     @Override

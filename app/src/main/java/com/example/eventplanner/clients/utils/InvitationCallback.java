@@ -5,6 +5,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.example.eventplanner.dto.event.InvitationErrorDto;
+import com.example.eventplanner.utils.JsonLog;
 import com.google.gson.Gson;
 
 import java.util.function.Consumer;
@@ -44,7 +45,9 @@ public class InvitationCallback<T> implements Callback<T> {
         }
         
         try {
+            JsonLog.d("InvitationCallback", response, "Response ");
             String errorBody = response.errorBody().string();
+            JsonLog.d("InvitationCallback", errorBody, "Error body ");
             Gson gson = new Gson();
             return gson.fromJson(errorBody, InvitationErrorDto.class);
         } catch (Exception e) {
