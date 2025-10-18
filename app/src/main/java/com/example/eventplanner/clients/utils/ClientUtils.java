@@ -91,6 +91,7 @@ public class ClientUtils {
 
         // User
         userService = retrofit.create(UserService.class);
+        userReportService = retrofit.create(UserReportService.class);
         profileService = retrofit.create(ProfileService.class);
 
         // Auth
@@ -118,6 +119,7 @@ public class ClientUtils {
 
     // User
     public static UserService userService;
+    public static UserReportService userReportService;
     public static ProfileService profileService;
 
     // Auth

@@ -13,6 +13,7 @@ import com.example.eventplanner.clients.utils.JwtUtils;
 import com.example.eventplanner.clients.utils.UserEmailUtils;
 import com.example.eventplanner.clients.utils.UserIdUtils;
 import com.example.eventplanner.clients.utils.UserRoleUtils;
+import com.example.eventplanner.dto.user.SuspendedDialogData;
 import com.example.eventplanner.dto.auth.LoginResponseDto;
 import com.example.eventplanner.dto.auth.QuickLoginDto;
 import com.example.eventplanner.dto.event.InvitationErrorDto;
@@ -46,6 +47,9 @@ public class AcceptInvitationViewModel extends ViewModel {
 
     private final MutableLiveData<Boolean> navigateToLogin = new MutableLiveData<>();
     public LiveData<Boolean> getNavigateToLogin() { return navigateToLogin; }
+
+    private final MutableLiveData<SuspendedDialogData> showSuspendedDialog = new MutableLiveData<>();
+    public LiveData<SuspendedDialogData> getShowSuspendedDialog() { return showSuspendedDialog; }
 
     public void acceptInvitation(Context context, String token) {
         if (token == null || token.isEmpty()) {
@@ -175,7 +179,15 @@ public class AcceptInvitationViewModel extends ViewModel {
                         String errorBody = error.first.errorBody().string();
                         JsonObject errorJson = new JsonParser().parse(errorBody).getAsJsonObject();
                         if (errorJson.has("suspendedAt")) {
-                            errorMessage.setValue("Your account is temporarily suspended"); //TODO: Replace with dialog
+                            String suspendedAtStr = errorJson.get("suspendedAt").getAsString();
+                            try {
+                                java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", java.util.Locale.getDefault());
+                                java.util.Date suspendedAt = sdf.parse(suspendedAtStr);
+                                SuspendedDialogData data = new SuspendedDialogData(suspendedAt);
+                                showSuspendedDialog.setValue(data);
+                            } catch (Exception parseException) {
+                                errorMessage.setValue("Your account is temporarily suspended");
+                            }
                         } else {
                             errorMessage.setValue("Failed to accept invitation");
                         }
@@ -207,6 +219,7 @@ public class AcceptInvitationViewModel extends ViewModel {
         navigateToEventId.setValue(null);
         navigateToHome.setValue(null);
         navigateToLogin.setValue(null);
+        showSuspendedDialog.setValue(null);
         errorMessage.setValue(null);
         invitationAccepted.setValue(null);
     }

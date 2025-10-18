@@ -3,10 +3,13 @@ package com.example.eventplanner.fragments.event;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,9 +24,13 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 
 import com.example.eventplanner.R;
+import com.example.eventplanner.clients.repositories.user.UserManagementRepository;
+import com.example.eventplanner.clients.utils.AuthUtils;
 import com.example.eventplanner.databinding.FragmentAllEventsPageBinding;
 import com.example.eventplanner.databinding.FragmentEventDetailsBinding;
+import com.example.eventplanner.dialogs.ReportUserDialog;
 import com.example.eventplanner.model.event.Event;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 
 import java.text.SimpleDateFormat;
@@ -40,6 +47,9 @@ public class EventDetailsFragment extends Fragment {
     private LinearLayout detailsLayout;
     private FragmentEventDetailsBinding binding;
     private CircularProgressIndicator progressIndicator;
+    private MaterialButton btnReportMenu;
+    private Event currentEvent;
+    private UserManagementRepository userManagementRepository;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -74,12 +84,18 @@ public class EventDetailsFragment extends Fragment {
         tvDate = binding.tvEventDate;
         tvLocation = binding.tvEventLocation;
         tvIsOpen = binding.tvEventIsOpen;
+        btnReportMenu = binding.btnReportMenu;
 
         progressIndicator = binding.progress;
         progressIndicator.setVisibility(View.VISIBLE);
 
         detailsLayout = binding.detailsLayout;
         detailsLayout.setVisibility(View.GONE);
+
+        userManagementRepository = new UserManagementRepository();
+
+        // Setup report menu
+        setupReportMenu();
 
         // ViewModel
         viewModel = new ViewModelProvider(this).get(EventDetailsViewModel.class);
@@ -90,6 +106,8 @@ public class EventDetailsFragment extends Fragment {
 
     private void populateEvent(Event event) {
         if (event == null) return;
+
+        currentEvent = event;
 
         // Fill UI
         tvName.setText(event.getName());
@@ -124,5 +142,70 @@ public class EventDetailsFragment extends Fragment {
 
         progressIndicator.setVisibility(View.GONE);
         detailsLayout.setVisibility(View.VISIBLE);
+    }
+
+    private void setupReportMenu() {
+        btnReportMenu.setOnClickListener(v -> {
+            if (currentEvent == null || currentEvent.getEventOrganizerDto() == null) {
+                Toast.makeText(getContext(), "Event organizer information not available", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            PopupMenu popupMenu = new PopupMenu(getContext(), v);
+            popupMenu.getMenuInflater().inflate(R.menu.report_menu, popupMenu.getMenu());
+            
+            // Hide suspend option if user is not admin
+            if (!AuthUtils.isAdmin(getContext())) {
+                popupMenu.getMenu().findItem(R.id.action_suspend_user).setVisible(false);
+            }
+
+            popupMenu.setOnMenuItemClickListener(this::onReportMenuItemClick);
+            popupMenu.show();
+        });
+    }
+
+    private boolean onReportMenuItemClick(MenuItem item) {
+        if (currentEvent == null || currentEvent.getEventOrganizerDto() == null) {
+            return false;
+        }
+
+        int itemId = item.getItemId();
+        if (itemId == R.id.action_report_user) {
+            openReportDialog();
+            return true;
+        } else if (itemId == R.id.action_suspend_user) {
+            suspendUser();
+            return true;
+        }
+        return false;
+    }
+
+    private void openReportDialog() {
+        if (currentEvent == null || currentEvent.getEventOrganizerDto() == null) {
+            return;
+        }
+
+        String email = currentEvent.getEventOrganizerDto().getEmail();
+        String name = currentEvent.getEventOrganizerDto().getFirstName() + " " + currentEvent.getEventOrganizerDto().getLastName();
+        
+        ReportUserDialog dialog = ReportUserDialog.newInstance(email, name);
+        dialog.show(getParentFragmentManager(), "ReportUserDialog");
+    }
+
+    private void suspendUser() {
+        if (currentEvent == null || currentEvent.getEventOrganizerDto() == null) {
+            return;
+        }
+
+        String email = currentEvent.getEventOrganizerDto().getEmail();
+        userManagementRepository.suspendUser(email).observe(getViewLifecycleOwner(), success -> {
+            if (success != null) {
+                if (success) {
+                    Toast.makeText(getContext(), R.string.suspend_success, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), R.string.suspend_failed, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 }

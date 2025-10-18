@@ -10,9 +10,12 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.eventplanner.R;
+import com.example.eventplanner.dialogs.SuspendedDialog;
+import com.example.eventplanner.dto.user.SuspendedDialogData;
 
 public class AcceptInvitationActivity extends AppCompatActivity {
 
@@ -83,6 +86,12 @@ public class AcceptInvitationActivity extends AppCompatActivity {
                 navigateToLogin();
             }
         });
+
+        viewModel.getShowSuspendedDialog().observe(this, data -> {
+            if (data != null) {
+                showSuspendedDialog(data);
+            }
+        });
     }
 
     private String getTokenFromIntent() {
@@ -118,6 +127,12 @@ public class AcceptInvitationActivity extends AppCompatActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
         finish();
+    }
+
+    private void showSuspendedDialog(SuspendedDialogData data) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        SuspendedDialog dialog = SuspendedDialog.newInstance(data);
+        dialog.show(fragmentManager, "SuspendedDialog");
     }
 
     @Override

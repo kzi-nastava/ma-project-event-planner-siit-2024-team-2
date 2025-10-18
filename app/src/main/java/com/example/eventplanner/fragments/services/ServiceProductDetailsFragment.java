@@ -4,9 +4,11 @@ import android.annotation.SuppressLint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,11 +22,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.eventplanner.R;
 import com.example.eventplanner.adapters.ImageAdapter;
 import com.example.eventplanner.adapters.PhotosAdapter;
+import com.example.eventplanner.clients.repositories.user.UserManagementRepository;
+import com.example.eventplanner.clients.utils.AuthUtils;
 import com.example.eventplanner.databinding.FragmentServiceProductDetailsBinding;
+import com.example.eventplanner.dialogs.ReportUserDialog;
 import com.example.eventplanner.dto.serviceproduct.ServiceDto;
 import com.example.eventplanner.dto.serviceproduct.ServiceProductSummaryDto;
 import com.example.eventplanner.model.serviceproduct.Service;
 import com.example.eventplanner.model.serviceproduct.ServiceProduct;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 
 import java.util.ArrayList;
@@ -50,6 +56,8 @@ public class ServiceProductDetailsFragment extends Fragment {
    private RecyclerView recyclerView;
    private LinearLayout detailsLayout;
    private LinearLayout serviceDetails;
+   private MaterialButton btnReportMenu;
+   private UserManagementRepository userManagementRepository;
 
    public ServiceProductDetailsFragment() {
       // Required empty constructor
@@ -81,6 +89,7 @@ public class ServiceProductDetailsFragment extends Fragment {
       tvPrice = binding.tvSpPrice;
       tvDiscount = binding.tvSpDiscount;
       tvAvailable = binding.tvSpAvailable;
+      btnReportMenu = binding.btnReportMenu;
 
       tvSpecifics = binding.tvSpSpecifics;
       tvReservationDeadline = binding.tvSpReservationDeadline;
@@ -96,6 +105,12 @@ public class ServiceProductDetailsFragment extends Fragment {
 
       serviceDetails = binding.serviceDetails;
       serviceDetails.setVisibility(View.GONE);
+
+      // Initialize repository
+      userManagementRepository = new UserManagementRepository();
+
+      // Setup report menu
+      setupReportMenu();
 
       recyclerView = binding.rvImages;
       recyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
@@ -134,5 +149,70 @@ public class ServiceProductDetailsFragment extends Fragment {
 
       progressIndicator.setVisibility(View.GONE);
       detailsLayout.setVisibility(View.VISIBLE);
+   }
+
+   private void setupReportMenu() {
+      btnReportMenu.setOnClickListener(v -> {
+         if (serviceProduct == null || serviceProduct.getCreatorEmail() == null) {
+            Toast.makeText(getContext(), "Service provider information not available", Toast.LENGTH_SHORT).show();
+            return;
+         }
+
+         PopupMenu popupMenu = new PopupMenu(getContext(), v);
+         popupMenu.getMenuInflater().inflate(R.menu.report_menu, popupMenu.getMenu());
+         
+         // Hide suspend option if user is not admin
+         if (!AuthUtils.isAdmin(getContext())) {
+            popupMenu.getMenu().findItem(R.id.action_suspend_user).setVisible(false);
+         }
+
+         popupMenu.setOnMenuItemClickListener(this::onReportMenuItemClick);
+         popupMenu.show();
+      });
+   }
+
+   private boolean onReportMenuItemClick(MenuItem item) {
+      if (serviceProduct == null || serviceProduct.getCreatorEmail() == null) {
+         return false;
+      }
+
+      int itemId = item.getItemId();
+      if (itemId == R.id.action_report_user) {
+         openReportDialog();
+         return true;
+      } else if (itemId == R.id.action_suspend_user) {
+         suspendUser();
+         return true;
+      }
+      return false;
+   }
+
+   private void openReportDialog() {
+      if (serviceProduct == null || serviceProduct.getCreatorEmail() == null) {
+         return;
+      }
+
+      String email = serviceProduct.getCreatorEmail();
+      String name = serviceProduct.getCreatorName();
+      
+      ReportUserDialog dialog = ReportUserDialog.newInstance(email, name);
+      dialog.show(getParentFragmentManager(), "ReportUserDialog");
+   }
+
+   private void suspendUser() {
+      if (serviceProduct == null || serviceProduct.getCreatorEmail() == null) {
+         return;
+      }
+
+      String email = serviceProduct.getCreatorEmail();
+      userManagementRepository.suspendUser(email).observe(getViewLifecycleOwner(), success -> {
+         if (success != null) {
+            if (success) {
+               Toast.makeText(getContext(), R.string.suspend_success, Toast.LENGTH_SHORT).show();
+            } else {
+               Toast.makeText(getContext(), R.string.suspend_failed, Toast.LENGTH_SHORT).show();
+            }
+         }
+      });
    }
 }

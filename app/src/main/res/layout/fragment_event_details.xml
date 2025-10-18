@@ -1,6 +1,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="16dp">
 
     <LinearLayout
@@ -14,14 +15,32 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:spacing="12dp">
-            <TextView
-                android:id="@+id/tv_event_name"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:textSize="22sp"
-                android:textColor="?attr/text_color"
-                android:text="Event Name" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/tv_event_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textStyle="bold"
+                    android:textSize="22sp"
+                    android:textColor="?attr/text_color"
+                    android:text="Event Name" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_report_menu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:icon="@drawable/report"
+                    app:iconSize="28dp"
+                    app:iconTint="?attr/text_color"
+                    style="@style/Widget.Material3.Button.IconButton" />
+
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
