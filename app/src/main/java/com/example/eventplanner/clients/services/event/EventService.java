@@ -39,6 +39,13 @@ public interface EventService {
             @Query("endDate") Long endDate);
 
     @Headers({"Content-Type:application/json"})
+    @GET("events/mine")
+    Call<PagedModel<Event>> getAllMine(
+            @Query("page") Integer page,
+            @Query("size") Integer size
+    );
+
+    @Headers({"Content-Type:application/json"})
     @GET("events/summaries")
     Call<PagedModel<EventSummaryDto>> getEventSummaries(
             @Query("page") Integer page,

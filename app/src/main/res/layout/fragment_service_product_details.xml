@@ -263,12 +263,22 @@
                 android:layout_marginTop="12dp"
                 android:layout_gravity="center"
                 android:orientation="horizontal"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_book_purchase"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Book/Purchase"
+                android:textSize="16sp"
+                style="@style/Widget.Material3.Button"
+                android:enabled="false" />
         </LinearLayout>
 
         <!-- Reviews Section -->
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/fragment_reviews_section"
-            android:name="com.example.eventplanner.fragments.review.ReviewsSectionFragment"
+            android:name="com.example.eventplanner.fragments.order.ReviewsSectionFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp" />

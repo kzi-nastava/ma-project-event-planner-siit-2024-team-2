@@ -159,5 +159,15 @@ public class EventRepository {
       return result;
    }
 
+   public LiveData<PagedModel<Event>> getAllMine(Integer page, Integer size) {
+      MutableLiveData<PagedModel<Event>> liveData = new MutableLiveData<>();
+      Call<PagedModel<Event>> call = eventService.getAllMine(page, size);
+
+      call.enqueue(new SimpleCallback<>(
+              response -> liveData.setValue(response != null ? response.body() : null),
+              error -> liveData.setValue(null)
+      ));
+      return liveData;
+   }
 
 }

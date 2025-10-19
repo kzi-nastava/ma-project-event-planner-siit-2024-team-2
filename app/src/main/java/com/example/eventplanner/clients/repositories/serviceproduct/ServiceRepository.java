@@ -5,6 +5,9 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.eventplanner.clients.services.serviceproduct.ServiceService;
 import com.example.eventplanner.clients.utils.ClientUtils;
+import com.example.eventplanner.dto.event.DateRangeDto;
+import com.example.eventplanner.dto.order.BookingDto;
+import com.example.eventplanner.dto.order.PurchaseDto;
 import com.example.eventplanner.dto.serviceproduct.ServiceDto;
 import com.example.eventplanner.model.serviceproduct.Service;
 import com.example.eventplanner.utils.SimpleCallback;
@@ -61,6 +64,33 @@ public class ServiceRepository {
         serviceService.getServiceById(id).enqueue(new SimpleCallback<>(
                 response -> liveData.setValue(response != null ? response.body() : null),
                 error -> liveData.setValue(null)
+        ));
+        return liveData;
+    }
+
+    public LiveData<List<DateRangeDto>> getAvailability(long serviceId, long eventId) {
+        MutableLiveData<List<DateRangeDto>> liveData = new MutableLiveData<>();
+        serviceService.getAvailability(serviceId, eventId).enqueue(new SimpleCallback<>(
+                response -> liveData.setValue(response != null ? response.body() : new ArrayList<>()),
+                error -> liveData.setValue(new ArrayList<>())
+        ));
+        return liveData;
+    }
+
+    public LiveData<Boolean> createBooking(long budgetId, BookingDto bookingDto) {
+        MutableLiveData<Boolean> liveData = new MutableLiveData<>();
+        serviceService.createBooking(budgetId, bookingDto).enqueue(new SimpleCallback<>(
+                response -> liveData.setValue(true),
+                error -> liveData.setValue(false)
+        ));
+        return liveData;
+    }
+
+    public LiveData<Boolean> createPurchase(long budgetId, PurchaseDto purchaseDto) {
+        MutableLiveData<Boolean> liveData = new MutableLiveData<>();
+        serviceService.createPurchase(budgetId, purchaseDto).enqueue(new SimpleCallback<>(
+                response -> liveData.setValue(true),
+                error -> liveData.setValue(false)
         ));
         return liveData;
     }

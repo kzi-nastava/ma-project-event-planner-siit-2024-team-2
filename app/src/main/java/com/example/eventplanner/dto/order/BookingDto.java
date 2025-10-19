@@ -1,6 +1,6 @@
 package com.example.eventplanner.dto.order;
 
-import java.util.Date;
+import java.time.Instant;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,9 +12,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BookingDto {
-    private long eventId;
     private long serviceId;
     private double price;
-    private Date date;
+    private Instant date;
     private double duration;
 }

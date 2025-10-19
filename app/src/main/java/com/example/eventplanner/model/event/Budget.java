@@ -20,7 +20,9 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Budget implements Parcelable, Serializable {
     private Long id;
+    private String name;
     private double plannedSpending;
+    private double currentSpent;
     private double maxAmount;
     private ServiceProductCategory serviceProductCategory;
 
@@ -30,7 +32,9 @@ public class Budget implements Parcelable, Serializable {
         } else {
             id = in.readLong();
         }
+        name = in.readString();
         plannedSpending = in.readDouble();
+        currentSpent = in.readDouble();
         maxAmount = in.readDouble();
         serviceProductCategory = in.readParcelable(ServiceProductCategory.class.getClassLoader());
     }
@@ -60,7 +64,9 @@ public class Budget implements Parcelable, Serializable {
             dest.writeByte((byte) 1);
             dest.writeLong(id);
         }
+        dest.writeString(name);
         dest.writeDouble(plannedSpending);
+        dest.writeDouble(currentSpent);
         dest.writeDouble(maxAmount);
         dest.writeParcelable(serviceProductCategory, flags);
     }
