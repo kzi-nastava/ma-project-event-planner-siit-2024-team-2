@@ -21,7 +21,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class EventReview implements Parcelable, Serializable {
     private Long id;
-    private int grade;
+    private double grade;
     private String comment;
     private BaseUser user;
     private Event event;
@@ -33,7 +33,7 @@ public class EventReview implements Parcelable, Serializable {
         } else {
             id = in.readLong();
         }
-        grade = in.readInt();
+        grade = in.readDouble();
         comment = in.readString();
         user = in.readParcelable(BaseUser.class.getClassLoader());
         event = in.readParcelable(Event.class.getClassLoader());
@@ -64,7 +64,7 @@ public class EventReview implements Parcelable, Serializable {
             dest.writeByte((byte) 1);
             dest.writeLong(id);
         }
-        dest.writeInt(grade);
+        dest.writeDouble(grade);
         dest.writeString(comment);
         dest.writeParcelable(user, flags);
         dest.writeParcelable(event, flags);

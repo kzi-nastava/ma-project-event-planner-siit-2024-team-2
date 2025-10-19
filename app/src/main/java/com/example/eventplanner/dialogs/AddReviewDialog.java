@@ -1,9 +1,11 @@
 package com.example.eventplanner.dialogs;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -34,13 +36,14 @@ public class AddReviewDialog extends DialogFragment {
     private long entityId;
     private String entityName;
     private ReviewType reviewType;
-    private int selectedRating = 0;
+    private float selectedRating = 0f;
     private OnReviewAddedListener listener;
     private ReviewRepository reviewRepository;
 
     private LinearLayout llRatingStars;
     private TextInputEditText etComment;
     private MaterialButton btnSubmit;
+    private MaterialButton btnCancel;
 
     public static AddReviewDialog newInstance(long entityId, String entityName, ReviewType reviewType) {
         AddReviewDialog dialog = new AddReviewDialog();
@@ -82,61 +85,89 @@ public class AddReviewDialog extends DialogFragment {
         llRatingStars = view.findViewById(R.id.ll_rating_stars);
         etComment = view.findViewById(R.id.et_comment);
         btnSubmit = view.findViewById(R.id.btn_submit);
+        btnCancel = view.findViewById(R.id.btn_cancel);
 
         TextView tvEntityName = view.findViewById(R.id.tv_entity_name);
         tvEntityName.setText(entityName);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void setupRatingStars() {
         llRatingStars.removeAllViews();
-        
+
         for (int i = 1; i <= 5; i++) {
             ImageView star = new ImageView(requireContext());
             star.setImageResource(R.drawable.ic_star_border);
-            star.setColorFilter(requireContext().getColor(com.google.android.material.R.color.design_default_color_primary));
+            star.setColorFilter(requireContext().getColor(R.color.primary));
             star.setPadding(0, 0, 8, 0);
-            
-            final int rating = i;
-            star.setOnClickListener(v -> {
-                selectedRating = rating;
-                updateRatingDisplay();
-                updateSubmitButton();
+
+            final int starPosition = i;
+            star.setOnTouchListener((v, event) -> {
+                if (event.getAction() == MotionEvent.ACTION_DOWN || event.getAction() == MotionEvent.ACTION_MOVE) {
+                    float touchX = event.getX();
+                    float starWidth = v.getWidth();
+
+                    // Determine if left half or right half was touched
+                    if (touchX < starWidth / 2) {
+                        // Left half
+                        selectedRating = starPosition - 0.5f;
+                    } else {
+                        // Right half
+                        selectedRating = starPosition;
+                    }
+
+                    if (selectedRating < 1f) {
+                        selectedRating = 1f;
+                    }
+
+                    updateRatingDisplay();
+                    updateSubmitButton();
+                    return true;
+                }
+                return false;
             });
-            
+
             llRatingStars.addView(star);
         }
     }
 
     private void updateRatingDisplay() {
+        int fullStars = (int) selectedRating;
+        boolean hasHalfStar = (selectedRating % 1) != 0;
+
         for (int i = 0; i < llRatingStars.getChildCount(); i++) {
             ImageView star = (ImageView) llRatingStars.getChildAt(i);
-            if (i < selectedRating) {
+
+            if (i < fullStars) {
+                // Full star
                 star.setImageResource(R.drawable.ic_star);
+            } else if (i == fullStars && hasHalfStar) {
+                // Half star
+                star.setImageResource(R.drawable.ic_star_half);
             } else {
+                // Empty star
                 star.setImageResource(R.drawable.ic_star_border);
             }
         }
     }
 
     private void setupClickListeners() {
-        MaterialButton btnCancel = getDialog().findViewById(R.id.btn_cancel);
         btnCancel.setOnClickListener(v -> dismiss());
-
         btnSubmit.setOnClickListener(v -> submitReview());
     }
 
     private void updateSubmitButton() {
-        btnSubmit.setEnabled(selectedRating > 0);
+        btnSubmit.setEnabled(selectedRating >= 1f);
     }
 
     private void submitReview() {
-        if (selectedRating == 0) {
+        if (selectedRating < 1f) {
             Toast.makeText(requireContext(), "Please select a rating", Toast.LENGTH_SHORT).show();
             return;
         }
 
         String comment = etComment.getText() != null ? etComment.getText().toString().trim() : "";
-        
+
         ReviewDto reviewDto = new ReviewDto();
         reviewDto.setGrade(selectedRating);
         reviewDto.setComment(comment.isEmpty() ? null : comment);
@@ -144,14 +175,17 @@ public class AddReviewDialog extends DialogFragment {
         reviewDto.setReviewType(reviewType);
 
         reviewRepository.add(reviewDto).observe(this, review -> {
-            if (review != null) {
+            if (review != null && review.first != null) {
                 Toast.makeText(requireContext(), "Review submitted successfully", Toast.LENGTH_SHORT).show();
                 if (listener != null) {
                     listener.onReviewAdded();
                 }
                 dismiss();
             } else {
-                Toast.makeText(requireContext(), "Failed to submit review", Toast.LENGTH_SHORT).show();
+                if (review == null || review.second == null)
+                    Toast.makeText(requireContext(), "Failed to submit review", Toast.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(requireContext(), review.second, Toast.LENGTH_SHORT).show();
             }
         });
     }

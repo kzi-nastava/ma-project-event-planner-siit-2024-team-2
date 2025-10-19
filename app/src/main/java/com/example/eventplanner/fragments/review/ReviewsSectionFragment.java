@@ -186,6 +186,7 @@ public class ReviewsSectionFragment extends Fragment {
         AddReviewDialog dialog = AddReviewDialog.newInstance(entityId, entityName, reviewType);
         dialog.setOnReviewAddedListener(() -> {
             loadReviews();
+            viewModel.loadReviewEligibility(entityId, reviewType);
         });
         dialog.show(getParentFragmentManager(), "AddReviewDialog");
     }

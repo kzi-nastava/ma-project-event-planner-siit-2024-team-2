@@ -13,7 +13,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EventReviewDto {
-    private int grade;
+    private double grade;
     private String comment;
     private long userId;
     private long eventId;

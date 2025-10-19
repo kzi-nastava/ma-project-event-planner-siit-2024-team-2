@@ -12,7 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReviewDto {
-    private int grade;
+    private double grade;
     private String comment;
     private long entityId;
     private ReviewType reviewType;

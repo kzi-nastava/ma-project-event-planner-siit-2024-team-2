@@ -1,5 +1,6 @@
 package com.example.eventplanner.clients.repositories.review;
 
+import androidx.core.util.Pair;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -43,11 +44,11 @@ public class ReviewRepository {
         return liveData;
     }
     
-    public LiveData<Review> add(ReviewDto review) {
-        MutableLiveData<Review> liveData = new MutableLiveData<>();
+    public LiveData<Pair<Review, String>> add(ReviewDto review) {
+        MutableLiveData<Pair<Review, String>> liveData = new MutableLiveData<>();
         reviewService.add(review).enqueue(new SimpleCallback<>(
-                response -> liveData.setValue(response != null ? response.body() : null),
-                error -> liveData.setValue(null)
+                response -> liveData.setValue(response != null ? new Pair<>(response.body(), null) : null),
+                error -> liveData.setValue(error == null ? null : new Pair<>(null, error.second))
         ));
         return liveData;
     }

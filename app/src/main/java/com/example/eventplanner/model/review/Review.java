@@ -21,7 +21,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Review implements Parcelable, Serializable {
     private long id;
-    private Integer grade;
+    private Double grade;
     private String comment;
     private BaseUser user;
     private ReviewStatus reviewStatus;
@@ -34,7 +34,7 @@ public class Review implements Parcelable, Serializable {
         if (in.readByte() == 0) {
             grade = null;
         } else {
-            grade = in.readInt();
+            grade = in.readDouble();
         }
         comment = in.readString();
         user = in.readParcelable(BaseUser.class.getClassLoader());
@@ -69,7 +69,7 @@ public class Review implements Parcelable, Serializable {
             dest.writeByte((byte) 0);
         } else {
             dest.writeByte((byte) 1);
-            dest.writeInt(grade);
+            dest.writeDouble(grade);
         }
         dest.writeString(comment);
         dest.writeParcelable(user, flags);
