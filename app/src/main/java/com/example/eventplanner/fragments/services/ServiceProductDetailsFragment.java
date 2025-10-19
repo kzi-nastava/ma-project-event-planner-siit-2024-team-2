@@ -58,6 +58,7 @@ public class ServiceProductDetailsFragment extends Fragment {
    private LinearLayout detailsLayout;
    private LinearLayout serviceDetails;
    private MaterialButton btnReportMenu;
+   private MaterialButton btnChatProvider;
    private UserManagementRepository userManagementRepository;
 
    public ServiceProductDetailsFragment() {
@@ -91,6 +92,7 @@ public class ServiceProductDetailsFragment extends Fragment {
       tvDiscount = binding.tvSpDiscount;
       tvAvailable = binding.tvSpAvailable;
       btnReportMenu = binding.btnReportMenu;
+      btnChatProvider = binding.btnChatProvider;
 
       tvSpecifics = binding.tvSpSpecifics;
       tvReservationDeadline = binding.tvSpReservationDeadline;
@@ -112,6 +114,9 @@ public class ServiceProductDetailsFragment extends Fragment {
 
       // Setup report menu
       setupReportMenu();
+      
+      // Setup chat button
+      setupChatButton();
 
       recyclerView = binding.rvImages;
       recyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
@@ -224,6 +229,21 @@ public class ServiceProductDetailsFragment extends Fragment {
                Toast.makeText(getContext(), R.string.suspend_failed, Toast.LENGTH_SHORT).show();
             }
          }
+      });
+   }
+
+   private void setupChatButton() {
+      btnChatProvider.setOnClickListener(v -> {
+         if (serviceProduct == null || serviceProduct.getServiceProductProvider() == null) {
+            Toast.makeText(getContext(), "Service provider information not available", Toast.LENGTH_SHORT).show();
+            return;
+         }
+
+         // Navigate to chat with service provider
+         androidx.navigation.NavController navController = androidx.navigation.Navigation.findNavController(requireActivity(), R.id.fragment_nav_content_main);
+         Bundle args = new Bundle();
+         args.putLong("userId", serviceProduct.getServiceProductProvider().getId());
+         navController.navigate(R.id.nav_chat, args);
       });
    }
 }

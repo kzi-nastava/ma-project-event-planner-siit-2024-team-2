@@ -15,6 +15,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.NavOptions;
+import androidx.navigation.Navigation;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
@@ -50,6 +53,7 @@ public class EventDetailsFragment extends Fragment {
     private FragmentEventDetailsBinding binding;
     private CircularProgressIndicator progressIndicator;
     private MaterialButton btnReportMenu;
+    private MaterialButton btnChatOrganizer;
     private Event currentEvent;
     private UserManagementRepository userManagementRepository;
 
@@ -87,6 +91,7 @@ public class EventDetailsFragment extends Fragment {
         tvLocation = binding.tvEventLocation;
         tvIsOpen = binding.tvEventIsOpen;
         btnReportMenu = binding.btnReportMenu;
+        btnChatOrganizer = binding.btnChatOrganizer;
 
         progressIndicator = binding.progress;
         progressIndicator.setVisibility(View.VISIBLE);
@@ -98,6 +103,9 @@ public class EventDetailsFragment extends Fragment {
 
         // Setup report menu
         setupReportMenu();
+        
+        // Setup chat button
+        setupChatButton();
 
         // ViewModel
         viewModel = new ViewModelProvider(this).get(EventDetailsViewModel.class);
@@ -211,6 +219,26 @@ public class EventDetailsFragment extends Fragment {
                     Toast.makeText(getContext(), R.string.suspend_failed, Toast.LENGTH_SHORT).show();
                 }
             }
+        });
+    }
+
+    private void setupChatButton() {
+        btnChatOrganizer.setOnClickListener(v -> {
+            if (currentEvent == null || currentEvent.getEventOrganizerDto() == null) {
+                Toast.makeText(getContext(), "Event organizer information not available", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Navigate to chat with organizer
+            NavController navController = Navigation.findNavController(requireActivity(), R.id.fragment_nav_content_main);
+            Bundle args = new Bundle();
+            args.putLong("userId", currentEvent.getEventOrganizerDto().getId());
+
+            NavOptions navOptions = new NavOptions.Builder()
+                    .setPopUpTo(R.id.nav_chat, true)
+                    .build();
+
+            navController.navigate(R.id.nav_chat, args, navOptions);
         });
     }
 }

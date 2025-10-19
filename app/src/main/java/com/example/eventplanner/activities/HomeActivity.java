@@ -101,6 +101,8 @@ public class HomeActivity extends AppCompatActivity {
                 .setOpenableLayout(drawerLayout)
                 .build();
 
+        protectedDestinations.add(R.id.nav_chat);
+
         // Setup navigation UI
         NavigationUI.setupWithNavController(navigationView, navController);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
@@ -110,13 +112,13 @@ public class HomeActivity extends AppCompatActivity {
                 handleLogoutClick();
                 return true;
             }
+            drawerLayout.closeDrawers();
             return NavigationUI.onNavDestinationSelected(item, navController);
         });
 
         // Add route protection
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
             if (protectedDestinations.contains(destination.getId()) && UserIdUtils.getUserId(this) < 0) {
-                // User is not logged in — redirect to LoginActivity
                 Intent intent = new Intent(this, LoginActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
@@ -203,6 +205,7 @@ public class HomeActivity extends AppCompatActivity {
         }
 
         menu.findItem(R.id.nav_notifications).setVisible(true);
+        menu.findItem(R.id.nav_chat).setVisible(true);
 
         switch (role) {
             case "ADMIN":
