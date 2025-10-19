@@ -17,10 +17,6 @@
         android:title="@string/notifications" />
 
     <item
-        android:id="@+id/nav_chat"
-        android:title="@string/chat" />
-
-    <item
         android:id="@+id/nav_my_events"
         android:title="@string/my_events" />
 
@@ -59,14 +55,6 @@
     <item
         android:id="@+id/nav_edit_service"
         android:title="@string/new_service" />
-
-    <item
-        android:id="@+id/nav_admin_user_reports"
-        android:title="@string/user_reports" />
-
-    <item
-        android:id="@+id/nav_admin_reviews"
-        android:title="@string/reviews" />
 
     <item
         android:id="@+id/nav_logout"

@@ -112,8 +112,6 @@ public class CategoryFragment extends Fragment {
             categories.clear();
 
             if (types != null && !types.isEmpty()) {
-                // NOTE: types is List<EventType> (model). If your adapter expects EventTypeDto,
-                // convert/map here. Example below assumes adapter accepts EventType model.
                 categories.addAll(types);
             }
 
@@ -128,7 +126,6 @@ public class CategoryFragment extends Fragment {
         viewModel.deleteCategory(id).observe(getViewLifecycleOwner(), success -> {
             if (Boolean.TRUE.equals(success)) {
                 Toast.makeText(requireContext(), "Category deleted", Toast.LENGTH_SHORT).show();
-                // reload list
                 viewModel.loadCategories();
             } else {
                 Toast.makeText(requireContext(), "Failed to delete category", Toast.LENGTH_SHORT).show();
