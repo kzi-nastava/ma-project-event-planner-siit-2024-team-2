@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -28,6 +29,7 @@ public class ServicesPageFragment extends Fragment {
     private RecyclerView recyclerView;
     private ServiceAdapter adapter;
     private ServicesViewModel viewModel;
+    private SearchView searchView;
 
     @Nullable
     @Override
@@ -37,6 +39,7 @@ public class ServicesPageFragment extends Fragment {
 
         recyclerView = view.findViewById(R.id.recycler_view_services);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        searchView = view.findViewById(R.id.search_view);
 
         adapter = new ServiceAdapter(new ArrayList<>(), new ServiceAdapter.OnServiceClickListener() {
             @Override
@@ -63,6 +66,21 @@ public class ServicesPageFragment extends Fragment {
         viewModel.getServices().observe(getViewLifecycleOwner(), services -> {
             if (services != null) adapter.setServices(services);
         });
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                adapter.filter(query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                adapter.filter(newText);
+                return true;
+            }
+        });
+
         return view;
     }
 

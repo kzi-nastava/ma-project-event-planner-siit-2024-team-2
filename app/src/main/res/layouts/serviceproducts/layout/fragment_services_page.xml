@@ -20,12 +20,12 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp">
 
-            <androidx.appcompat.widget.SearchView
-                android:id="@+id/search_text"
+            <SearchView
+                android:id="@+id/search_view"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:queryHint="Search services..." />
 
-                />
         </LinearLayout>
         <LinearLayout
             android:id="@+id/linear2"
@@ -37,15 +37,15 @@
             android:layout_marginTop="10dp"
             >
 
-            <Button
-                android:id="@+id/btnFilter"
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.7"
-                android:layout_marginRight="10dp"
+<!--            <Button-->
+<!--                android:id="@+id/btnFilter"-->
+<!--                android:layout_width="80dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_weight="0.7"-->
+<!--                android:layout_marginRight="10dp"-->
 
-                android:text="Filter"
-                tools:ignore="TextContrastCheck" />
+<!--                android:text="Filter"-->
+<!--                tools:ignore="TextContrastCheck" />-->
 
 
             <Button
@@ -53,7 +53,6 @@
             android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.7"
-                android:layout_marginLeft="10dp"
                 android:text="Price list"
             tools:ignore="TextContrastCheck" />
         </LinearLayout>
@@ -62,7 +61,7 @@
             android:id="@+id/recycler_view_services"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="20dp"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
             android:layout_marginBottom="50dp"

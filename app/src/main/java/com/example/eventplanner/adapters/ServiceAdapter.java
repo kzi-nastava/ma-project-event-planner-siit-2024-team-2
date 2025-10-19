@@ -18,6 +18,7 @@ import java.util.List;
 public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ViewHolder> {
 
     private List<ServiceDto> services;
+    private List<ServiceDto> filteredServices;
     private OnServiceClickListener listener;
 
     public interface OnServiceClickListener {
@@ -28,6 +29,7 @@ public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ViewHold
     public ServiceAdapter(List<ServiceDto> services, OnServiceClickListener listener) {
         this.services = services;
         this.listener = listener;
+        this.filteredServices = services;
     }
 
     @NonNull
@@ -40,14 +42,11 @@ public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        ServiceDto service = services.get(position);
+        ServiceDto service = filteredServices.get(position);
 
         holder.title.setText(service.getName());
         holder.description.setText(service.getDescription());
         holder.price.setText("Price: " + service.getPrice() + "$");
-
-        // TODO: If you have image loading (e.g., Glide or Picasso), you can set it here:
-        // Glide.with(holder.itemView.getContext()).load(service.getImageUrl()).into(holder.image);
 
         holder.btnEdit.setOnClickListener(v -> {
             if (listener != null) listener.onEditClick(service);
@@ -60,11 +59,26 @@ public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ViewHold
 
     @Override
     public int getItemCount() {
-        return services != null ? services.size() : 0;
+        return services != null ? filteredServices.size() : 0;
     }
 
     public void setServices(List<ServiceDto> newServices) {
         this.services = newServices;
+        filter(null);
+    }
+
+    public void filter(String query) {
+        filteredServices.clear();
+        if (query == null || query.trim().isEmpty()) {
+            filteredServices.addAll(services);
+        } else {
+            String lowerQuery = query.toLowerCase();
+            for (ServiceDto s : services) {
+                if (s.getName().toLowerCase().contains(lowerQuery)) {
+                    filteredServices.add(s);
+                }
+            }
+        }
         notifyDataSetChanged();
     }
 
