@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -56,6 +57,9 @@ public class EventDetailsFragment extends Fragment {
     private MaterialButton btnChatOrganizer;
     private Event currentEvent;
     private UserManagementRepository userManagementRepository;
+    private Button btnAttendEvent;
+    private boolean isAttending = false;
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -100,6 +104,7 @@ public class EventDetailsFragment extends Fragment {
         detailsLayout.setVisibility(View.GONE);
 
         userManagementRepository = new UserManagementRepository();
+        btnAttendEvent = binding.btnAttendEvent;
 
         // Setup report menu
         setupReportMenu();
@@ -110,7 +115,7 @@ public class EventDetailsFragment extends Fragment {
         // ViewModel
         viewModel = new ViewModelProvider(this).get(EventDetailsViewModel.class);
         viewModel.getEventById(eventId).observe(getViewLifecycleOwner(), this::populateEvent);
-
+        setupAttendButton();
         return root;
     }
 
@@ -241,4 +246,48 @@ public class EventDetailsFragment extends Fragment {
             navController.navigate(R.id.nav_chat, args, navOptions);
         });
     }
+
+    private void setupAttendButton() {
+        // Initially disable until event is loaded
+        btnAttendEvent.setEnabled(false);
+
+        // Observe attendance state when event is loaded
+        viewModel.isUserAttending(eventId).observe(getViewLifecycleOwner(), attending -> {
+            isAttending = Boolean.TRUE.equals(attending);
+            updateAttendButtonText();
+            btnAttendEvent.setEnabled(true);
+        });
+
+        btnAttendEvent.setOnClickListener(v -> {
+            btnAttendEvent.setEnabled(false);
+            if (isAttending) {
+                viewModel.removeAttendance(eventId).observe(getViewLifecycleOwner(), success -> {
+                    btnAttendEvent.setEnabled(true);
+                    if (Boolean.TRUE.equals(success)) {
+                        isAttending = false;
+                        updateAttendButtonText();
+                        Toast.makeText(getContext(), "You left the event.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getContext(), "Failed to leave event.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else {
+                viewModel.attendEvent(eventId).observe(getViewLifecycleOwner(), success -> {
+                    btnAttendEvent.setEnabled(true);
+                    if (Boolean.TRUE.equals(success)) {
+                        isAttending = true;
+                        updateAttendButtonText();
+                        Toast.makeText(getContext(), "You are now attending this event!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getContext(), "Failed to attend event.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+    }
+
+    private void updateAttendButtonText() {
+        btnAttendEvent.setText(isAttending ? "Cancel Attendance" : "Attend Event");
+    }
+
 }

@@ -23,6 +23,24 @@ public class EventDetailsViewModel extends ViewModel {
         return event;
     }
 
+    public LiveData<Boolean> isUserAttending(long eventId) {
+        MutableLiveData<Boolean> result = new MutableLiveData<>();
+        tracker.observeOnce(eventRepository.isUserAttending(eventId), result, true);
+        return result;
+    }
+
+    public LiveData<Boolean> attendEvent(long eventId) {
+        MutableLiveData<Boolean> result = new MutableLiveData<>();
+        tracker.observeOnce(eventRepository.attendEvent(eventId), result, true);
+        return result;
+    }
+
+    public LiveData<Boolean> removeAttendance(long eventId) {
+        MutableLiveData<Boolean> result = new MutableLiveData<>();
+        tracker.observeOnce(eventRepository.removeAttendance(eventId), result, true);
+        return result;
+    }
+
     @Override
     protected void onCleared() {
         super.onCleared();
