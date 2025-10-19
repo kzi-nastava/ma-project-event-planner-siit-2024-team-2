@@ -20,14 +20,14 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Review implements Parcelable, Serializable {
-    private long id;
-    private Double grade;
-    private String comment;
-    private BaseUser user;
-    private ReviewStatus reviewStatus;
-    private Date createdAt;
-    private boolean hiding;
-    private boolean hidden;
+    protected long id;
+    protected Double grade;
+    protected String comment;
+    protected BaseUser user;
+    protected ReviewStatus reviewStatus;
+    protected Date createdAt;
+    protected boolean hiding;
+    protected boolean hidden;
 
     protected Review(Parcel in) {
         id = in.readLong();

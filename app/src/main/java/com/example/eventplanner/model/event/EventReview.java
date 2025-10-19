@@ -5,10 +5,12 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import com.example.eventplanner.model.review.Review;
+import com.example.eventplanner.model.review.ReviewStatus;
 import com.example.eventplanner.model.user.BaseUser;
-import com.example.eventplanner.model.utils.ReviewStatus;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,23 +21,20 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class EventReview implements Parcelable, Serializable {
-    private Long id;
-    private double grade;
-    private String comment;
-    private BaseUser user;
+public class EventReview extends Review  implements Parcelable, Serializable {
     private Event event;
-    private ReviewStatus reviewStatus;
 
     protected EventReview(Parcel in) {
+        id = in.readLong();
         if (in.readByte() == 0) {
-            id = null;
+            grade = null;
         } else {
-            id = in.readLong();
+            grade = in.readDouble();
         }
-        grade = in.readDouble();
         comment = in.readString();
         user = in.readParcelable(BaseUser.class.getClassLoader());
+        hiding = in.readByte() != 0;
+        hidden = in.readByte() != 0;
         event = in.readParcelable(Event.class.getClassLoader());
     }
 
@@ -58,15 +57,17 @@ public class EventReview implements Parcelable, Serializable {
 
     @Override
     public void writeToParcel(@NonNull Parcel dest, int flags) {
-        if (id == null) {
+        dest.writeLong(id);
+        if (grade == null) {
             dest.writeByte((byte) 0);
         } else {
             dest.writeByte((byte) 1);
-            dest.writeLong(id);
+            dest.writeDouble(grade);
         }
-        dest.writeDouble(grade);
         dest.writeString(comment);
         dest.writeParcelable(user, flags);
+        dest.writeByte((byte) (hiding ? 1 : 0));
+        dest.writeByte((byte) (hidden ? 1 : 0));
         dest.writeParcelable(event, flags);
     }
 }

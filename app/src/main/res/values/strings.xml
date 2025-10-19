@@ -102,4 +102,6 @@
     <string name="account_temporarily_suspended">Your account is temporarily suspended</string>
     <string name="chat">Chat</string>
     <string name="review_comment">Review comment</string>
+    <string name="user_reports">User Reports</string>
+    <string name="reviews">Reviews</string>
 </resources>
