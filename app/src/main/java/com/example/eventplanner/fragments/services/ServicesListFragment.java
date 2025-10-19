@@ -34,7 +34,6 @@ public class ServicesListFragment extends ListFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.i("ShopApp", "onCreate Services List Fragment");
         if (getArguments() != null) {
             mServices = getArguments().getParcelableArrayList(ARG_PARAM);
             adapter = new ServiceListAdapter(getActivity(), mServices);
@@ -44,7 +43,6 @@ public class ServicesListFragment extends ListFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Log.i("ShopApp", "onCreateView Services List Fragment");
         binding = FragmentServicesListBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
         return root;

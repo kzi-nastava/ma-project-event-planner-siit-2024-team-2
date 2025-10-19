@@ -40,7 +40,6 @@ public class CreateProductViewModel extends ViewModel {
 
 
    public void createProduct(ProductDto dto) {
-      Log.d("Product value", dto.toString());
       productRepository.createProduct(dto).observeForever(result -> {
          if (result != null) {
             success.setValue(true);

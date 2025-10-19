@@ -66,7 +66,6 @@ public class CreateEventViewModel extends ViewModel {
         // delegate to repository
         repository.createEvent(eventDto).observeForever(event -> {
             if (event != null) {
-                Log.d("EVENT_CREATED", event.toString());
                 isEventCreated.setValue(true);
             } else {
                 isEventCreated.setValue(false);

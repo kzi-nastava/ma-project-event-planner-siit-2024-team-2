@@ -83,4 +83,26 @@
     <string name="upgrade_now">Upgrade Now</string>
     <string name="company_description">Company Description</string>
     <string name="company_description_hint">Describe your company and services</string>
+    
+    <!-- Report User Strings -->
+    <string name="report_user">Report User</string>
+    <string name="report_reason">Enter reason</string>
+    <string name="report_reason_hint">Please provide details about the issue</string>
+    <string name="report_success">Report sent successfully</string>
+    <string name="report_failed">Failed to send report</string>
+    <string name="report_cancel">Cancel</string>
+    <string name="report_submit">Report</string>
+    <string name="authentication_required">Authentication Required</string>
+    <string name="login_to_report">To submit a report, you need to be logged in. Please log in to continue.</string>
+    <string name="suspend_user">Suspend User</string>
+    <string name="suspend_success">User suspended successfully</string>
+    <string name="suspend_failed">Failed to suspend user</string>
+    
+    <!-- Suspension Dialog Strings -->
+    <string name="account_suspended">Account Suspended</string>
+    <string name="suspension_message">Your account has been temporarily suspended due to a violation of our community guidelines.</string>
+    <string name="suspension_duration">The suspension will be lifted %1$s.</string>
+    <string name="suspension_close">Close</string>
+    <string name="account_temporarily_suspended">Your account is temporarily suspended</string>
+    <string name="chat">Chat</string>
 </resources>

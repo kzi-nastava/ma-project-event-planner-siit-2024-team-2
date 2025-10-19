@@ -50,6 +50,8 @@ public class SimpleCallback<T> implements Callback<T> {
         }
         try {
             String errorString = errorBody.string();
+            if (errorString.isBlank())
+                return "Unknown error";
             JSONObject errorJson = new JSONObject(errorString);
 
             if (errorJson.has("message")) {

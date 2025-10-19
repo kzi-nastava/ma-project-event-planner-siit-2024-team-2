@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 
 import com.example.eventplanner.R;
 import com.example.eventplanner.clients.utils.ClientUtils;
@@ -15,10 +16,15 @@ import com.example.eventplanner.clients.utils.JwtUtils;
 import com.example.eventplanner.clients.utils.UserEmailUtils;
 import com.example.eventplanner.clients.utils.UserIdUtils;
 import com.example.eventplanner.clients.utils.UserRoleUtils;
+import com.example.eventplanner.dialogs.SuspendedDialog;
 import com.example.eventplanner.dto.auth.LoginDto;
 import com.example.eventplanner.dto.auth.LoginResponseDto;
+import com.example.eventplanner.dto.user.SuspendedDialogData;
+import com.example.eventplanner.utils.JsonLog;
 import com.example.eventplanner.utils.SimpleCallback;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import retrofit2.Call;
 
@@ -100,7 +106,18 @@ public class LoginActivity extends AppCompatActivity {
                     } else
                         Toast.makeText(this, "Login failed. Please check your credentials.", Toast.LENGTH_SHORT).show();
                 },
-                error -> Toast.makeText(this, "Login failed. Please check your credentials.", Toast.LENGTH_SHORT).show()
+                error -> {
+                    if (error.second == null) {
+                        Toast.makeText(this, "Login failed. Please check your credentials.", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    try {
+                        LoginResponseDto dto = new Gson().fromJson(error.second, LoginResponseDto.class);
+                        showSuspendedDialog(new SuspendedDialogData(dto.getSuspendedAt()));
+                    } catch (Exception e) {
+                        Toast.makeText(this, "Login failed. Please check your credentials.", Toast.LENGTH_SHORT).show();
+                    }
+                }
         ));
     }
 
@@ -115,5 +132,11 @@ public class LoginActivity extends AppCompatActivity {
         intent.putExtra("token", token);
         startActivity(intent);
         finish();
+    }
+
+    private void showSuspendedDialog(SuspendedDialogData data) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        SuspendedDialog dialog = SuspendedDialog.newInstance(data);
+        dialog.show(fragmentManager, "SuspendedDialog");
     }
 }

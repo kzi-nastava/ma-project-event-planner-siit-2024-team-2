@@ -19,7 +19,6 @@ public class ServiceProductDeserializer implements JsonDeserializer<ServiceProdu
     public ServiceProduct deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         JsonObject jsonObject = json.getAsJsonObject();
         String type = jsonObject.get("dtype").getAsString();
-        JsonLog.d("ServiceProductDeserializer", jsonObject, "jsonObject: ");
 
         switch (type.toLowerCase()) {
             case "service":
