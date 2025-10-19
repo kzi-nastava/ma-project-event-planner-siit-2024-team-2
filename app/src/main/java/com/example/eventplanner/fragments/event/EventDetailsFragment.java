@@ -32,7 +32,9 @@ import com.example.eventplanner.clients.utils.AuthUtils;
 import com.example.eventplanner.databinding.FragmentAllEventsPageBinding;
 import com.example.eventplanner.databinding.FragmentEventDetailsBinding;
 import com.example.eventplanner.dialogs.ReportUserDialog;
+import com.example.eventplanner.fragments.review.ReviewsSectionFragment;
 import com.example.eventplanner.model.event.Event;
+import com.example.eventplanner.model.review.ReviewType;
 import com.example.eventplanner.model.user.BaseUser;
 import com.example.eventplanner.model.user.EventOrganizer;
 import com.google.android.material.button.MaterialButton;
@@ -56,6 +58,7 @@ public class EventDetailsFragment extends Fragment {
     private MaterialButton btnChatOrganizer;
     private Event currentEvent;
     private UserManagementRepository userManagementRepository;
+    private boolean initializedReviews = false;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -152,6 +155,22 @@ public class EventDetailsFragment extends Fragment {
 
         progressIndicator.setVisibility(View.GONE);
         detailsLayout.setVisibility(View.VISIBLE);
+
+        if (!initializedReviews)
+            initializeReviewsSection();
+    }
+    
+    private void initializeReviewsSection() {
+        ReviewsSectionFragment reviewsFragment = ReviewsSectionFragment.newInstance(
+                eventId,
+                currentEvent.getName(),
+                ReviewType.EVENT
+        );
+
+        getChildFragmentManager().beginTransaction()
+                .replace(R.id.fragment_reviews_section, reviewsFragment)
+                .commit();
+        initializedReviews = true;
     }
 
     private void setupReportMenu() {
@@ -164,7 +183,6 @@ public class EventDetailsFragment extends Fragment {
             PopupMenu popupMenu = new PopupMenu(getContext(), v);
             popupMenu.getMenuInflater().inflate(R.menu.report_menu, popupMenu.getMenu());
             
-            // Hide suspend option if user is not admin
             if (!AuthUtils.isAdmin(getContext())) {
                 popupMenu.getMenu().findItem(R.id.action_suspend_user).setVisible(false);
             }
@@ -229,7 +247,6 @@ public class EventDetailsFragment extends Fragment {
                 return;
             }
 
-            // Navigate to chat with organizer
             NavController navController = Navigation.findNavController(requireActivity(), R.id.fragment_nav_content_main);
             Bundle args = new Bundle();
             args.putLong("userId", currentEvent.getEventOrganizerDto().getId());

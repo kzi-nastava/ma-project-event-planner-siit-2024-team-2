@@ -21,6 +21,7 @@ import com.example.eventplanner.clients.services.serviceproduct.ServiceProductCa
 import com.example.eventplanner.clients.services.serviceproduct.ServiceProductService;
 import com.example.eventplanner.clients.services.chat.ChatService;
 import com.example.eventplanner.clients.services.chat.ChatMessageService;
+import com.example.eventplanner.clients.services.review.ReviewService;
 import com.example.eventplanner.model.serviceproduct.ServiceProduct;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -116,6 +117,9 @@ public class ClientUtils {
         // Chat
         chatService = retrofit.create(ChatService.class);
         chatMessageService = retrofit.create(ChatMessageService.class);
+
+        // Review
+        reviewService = retrofit.create(ReviewService.class);
     }
 
     // Event
@@ -148,4 +152,7 @@ public class ClientUtils {
     // Chat
     public static ChatService chatService;
     public static ChatMessageService chatMessageService;
+
+    // Review
+    public static ReviewService reviewService;
 }
