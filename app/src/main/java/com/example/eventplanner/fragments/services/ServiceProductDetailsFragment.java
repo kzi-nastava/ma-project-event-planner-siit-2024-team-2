@@ -1,7 +1,6 @@
 package com.example.eventplanner.fragments.services;
 
 import android.annotation.SuppressLint;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,27 +21,22 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.eventplanner.R;
 import com.example.eventplanner.adapters.ImageAdapter;
-import com.example.eventplanner.adapters.PhotosAdapter;
 import com.example.eventplanner.clients.repositories.user.UserManagementRepository;
 import com.example.eventplanner.clients.utils.AuthUtils;
 import com.example.eventplanner.databinding.FragmentServiceProductDetailsBinding;
 import com.example.eventplanner.dialogs.ReportUserDialog;
-import com.example.eventplanner.dto.serviceproduct.ServiceDto;
 import com.example.eventplanner.dto.serviceproduct.ServiceProductSummaryDto;
-import com.example.eventplanner.fragments.review.ReviewsSectionFragment;
+import com.example.eventplanner.fragments.order.ReviewsSectionFragment;
 import com.example.eventplanner.model.review.ReviewType;
 import com.example.eventplanner.model.serviceproduct.Service;
 import com.example.eventplanner.model.serviceproduct.ServiceProduct;
 import com.example.eventplanner.model.user.ServiceProductProvider;
-import com.example.eventplanner.utils.JsonLog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-import lombok.Getter;
 
 public class ServiceProductDetailsFragment extends Fragment {
 

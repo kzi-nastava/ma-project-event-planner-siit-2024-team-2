@@ -6,7 +6,9 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.eventplanner.clients.services.order.BookingService;
 import com.example.eventplanner.clients.utils.ClientUtils;
 import com.example.eventplanner.dto.order.BookingDto;
+import com.example.eventplanner.dto.order.PendingBookingDto;
 import com.example.eventplanner.model.order.Booking;
+import com.example.eventplanner.model.utils.PagedModel;
 import com.example.eventplanner.utils.SimpleCallback;
 
 import java.util.List;
@@ -71,7 +73,40 @@ public class BookingRepository {
         Call<ResponseBody> call = bookingService.deleteBooking(id);
 
         call.enqueue(new SimpleCallback<>(
-                response -> liveData.setValue(response != null && response.isSuccessful()),
+                response -> liveData.setValue(response != null),
+                error -> liveData.setValue(false)
+        ));
+        return liveData;
+    }
+
+    public LiveData<PagedModel<PendingBookingDto>> getMyBookings(Integer page, Integer size) {
+        MutableLiveData<PagedModel<PendingBookingDto>> liveData = new MutableLiveData<>();
+        Call<PagedModel<PendingBookingDto>> call = bookingService.getMyBookings(page, size);
+
+        call.enqueue(new SimpleCallback<>(
+                response -> liveData.setValue(response != null ? response.body() : null),
+                error -> liveData.setValue(null)
+        ));
+        return liveData;
+    }
+
+    public LiveData<Boolean> acceptBooking(Long id) {
+        MutableLiveData<Boolean> liveData = new MutableLiveData<>();
+        Call<Void> call = bookingService.acceptBooking(id);
+
+        call.enqueue(new SimpleCallback<>(
+                response -> liveData.setValue(true),
+                error -> liveData.setValue(false)
+        ));
+        return liveData;
+    }
+
+    public LiveData<Boolean> declineBooking(Long id) {
+        MutableLiveData<Boolean> liveData = new MutableLiveData<>();
+        Call<Boolean> call = bookingService.declineBooking(id);
+
+        call.enqueue(new SimpleCallback<>(
+                response -> liveData.setValue(response != null),
                 error -> liveData.setValue(false)
         ));
         return liveData;

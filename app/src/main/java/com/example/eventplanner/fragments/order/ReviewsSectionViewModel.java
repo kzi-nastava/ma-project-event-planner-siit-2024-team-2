@@ -1,4 +1,4 @@
-package com.example.eventplanner.fragments.review;
+package com.example.eventplanner.fragments.order;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -10,8 +10,6 @@ import com.example.eventplanner.dto.review.ReviewSummaryDto;
 import com.example.eventplanner.model.review.ReviewType;
 import com.example.eventplanner.model.utils.PagedModel;
 import com.example.eventplanner.utils.ObserverTracker;
-
-import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;

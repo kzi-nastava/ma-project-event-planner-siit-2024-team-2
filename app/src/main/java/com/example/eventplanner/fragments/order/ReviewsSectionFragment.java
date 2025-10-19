@@ -1,14 +1,11 @@
-package com.example.eventplanner.fragments.review;
+package com.example.eventplanner.fragments.order;
 
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,7 +14,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.eventplanner.R;
 import com.example.eventplanner.adapters.ReviewAdapter;
 import com.example.eventplanner.databinding.FragmentReviewsSectionBinding;
 import com.example.eventplanner.dialogs.AddReviewDialog;
@@ -26,7 +22,6 @@ import com.example.eventplanner.dto.review.ReviewSummaryDto;
 import com.example.eventplanner.model.review.ReviewType;
 import com.example.eventplanner.model.utils.PageMetadata;
 import com.example.eventplanner.model.utils.PagedModel;
-import com.example.eventplanner.pagination.OnPaginateListener;
 import com.example.eventplanner.pagination.Pagination;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.CircularProgressIndicator;

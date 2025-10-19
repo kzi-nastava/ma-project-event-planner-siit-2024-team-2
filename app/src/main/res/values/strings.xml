@@ -104,4 +104,5 @@
     <string name="review_comment">Review comment</string>
     <string name="user_reports">User Reports</string>
     <string name="reviews">Reviews</string>
+    <string name="bookings">Pending Bookings</string>
 </resources>
