@@ -24,6 +24,7 @@ import com.example.eventplanner.adapters.ImageAdapter;
 import com.example.eventplanner.clients.repositories.user.UserManagementRepository;
 import com.example.eventplanner.clients.utils.AuthUtils;
 import com.example.eventplanner.databinding.FragmentServiceProductDetailsBinding;
+import com.example.eventplanner.dialogs.BookPurchaseDialog;
 import com.example.eventplanner.dialogs.ReportUserDialog;
 import com.example.eventplanner.dto.serviceproduct.ServiceProductSummaryDto;
 import com.example.eventplanner.fragments.order.ReviewsSectionFragment;
@@ -57,6 +58,7 @@ public class ServiceProductDetailsFragment extends Fragment {
    private LinearLayout serviceDetails;
    private MaterialButton btnReportMenu;
    private MaterialButton btnChatProvider;
+   private MaterialButton btnBookPurchase;
    private UserManagementRepository userManagementRepository;
    private boolean initializedReviews = false;
 
@@ -92,6 +94,7 @@ public class ServiceProductDetailsFragment extends Fragment {
       tvAvailable = binding.tvSpAvailable;
       btnReportMenu = binding.btnReportMenu;
       btnChatProvider = binding.btnChatProvider;
+      btnBookPurchase = binding.btnBookPurchase;
 
       tvSpecifics = binding.tvSpSpecifics;
       tvReservationDeadline = binding.tvSpReservationDeadline;
@@ -116,6 +119,9 @@ public class ServiceProductDetailsFragment extends Fragment {
       
       // Setup chat button
       setupChatButton();
+      
+      // Setup booking button
+      setupBookingButton();
 
       recyclerView = binding.rvImages;
       recyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
@@ -156,6 +162,14 @@ public class ServiceProductDetailsFragment extends Fragment {
 
       progressIndicator.setVisibility(View.GONE);
       detailsLayout.setVisibility(View.VISIBLE);
+
+      if (dto.isAvailable()) {
+         btnBookPurchase.setEnabled(true);
+         btnBookPurchase.setText(dto instanceof Service ? "Book Service" : "Purchase Product");
+      } else {
+         btnBookPurchase.setEnabled(false);
+         btnBookPurchase.setText("Not Available");
+      }
 
       Log.e("ServiceProductDetailsFragment", "SP ID: " + serviceProductId.toString());
       if (!initializedReviews)
@@ -262,6 +276,29 @@ public class ServiceProductDetailsFragment extends Fragment {
          Bundle args = new Bundle();
          args.putLong("userId", serviceProduct.getServiceProductProvider().getId());
          navController.navigate(R.id.nav_chat, args);
+      });
+   }
+
+   private void setupBookingButton() {
+      btnBookPurchase.setOnClickListener(v -> {
+         if (serviceProduct == null) {
+            Toast.makeText(getContext(), "Service product information not available", Toast.LENGTH_SHORT).show();
+            return;
+         }
+
+         if (!serviceProduct.isAvailable()) {
+            Toast.makeText(getContext(), "This service/product is not available", Toast.LENGTH_SHORT).show();
+            return;
+         }
+
+         // Open booking/purchase dialog
+         BookPurchaseDialog dialog = BookPurchaseDialog.newInstance(serviceProduct);
+         dialog.setListener(success -> {
+            if (success) {
+               Toast.makeText(getContext(), "Booking/Purchase completed successfully", Toast.LENGTH_SHORT).show();
+            }
+         });
+         dialog.show(getParentFragmentManager(), "BookPurchaseDialog");
       });
    }
 }
