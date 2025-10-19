@@ -250,7 +250,7 @@ public class EventDetailsFragment extends Fragment {
     private void setupAttendButton() {
         // Initially disable until event is loaded
         btnAttendEvent.setEnabled(false);
-
+        if (!AuthUtils.isLoggedIn(requireContext())) return;
         // Observe attendance state when event is loaded
         viewModel.isUserAttending(eventId).observe(getViewLifecycleOwner(), attending -> {
             isAttending = Boolean.TRUE.equals(attending);
