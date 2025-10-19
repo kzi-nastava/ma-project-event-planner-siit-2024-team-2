@@ -1,179 +1,278 @@
 package com.example.eventplanner.fragments.services;
 
-import static android.app.Activity.RESULT_OK;
-
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import android.view.*;
+import android.widget.*;
+import androidx.annotation.*;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.provider.MediaStore;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.RadioButton;
-import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import com.example.eventplanner.R;
-import com.example.eventplanner.adapters.PhotosAdapter;
-import com.example.eventplanner.databinding.FragmentEditServiceBinding;
+import com.example.eventplanner.adapters.ImageAdapter;
+import com.example.eventplanner.adapters.SelectableEventAdapter;
+import com.example.eventplanner.clients.utils.UserIdUtils;
+import com.example.eventplanner.dto.serviceproduct.ServiceDto;
+import com.example.eventplanner.model.event.EventType;
 import com.example.eventplanner.model.serviceproduct.Service;
+import com.example.eventplanner.model.serviceproduct.ServiceProductCategory;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
+public class EditServiceFragment extends Fragment {
 
-public class EditServiceFragment extends Fragment{
+    private EditText inputName, inputDescription, inputPrice, inputDiscount, inputSpecifies;
+    private EditText inputDuration, inputCancellationDays, inputReservationDays;
+    private CheckBox cbVisible, cbAvailable, cbAutomaticReserved;
+    private Spinner spinnerCategory;
+    private RecyclerView rvEvents;
+    private Button btnSave, btnCancel, btnAttachImages;
 
-    private FragmentEditServiceBinding binding;
-    private Service service;
-    private static final int PICK_IMAGE_REQUEST = 1;
+    private EditServiceViewModel viewModel;
+    private List<EventType> selectedEvents = new ArrayList<>();
+    List<Long> selectedEventIds = new ArrayList<>();
+    private List<String> images = new ArrayList<>();
+    private ImageAdapter imageAdapter;
+    private final int IMAGE_PICK_CODE = 101;
 
-    public EditServiceFragment() {}
-
-    public static EditServiceFragment newInstance() {
-        EditServiceFragment fragment = new EditServiceFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
-    }
-
+    @Nullable
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.fragment_edit_service, container, false);
+        viewModel = new ViewModelProvider(this).get(EditServiceViewModel.class);
+        initViews(v);
+        observeData();
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        binding = FragmentEditServiceBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
-        return root;
-    }
+        // Check if editing
+        if (getArguments() != null && getArguments().containsKey("serviceId")) {
+            long serviceId = getArguments().getLong("serviceId");
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        Spinner serviceCategory = view.findViewById(R.id.spinner_service_categories);
-
-        TextView serviceName = binding.nameEditText;
-        TextView serviceDescription = binding.descriptionEditText;
-        TextView serviceSpecifies = binding.specifiesEditText;
-        TextView deleteInstruction = binding.deleteInstructionText;
-
-        TextView servicePrice = binding.priceEditText;
-        TextView serviceDiscount = binding.discountEditText;
-
-        RadioButton serviceRadioVisibility = binding.radioVisibility;
-        RadioButton serviceRadioAvailability = binding.radioAvailability;
-        TextView serviceDuration = binding.durationEditText;
-        TextView serviceCancellationDeadline = binding.cancellationDeadlineEditText;
-        TextView serviceReservationDeadline = binding.reservationDeadlineEditText;
-
-        Button saveBtn = binding.btnSave;
-        Button cancelBtn = binding.btnCancel;
-        Button attachPhotoBtn = binding.btnAttachPhoto;
-
-        navigateBack(view, saveBtn, true);
-        navigateBack(view, cancelBtn, false);
-        attachPhotoBtn.setOnClickListener(view1 -> openGallery());
-
-        if (getArguments() != null) {
-            service = getArguments().getParcelable("selectedService");
-
-            if (service != null) {
-                setServiceAttributes(serviceCategory, serviceName, serviceDescription, serviceSpecifies, deleteInstruction, servicePrice, serviceDiscount,
-                        serviceRadioVisibility, serviceRadioAvailability, serviceDuration, serviceReservationDeadline, serviceCancellationDeadline);
-            }
+            viewModel.getService(serviceId).observe(getViewLifecycleOwner(), service -> {
+                if (service != null) {
+                    populateForm(service);
+                } else {
+                    Toast.makeText(requireContext(), "Failed to load service", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
+        viewModel.getCategories();
+        viewModel.getEventTypes();
+        return v;
     }
 
-    private void setServiceAttributes(Spinner serviceCategory, TextView serviceName, TextView serviceDescription, TextView serviceSpecifies, TextView deleteInstruction,
-                                      TextView servicePrice, TextView serviceDiscount, RadioButton serviceRadioVisibility, RadioButton serviceRadioAvailability,
-                                      TextView serviceDuration, TextView serviceReservationDeadline, TextView serviceCancellationDeadline) {
-        setServiceCategory(serviceCategory);
 
-        serviceName.setText(service.getName());
-        serviceDescription.setText(service.getDescription());
-        serviceSpecifies.setText(service.getSpecifies());
-        servicePrice.setText(String.valueOf(service.getPrice()));
-        serviceDiscount.setText(String.valueOf(service.getDiscount()));
+    private void populateForm(Service product) {
+        inputName.setText(product.getName());
+        inputDescription.setText(product.getDescription());
+        inputPrice.setText(String.valueOf(product.getPrice()));
+        inputDiscount.setText(String.valueOf(product.getDiscount()));
+        inputSpecifies.setText(product.getSpecifies());
+        inputDuration.setText(String.valueOf(product.getDuration()));
+        inputCancellationDays.setText(String.valueOf(product.getCancellationDaysDeadline()));
+        inputReservationDays.setText(String.valueOf(product.getReservationDaysDeadline()));
+        cbVisible.setChecked(product.isVisible());
+        cbAvailable.setChecked(product.isAvailable());
+        cbAutomaticReserved.setChecked(product.isHasAutomaticReservation());
+        selectedEvents = product.getAvailableEventTypes() != null
+                ? new ArrayList<EventType>(product.getAvailableEventTypes())
+                : new ArrayList<>();
 
-        serviceRadioVisibility.setChecked(service.isVisible());
-        serviceRadioAvailability.setChecked(service.isAvailable());
-        serviceDuration.setText(String.valueOf(service.getDuration()));
-        serviceReservationDeadline.setText(String.valueOf(service.getReservationDaysDeadline()));
-        serviceCancellationDeadline.setText(String.valueOf(service.getCancellationDaysDeadline()));
+        images.clear();
+        images.addAll(product.getImageEncodedNames());
 
-        setServicePhotos(deleteInstruction);
-    }
 
-    private void setServiceCategory(Spinner serviceCategory) {
-        int categoryPosition = -1;
+        // Set spinner selection
+        viewModel.getCategories().observe(getViewLifecycleOwner(), cats -> {
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                    requireContext(),
+                    android.R.layout.simple_spinner_item,
+                    cats.stream().map(c -> c.getName()).toArray(String[]::new)
+            );
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinnerCategory.setAdapter(adapter);
 
-        String[] serviceCategories = getContext().getResources().getStringArray(R.array.service_categories);
-        String targetService = service.getCategory().getName();
-
-        for (int i = 0; i < serviceCategories.length; i++) {
-            if (serviceCategories[i].equals(targetService)) {
-                categoryPosition = i;
-                break;
+            // select the correct category
+            for (int i = 0; i < cats.size(); i++) {
+                if (cats.get(i).getId().equals(product.getCategory().getId())) {
+                    spinnerCategory.setSelection(i);
+                    break;
+                }
             }
-        }
-        serviceCategory.setSelection(categoryPosition);
-    }
-
-    private void setServicePhotos(TextView deleteInstruction) {
-        RecyclerView photosRecyclerView = binding.photosRecyclerView;
-        List<Uri> photoList = new ArrayList<>();
-        photoList.add(Uri.parse("android.resource://" + getContext().getPackageName() + "/" + R.drawable.catering));
-
-        if (photoList.isEmpty())
-            deleteInstruction.setText("There aren't any photos of the service yet.");
-
-        PhotosAdapter photosAdapter = new PhotosAdapter(photoList);
-        photosRecyclerView.setAdapter(photosAdapter);
-
-        // Set up RecyclerView with GridLayoutManager
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 3);
-        photosRecyclerView.setLayoutManager(gridLayoutManager);
-    }
-
-    private static void navigateBack(@NonNull View view, Button cancelBtn, boolean showSaveToast) {
-        cancelBtn.setOnClickListener(view1 -> {
-            NavController navController = Navigation.findNavController(view);
-            navController.navigateUp();
-            if (showSaveToast)
-                Toast.makeText(view.getContext(), "The service successfully saved.", Toast.LENGTH_SHORT).show();
         });
     }
 
-    public void openGallery() {
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        intent.setType("image/*"); // Filter for images only
-        startActivityForResult(intent, PICK_IMAGE_REQUEST);
+
+    private void initViews(View v) {
+        inputName = v.findViewById(R.id.nameEditText);
+        inputDescription = v.findViewById(R.id.descriptionEditText);
+        inputPrice = v.findViewById(R.id.priceEditText);
+        inputDiscount = v.findViewById(R.id.discountEditText);
+        inputSpecifies = v.findViewById(R.id.specifiesEditText);
+        inputDuration = v.findViewById(R.id.durationEditText);
+        inputCancellationDays = v.findViewById(R.id.cancellationDeadlineEditText);
+        inputReservationDays = v.findViewById(R.id.reservationDeadlineEditText);
+
+        cbVisible = v.findViewById(R.id.checkboxVisible);
+        cbAvailable = v.findViewById(R.id.checkboxAvailable);
+        cbAutomaticReserved = v.findViewById(R.id.checkboxAutomaticReserved);
+        spinnerCategory = v.findViewById(R.id.spinner_service_categories);
+        rvEvents = v.findViewById(R.id.rvEventsService);
+
+        RecyclerView recyclerView = v.findViewById(R.id.rv_service_images);
+        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+        imageAdapter = new ImageAdapter(images);
+        recyclerView.setAdapter(imageAdapter);
+
+        btnSave = v.findViewById(R.id.btn_save);
+        btnCancel = v.findViewById(R.id.btn_cancel);
+        btnAttachImages = v.findViewById(R.id.btn_attach_photo);
+
+        btnAttachImages.setOnClickListener(vw -> openGallery());
+        btnSave.setOnClickListener(vw -> onSave());
+        btnCancel.setOnClickListener(vw -> requireActivity().onBackPressed());
     }
+
+    private void observeData() {
+        viewModel.getCategories().observe(getViewLifecycleOwner(), cats -> {
+            ArrayAdapter<ServiceProductCategory> adapter = new ArrayAdapter<>(
+                    requireContext(),
+                    android.R.layout.simple_spinner_item,
+                    cats
+            );
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinnerCategory.setAdapter(adapter);
+        });
+        viewModel.getEventTypes().observe(getViewLifecycleOwner(), eventTypes -> {
+            rvEvents.setLayoutManager(new LinearLayoutManager(requireContext()));
+
+            if (getArguments() != null && getArguments().containsKey("serviceId")) {
+                long serviceId = getArguments().getLong("serviceId");
+
+                viewModel.getService(serviceId).observe(getViewLifecycleOwner(), service -> {
+                    if (service != null) {
+                        populateForm(service);
+
+                        selectedEvents = service.getAvailableEventTypes() != null
+                                ? new ArrayList<>(service.getAvailableEventTypes())
+                                : new ArrayList<>();
+
+                        List<Long> selectedEventIds = selectedEvents.stream()
+                                .map(EventType::getId)
+                                .collect(Collectors.toList());
+
+                        SelectableEventAdapter adapter = new SelectableEventAdapter(
+                                eventTypes,
+                                new HashSet<>(selectedEventIds),
+                                (eventId, selected) -> {
+                                    if (selected) selectedEventIds.add(eventId);
+                                    else selectedEventIds.remove(eventId);
+                                }
+                        );
+
+                        rvEvents.setAdapter(adapter);
+                    } else {
+                        Toast.makeText(requireContext(), "Failed to load service", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else {
+                selectedEvents = new ArrayList<>();
+                List<Long> selectedEventIds = new ArrayList<>();
+
+                SelectableEventAdapter adapter = new SelectableEventAdapter(
+                        eventTypes,
+                        new HashSet<>(), // empty selection
+                        (eventId, selected) -> {
+                            if (selected) selectedEventIds.add(eventId);
+                            else selectedEventIds.remove(eventId);
+                        }
+                );
+
+                rvEvents.setAdapter(adapter);
+            }
+        });
+
+
+        viewModel.getSuccess().observe(getViewLifecycleOwner(), success -> {
+            if (success) {
+                Toast.makeText(requireContext(), "Service saved successfully!", Toast.LENGTH_SHORT).show();
+                requireActivity().onBackPressed();
+            }
+        });
+    }
+
+    private void openGallery() {
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        startActivityForResult(intent, IMAGE_PICK_CODE);
+    }
+
+    private void onSave() {
+        String name = inputName.getText().toString().trim();
+        String description = inputDescription.getText().toString().trim();
+        double price = Double.parseDouble(inputPrice.getText().toString());
+        double discount = Double.parseDouble(inputDiscount.getText().toString());
+        boolean visible = cbVisible.isChecked();
+        boolean available = cbAvailable.isChecked();
+        long categoryId = spinnerCategory.getSelectedItemPosition() + 1;
+        long providerId = UserIdUtils.getUserId(requireContext());
+        String specifics = inputSpecifies.getText().toString().trim();
+        float duration = Float.parseFloat(inputDuration.getText().toString());
+        int canc = Integer.parseInt(inputCancellationDays.getText().toString());
+        int res = Integer.parseInt(inputReservationDays.getText().toString());
+        boolean autoReserved = cbAutomaticReserved.isChecked();
+
+        ServiceDto dto = new ServiceDto(
+                categoryId,
+                available,
+                visible,
+                price,
+                discount,
+                name,
+                description,
+                selectedEventIds,
+                providerId,
+                specifics,
+                duration,
+                canc,
+                res,
+                autoReserved,
+                images
+        );
+
+        // If editing, include product ID
+        if (getArguments() != null && getArguments().containsKey("service")) {
+            ServiceDto existing = (ServiceDto) getArguments().getSerializable("service");
+            dto.setId(existing.getId());
+            viewModel.updateService(dto);
+        } else {
+            images.add("slike");
+            dto.setImages(images);
+            viewModel.createService(dto);
+        }
+    }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
-            Uri imageUri = data.getData();
-            List<String> images = service.getImages();
-            images.add(imageUri.toString());
-            service.setImages(images);
-            Toast.makeText(getContext(), "The photo successfully chosen.", Toast.LENGTH_SHORT).show();
+        if (requestCode == IMAGE_PICK_CODE && resultCode == Activity.RESULT_OK && data != null) {
+            if (data.getClipData() != null) {
+                int count = data.getClipData().getItemCount();
+                for (int i = 0; i < count; i++) {
+                    Uri imageUri = data.getClipData().getItemAt(i).getUri();
+                    images.add(imageUri.toString());
+                }
+            } else if (data.getData() != null) {
+                images.add(data.getData().toString());
+            }
         }
     }
 }

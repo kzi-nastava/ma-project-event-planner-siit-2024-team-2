@@ -1,87 +1,99 @@
 package com.example.eventplanner.fragments.services;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-
-import android.os.Parcel;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.eventplanner.R;
-import com.example.eventplanner.databinding.FragmentServicesPageBinding;
-import com.example.eventplanner.model.serviceproduct.Service;
-import com.example.eventplanner.model.serviceproduct.ServiceProductCategory;
+import com.example.eventplanner.adapters.ServiceAdapter;
+import com.example.eventplanner.clients.repositories.serviceproduct.ServiceRepository;
+import com.example.eventplanner.dto.serviceproduct.ServiceDto;
 
 import java.util.ArrayList;
 
 public class ServicesPageFragment extends Fragment {
 
-    public static ArrayList<Service> services = new ArrayList<Service>();
-    private FragmentServicesPageBinding binding;
+    private RecyclerView recyclerView;
+    private ServiceAdapter adapter;
+    private ServicesViewModel viewModel;
 
-    public static ServicesPageFragment newInstance() {
-        return new ServicesPageFragment();
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_services_page, container, false);
+
+        recyclerView = view.findViewById(R.id.recycler_view_services);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        adapter = new ServiceAdapter(new ArrayList<>(), new ServiceAdapter.OnServiceClickListener() {
+            @Override
+            public void onEditClick(ServiceDto service) {
+                Bundle args = new Bundle();
+                args.putSerializable("serviceId", service.getId());
+
+                // Navigate using NavController from a view inside the fragment
+                NavController navController = Navigation.findNavController(requireActivity(), R.id.fragment_nav_content_main);
+                navController.navigate(R.id.nav_edit_service, args);
+            }
+
+            @Override
+            public void onDeleteClick(ServiceDto service) {
+                showDeleteDialog(service);
+                viewModel.loadServices();
+            }
+        });
+        recyclerView.setAdapter(adapter);
+
+        ServiceRepository repository = new ServiceRepository();
+        ServicesViewModelFactory factory = new ServicesViewModelFactory(repository);
+        viewModel = new ViewModelProvider(this, factory).get(ServicesViewModel.class);
+        viewModel.getServices().observe(getViewLifecycleOwner(), services -> {
+            if (services != null) adapter.setServices(services);
+        });
+        return view;
     }
 
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        binding = FragmentServicesPageBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
+    private void showDeleteDialog(ServiceDto service) {
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Delete Service")
+                .setMessage("Are you sure you want to delete \"" + service.getName() + "\"?")
+                .setPositiveButton("Delete", (dialog, which) -> {
+                    viewModel.deleteService(service.getId());
+                    observeDeleteResult();
+                })
+                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                .create()
+                .show();
+    }
 
-        prepareProductList(services);
+    private void observeDeleteResult() {
+        viewModel.getDeleteSuccess().observe(getViewLifecycleOwner(), success -> {
+            if (Boolean.TRUE.equals(success)) {
+                Toast.makeText(requireContext(), "Service deleted successfully!", Toast.LENGTH_SHORT).show();
+                viewModel.loadServices();
 
-        FragmentTransition.to(ServicesListFragment.newInstance(services), getActivity(),
-                false, R.id.scroll_services_list);
-
-        return root;
+            } else {
+                Toast.makeText(requireContext(), "Failed to delete service", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
-    }
-
-    private void prepareProductList(ArrayList<Service> services){
-        services.clear();
-//        services.add(new Service(1L, "Your catering", "We offer a brilliant service of catering. Don't worry because we're coming while your meal is still hot! Lorem ipsum  tra la la...", R.drawable.catering));
-//        services.add(new Service(2L, "Our catering", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor", R.drawable.catering));
-//        services.add(new Service(3L, "My catering", "We offer a brilliant service of catering. Don't worry because we're coming while your meal is still hot! Lorem ipsum  tra la la...", R.drawable.catering));
-        Parcel parcel = Parcel.obtain();
-
-        // Write data to the Parcel in the same order as the constructor reads it
-        parcel.writeByte((byte) 1); // Indicates that `id` is not null
-        parcel.writeLong(12345L); // Example ID
-
-        ServiceProductCategory serviceProductCategory = new ServiceProductCategory(1L, "catering", "");
-        parcel.writeParcelable(serviceProductCategory, 0); // Example for `category`
-
-        parcel.writeByte((byte) 1); // `available` as true
-        parcel.writeByte((byte) 0); // `visible` as false
-        parcel.writeDouble(99.99); // Example price
-        parcel.writeDouble(10.0); // Example discount
-        parcel.writeString("Service Name"); // Example name
-        parcel.writeString("Service Description"); // Example description
-        parcel.writeStringList(new ArrayList<>()); // Example images list
-        parcel.writeTypedList(new ArrayList<>()); // Example event types
-        parcel.writeParcelable(null, 0); // Example for `serviceProductProvider`
-        parcel.writeString("Some specifications"); // Example specifies
-        parcel.writeFloat(1.5f); // Example duration
-        parcel.writeFloat(0.5f); // Example minEngagementDuration
-        parcel.writeFloat(2.0f); // Example maxEngagementDuration
-        parcel.writeInt(30); // Example reservationDaysDeadline
-        parcel.writeInt(7); // Example cancellationDaysDeadline
-        parcel.writeByte((byte) 1); // `hasAutomaticReservation` as true
-
-        // Reset the Parcel for reading
-        parcel.setDataPosition(0);
-
-        // Create a Service object using the Parcel
-        Service service = new Service(parcel);
-        services.add(service);
-
-        // Release the Parcel object
-        parcel.recycle();
+    public void onResume() {
+        super.onResume();
+        viewModel.loadServices();
     }
 }

@@ -20,8 +20,8 @@ public class ServiceRepository {
         this.serviceService = ClientUtils.serviceService;
     }
 
-    public LiveData<List<Service>> getMyServices() {
-        MutableLiveData<List<Service>> liveData = new MutableLiveData<>();
+    public LiveData<List<ServiceDto>> getMyServices() {
+        MutableLiveData<List<ServiceDto>> liveData = new MutableLiveData<>();
         serviceService.getMyServices().enqueue(new SimpleCallback<>(
                 response -> liveData.setValue(response != null ? response.body() : new ArrayList<>()),
                 error -> liveData.setValue(new ArrayList<>())

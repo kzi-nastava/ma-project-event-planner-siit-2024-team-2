@@ -20,7 +20,6 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginBottom="18dp"
-            android:entries="@array/service_categories"
             android:prompt="@string/select_category" />
 
         <!-- Button for New Service Category -->
@@ -90,6 +89,33 @@
                 android:inputType="number" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_marginTop="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <CheckBox
+                android:id="@+id/checkboxVisible"
+                android:text="Visible"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <CheckBox
+                android:id="@+id/checkboxAvailable"
+                android:text="Available"
+                android:layout_marginStart="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <CheckBox
+                android:id="@+id/checkboxAutomaticReserved"
+                android:text="Auto reserved"
+                android:layout_marginStart="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+
         <Button
             android:id="@+id/btn_attach_photo"
             android:layout_width="wrap_content"
@@ -104,79 +130,25 @@
             android:layout_margin="2dp" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/photos_recycler_view"
+            android:id="@+id/rv_service_images"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            />
+            android:layout_marginTop="12dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal"/>
 
-        <!-- Checkbox List for Available Event Categories -->
+        <!-- Event list -->
         <TextView
+            android:text="Available Events:"
+            android:textStyle="bold"
+            android:layout_marginTop="24dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Choose available event categories for this service:"
-            android:layout_marginTop="12dp" />
+            android:layout_height="wrap_content"/>
 
-        <LinearLayout
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvEventsService"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="4dp">
-
-            <CheckBox
-                android:id="@+id/checkbox_category1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="12dp"
-
-                android:text="Wedding" />
-
-            <CheckBox
-                android:id="@+id/checkbox_category2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Funeral" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="4dp">
-
-            <CheckBox
-                android:id="@+id/checkbox_category3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="15dp"
-                android:text="Birthday" />
-
-            <CheckBox
-                android:id="@+id/checkbox_category4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Conference" />
-        </LinearLayout>
-
-        <!-- Radio Buttons -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="8dp">
-
-            <RadioButton
-                android:id="@+id/radio_visibility"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="15dp"
-                android:text="visibility" />
-
-            <RadioButton
-                android:id="@+id/radio_availability"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="availability" />
-        </LinearLayout>
+            android:layout_height="200dp" />
 
         <!-- Additional 3 Text Boxes -->
         <com.google.android.material.textfield.TextInputLayout
