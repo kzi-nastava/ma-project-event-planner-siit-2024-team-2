@@ -199,5 +199,12 @@
                 android:layout_gravity="center"
                 android:visibility="gone"/>
         </FrameLayout>
+        <Button
+            android:id="@+id/btn_attend_event"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Attend Event"
+            android:layout_marginTop="16dp"/>
+
     </LinearLayout>
 </ScrollView>

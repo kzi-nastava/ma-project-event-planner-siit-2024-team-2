@@ -99,4 +99,14 @@ public interface EventService {
     @Headers({"Content-Type:application/json"})
     @GET("events/max-attendances-range")
     Call<List<Integer>> getMaxAttendancesRange();
+
+    @GET("events/{id}/attend")
+    Call<Boolean> isUserAttending(@Path("id") long id);
+
+    @POST("events/{id}/attend")
+    Call<Void> attendEvent(@Path("id") long id);
+
+    @DELETE("events/{id}/attend")
+    Call<Void> removeAttendance(@Path("id") long id);
+
 }

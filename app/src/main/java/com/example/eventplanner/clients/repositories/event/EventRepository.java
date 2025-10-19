@@ -126,4 +126,38 @@ public class EventRepository {
       ));
       return liveData;
    }
+   public LiveData<Boolean> isUserAttending(long eventId) {
+      MutableLiveData<Boolean> result = new MutableLiveData<>();
+      Call<Boolean> call = eventService.isUserAttending(eventId);
+
+      call.enqueue(new SimpleCallback<>(
+              response -> result.setValue(response != null && response.body() != null ? response.body() : false),
+              error -> result.setValue(false)
+      ));
+      return result;
+   }
+
+   public LiveData<Boolean> attendEvent(long eventId) {
+      MutableLiveData<Boolean> result = new MutableLiveData<>();
+      Call<Void> call = eventService.attendEvent(eventId);
+
+      call.enqueue(new SimpleCallback<>(
+              response -> result.setValue(response != null && response.isSuccessful()),
+              error -> result.setValue(false)
+      ));
+      return result;
+   }
+
+   public LiveData<Boolean> removeAttendance(long eventId) {
+      MutableLiveData<Boolean> result = new MutableLiveData<>();
+      Call<Void> call = eventService.removeAttendance(eventId);
+
+      call.enqueue(new SimpleCallback<>(
+              response -> result.setValue(response != null && response.isSuccessful()),
+              error -> result.setValue(false)
+      ));
+      return result;
+   }
+
+
 }
