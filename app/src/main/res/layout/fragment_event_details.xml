@@ -179,6 +179,13 @@
                     android:text="Open" />
             </LinearLayout>
         </LinearLayout>
+        <Button
+            android:id="@+id/btn_attend_event"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Attend Event"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"/>
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/fragment_reviews_section"
@@ -199,12 +206,6 @@
                 android:layout_gravity="center"
                 android:visibility="gone"/>
         </FrameLayout>
-        <Button
-            android:id="@+id/btn_attend_event"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Attend Event"
-            android:layout_marginTop="16dp"/>
 
     </LinearLayout>
 </ScrollView>

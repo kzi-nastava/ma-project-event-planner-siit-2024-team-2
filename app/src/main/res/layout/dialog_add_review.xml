@@ -30,7 +30,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Rating *"
+        android:text="Rating"
         android:textSize="16sp"
         android:textStyle="bold"
         android:textColor="?attr/text_color"

@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -89,6 +91,23 @@ public class AddReviewDialog extends DialogFragment {
 
         TextView tvEntityName = view.findViewById(R.id.tv_entity_name);
         tvEntityName.setText(entityName);
+
+        etComment.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                updateSubmitButton();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -157,7 +176,7 @@ public class AddReviewDialog extends DialogFragment {
     }
 
     private void updateSubmitButton() {
-        btnSubmit.setEnabled(selectedRating >= 1f);
+        btnSubmit.setEnabled(selectedRating >= 1f && etComment.getText() != null && !etComment.getText().toString().trim().isEmpty());
     }
 
     private void submitReview() {
