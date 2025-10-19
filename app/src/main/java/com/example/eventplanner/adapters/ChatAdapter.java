@@ -3,12 +3,15 @@ package com.example.eventplanner.adapters;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.eventplanner.R;
+import com.example.eventplanner.clients.utils.ImageUtil;
 import com.example.eventplanner.model.chat.Chat;
 import com.example.eventplanner.model.user.BaseUser;
 
@@ -60,14 +63,12 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
 
     class ChatViewHolder extends RecyclerView.ViewHolder {
         private TextView tvChatUserName;
-        private TextView tvLastMessage;
-        private TextView tvMessageTime;
+        private ImageView profilePicture;
 
         public ChatViewHolder(@NonNull View itemView) {
             super(itemView);
             tvChatUserName = itemView.findViewById(R.id.tv_chat_user_name);
-            tvLastMessage = itemView.findViewById(R.id.tv_last_message);
-            tvMessageTime = itemView.findViewById(R.id.tv_message_time);
+            profilePicture = itemView.findViewById(R.id.profile_picture);
 
             itemView.setOnClickListener(v -> {
                 int position = getAdapterPosition();
@@ -86,14 +87,14 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
                 otherUser.getEmail();
             
             tvChatUserName.setText(userName);
-            tvLastMessage.setText(chat.getLastMessage() != null ? chat.getLastMessage() : "No messages yet");
-            
-            if (chat.getLastMessageDate() != null) {
-                SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
-                tvMessageTime.setText(timeFormat.format(chat.getLastMessageDate()));
-            } else {
-                tvMessageTime.setText("");
-            }
+
+            if (otherUser.getImageEncodedName() != null && !otherUser.getImageEncodedName().isBlank())
+                Glide.with(profilePicture.getContext())
+                        .load(ImageUtil.getImageUrl(otherUser.getImageEncodedName()))
+                        .placeholder(R.drawable.profile_picture)
+                        .into(profilePicture);
+            else
+                profilePicture.setImageResource(R.drawable.profile_picture);
         }
     }
 }

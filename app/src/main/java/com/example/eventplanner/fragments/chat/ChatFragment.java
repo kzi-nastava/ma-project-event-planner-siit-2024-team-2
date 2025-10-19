@@ -126,7 +126,6 @@ public class ChatFragment extends Fragment {
             if (chat != null) {
                 showChatWindow();
                 updateChatUI(chat);
-                updateChatHeader(chat.getUser2());
             } else {
                 showEmptyState();
             }
@@ -214,10 +213,24 @@ public class ChatFragment extends Fragment {
     }
 
     private void updateChatHeader(BaseUser friend) {
-        String name = friend.getFirstName() != null && friend.getLastName() != null ?
-                friend.getFirstName() + " " + friend.getLastName() :
-                friend.getEmail();
-        binding.tvChatFriendName.setText(name);
+        JsonLog.d("Friend", friend);
+        binding.tvChatFriendName.setText(getName(friend));
+    }
+    private String getName(BaseUser user) {
+        if (user != null) {
+            String firstName = user.getFirstName();
+            String lastName = user.getLastName();
+            String email = user.getEmail();
+
+            if (firstName != null && lastName != null) {
+                return firstName + " " + lastName;
+            } else if (firstName != null) {
+                return firstName;
+            } else {
+                return email != null ? email : "Deleted User";
+            }
+        }
+        return "Deleted User";
     }
 
     private void updateBlockedStateUI(Chat chat) {
