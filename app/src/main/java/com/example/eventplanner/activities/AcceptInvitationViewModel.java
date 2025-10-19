@@ -98,8 +98,6 @@ public class AcceptInvitationViewModel extends ViewModel {
     }
 
     private void handleInvitationError(Context context, InvitationErrorDto errorDto, String token) {
-        Log.d("AcceptInvitation", "Failed to accept invitation");
-
         if (errorDto != null) {
             switch (errorDto.getType()) {
                 case UNAUTHORIZED_QUICK_REGISTRATION:

@@ -123,7 +123,6 @@ public class ChatFragment extends Fragment {
         });
 
         viewModel.getCurrentChat().observe(getViewLifecycleOwner(), chat -> {
-            JsonLog.d("Chat", chat, "Chat ");
             if (chat != null) {
                 showChatWindow();
                 updateChatUI(chat);

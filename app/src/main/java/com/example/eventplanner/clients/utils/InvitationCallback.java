@@ -45,9 +45,7 @@ public class InvitationCallback<T> implements Callback<T> {
         }
         
         try {
-            JsonLog.d("InvitationCallback", response, "Response ");
             String errorBody = response.errorBody().string();
-            JsonLog.d("InvitationCallback", errorBody, "Error body ");
             Gson gson = new Gson();
             return gson.fromJson(errorBody, InvitationErrorDto.class);
         } catch (Exception e) {
