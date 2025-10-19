@@ -3,6 +3,7 @@ package com.example.eventplanner.activities;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.text.Spanned;
@@ -19,6 +20,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentManager;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -33,6 +35,8 @@ import com.example.eventplanner.clients.utils.ImageUtil;
 import com.example.eventplanner.clients.utils.UserIdUtils;
 import com.example.eventplanner.clients.utils.UserRoleUtils;
 import com.example.eventplanner.databinding.ActivityHomeBinding;
+import com.example.eventplanner.dialogs.SuspendedDialog;
+import com.example.eventplanner.dto.user.SuspendedDialogData;
 import com.example.eventplanner.utils.FormatUtil;
 import com.google.android.material.navigation.NavigationView;
 
@@ -87,6 +91,8 @@ public class HomeActivity extends AppCompatActivity {
 
         protectedDestinations.add(R.id.nav_fragment_category);
         protectedDestinations.add(R.id.nav_create_category);
+        protectedDestinations.add(R.id.nav_admin_user_reports);
+        protectedDestinations.add(R.id.nav_admin_reviews);
 
         Set<Integer> combinedDestinations = new HashSet<>();
         combinedDestinations.addAll(topLevelDestinations);
@@ -95,6 +101,8 @@ public class HomeActivity extends AppCompatActivity {
         appBarConfiguration = new AppBarConfiguration.Builder(combinedDestinations)
                 .setOpenableLayout(drawerLayout)
                 .build();
+
+        protectedDestinations.add(R.id.nav_chat);
 
         // Setup navigation UI
         NavigationUI.setupWithNavController(navigationView, navController);
@@ -105,13 +113,13 @@ public class HomeActivity extends AppCompatActivity {
                 handleLogoutClick();
                 return true;
             }
+            drawerLayout.closeDrawers();
             return NavigationUI.onNavDestinationSelected(item, navController);
         });
 
         // Add route protection
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
             if (protectedDestinations.contains(destination.getId()) && UserIdUtils.getUserId(this) < 0) {
-                // User is not logged in — redirect to LoginActivity
                 Intent intent = new Intent(this, LoginActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
@@ -136,6 +144,10 @@ public class HomeActivity extends AppCompatActivity {
 
     private void handleIntent(Intent intent) {
         long eventId = intent.getLongExtra("com.example.eventplanner.navigateToEvent", -1);
+        SuspendedDialogData data = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            data = intent.getSerializableExtra("com.example.eventplanner.showSuspension", SuspendedDialogData.class);
+        }
         if (intent.getBooleanExtra("com.example.eventplanner.navigateToNotifications", false))
             navController.navigate(R.id.nav_notifications);
         else if (eventId != -1) {
@@ -144,6 +156,10 @@ public class HomeActivity extends AppCompatActivity {
 
             NavController navController = Navigation.findNavController(this, R.id.fragment_nav_content_main);
             navController.navigate(R.id.fragment_event_details, args);
+        } else if (data != null) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            SuspendedDialog dialog = SuspendedDialog.newInstance(data);
+            dialog.show(fragmentManager, "SuspendedDialog");
         }
     }
 
@@ -190,6 +206,7 @@ public class HomeActivity extends AppCompatActivity {
         }
 
         menu.findItem(R.id.nav_notifications).setVisible(true);
+        menu.findItem(R.id.nav_chat).setVisible(true);
 
         switch (role) {
             case "ADMIN":
@@ -197,6 +214,8 @@ public class HomeActivity extends AppCompatActivity {
                 menu.findItem(R.id.nav_create_event_type).setVisible(true);
                 menu.findItem(R.id.nav_fragment_category).setVisible(true);
                 menu.findItem(R.id.nav_create_category).setVisible(true);
+                menu.findItem(R.id.nav_admin_user_reports).setVisible(true);
+                menu.findItem(R.id.nav_admin_reviews).setVisible(true);
                 break;
 
             case "SERVICE_PRODUCT_PROVIDER":

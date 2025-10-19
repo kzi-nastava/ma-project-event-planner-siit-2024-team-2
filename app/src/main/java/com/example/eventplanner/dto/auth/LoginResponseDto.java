@@ -3,6 +3,7 @@ package com.example.eventplanner.dto.auth;
 import com.example.eventplanner.model.utils.UserRole;
 
 import java.time.Instant;
+import java.util.Date;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,5 +19,5 @@ public class LoginResponseDto {
     private String email;
     private String jwt;
     private UserRole role;
-    private Instant suspendedAt = null;
+    private Date suspendedAt = null;
 }

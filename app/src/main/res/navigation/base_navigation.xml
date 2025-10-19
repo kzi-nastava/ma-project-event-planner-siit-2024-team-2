@@ -50,6 +50,17 @@
         tools:layout="@layout/fragment_notifications" />
 
     <fragment
+        android:id="@+id/nav_chat"
+        android:name="com.example.eventplanner.fragments.chat.ChatFragment"
+        android:label="Chat"
+        tools:layout="@layout/fragment_chat">
+        <argument
+            android:name="userId"
+            android:defaultValue="-1L"
+            app:argType="long" />
+    </fragment>
+
+    <fragment
         android:id="@+id/nav_my_events"
         android:name="com.example.eventplanner.fragments.event.MyEventsFragment"
         android:label="@string/my_events"
@@ -194,6 +205,18 @@
             android:name="eventId"
             app:argType="long" />
     </fragment>
+
+    <fragment
+        android:id="@+id/nav_admin_user_reports"
+        android:name="com.example.eventplanner.fragments.admin.AdminUserReportsFragment"
+        android:label="User Reports"
+        tools:layout="@layout/fragment_admin_user_reports" />
+
+    <fragment
+        android:id="@+id/nav_admin_reviews"
+        android:name="com.example.eventplanner.fragments.admin.AdminReviewsFragment"
+        android:label="Reviews"
+        tools:layout="@layout/fragment_admin_reviews" />
 
     <activity
         android:id="@+id/accept_invitation_activity"

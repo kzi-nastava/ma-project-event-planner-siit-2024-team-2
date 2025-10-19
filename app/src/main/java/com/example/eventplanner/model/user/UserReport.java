@@ -2,8 +2,11 @@ package com.example.eventplanner.model.user;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.format.DateUtils;
 
 import androidx.annotation.NonNull;
+
+import com.example.eventplanner.model.utils.SimpleCardElement;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -17,12 +20,13 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserReport implements Parcelable, Serializable {
+public class UserReport extends SimpleCardElement implements Parcelable, Serializable {
     private Long id;
     private BaseUser reporter;
     private BaseUser reported;
-    private Date dateApproved;
+    private Date approvedAt;
     private String reason;
+    private Date createdAt;
 
     protected UserReport(Parcel in) {
         if (in.readByte() == 0) {
@@ -32,7 +36,9 @@ public class UserReport implements Parcelable, Serializable {
         }
         reporter = in.readParcelable(BaseUser.class.getClassLoader());
         reported = in.readParcelable(BaseUser.class.getClassLoader());
+        approvedAt = new Date(in.readLong());
         reason = in.readString();
+        createdAt = new Date(in.readLong());
     }
 
     public static final Creator<UserReport> CREATOR = new Creator<UserReport>() {
@@ -62,6 +68,42 @@ public class UserReport implements Parcelable, Serializable {
         }
         dest.writeParcelable(reporter, flags);
         dest.writeParcelable(reported, flags);
+        dest.writeLong(approvedAt.getTime());
         dest.writeString(reason);
+        dest.writeLong(createdAt.getTime());
+    }
+
+    @Override
+    public String getTitle() {
+        String reporterName = getName(reporter);
+        String reportedName = getName(reported);
+        return String.format("**%s** reported **%s**", reporterName, reportedName);
+    }
+
+    @Override
+    public String getSubtitle() {
+        return DateUtils.getRelativeTimeSpanString(createdAt.getTime()).toString();
+    }
+
+    @Override
+    public String getBody() {
+        return "**Reason:**\n" + (reason != null ? reason : "No reason provided");
+    }
+
+    private String getName(BaseUser user) {
+        if (user != null) {
+            String firstName = user.getFirstName();
+            String lastName = user.getLastName();
+            String email = user.getEmail();
+
+            if (firstName != null && lastName != null) {
+                return firstName + " " + lastName + " (" + email + ")";
+            } else if (firstName != null) {
+                return firstName + " (" + email + ")";
+            } else {
+                return email != null ? email : "Deleted User";
+            }
+        }
+        return "Deleted User";
     }
 }

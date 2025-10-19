@@ -49,12 +49,12 @@
         android:title="@string/my_products" />
 
     <item
-        android:id="@+id/nav_edit_service"
-        android:title="@string/new_service" />
+        android:id="@+id/nav_services"
+        android:title="@string/services" />
 
     <item
-        android:id="@+id/nav_services"
-        android:title="My Services" />
+        android:id="@+id/nav_edit_service"
+        android:title="@string/new_service" />
 
     <item
         android:id="@+id/nav_logout"

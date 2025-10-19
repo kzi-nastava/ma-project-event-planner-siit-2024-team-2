@@ -3,6 +3,7 @@ package com.example.eventplanner.clients.utils;
 import android.content.Context;
 
 import com.example.eventplanner.BuildConfig;
+import com.example.eventplanner.clients.deserializers.ReviewDeserializer;
 import com.example.eventplanner.clients.deserializers.ServiceProductDeserializer;
 import com.example.eventplanner.clients.interceptors.JwtInterceptor;
 import com.example.eventplanner.clients.interceptors.UnauthorizedInterceptor;
@@ -19,10 +20,19 @@ import com.example.eventplanner.clients.services.serviceproduct.ServiceService;
 import com.example.eventplanner.clients.services.user.*;
 import com.example.eventplanner.clients.services.serviceproduct.ServiceProductCategoryService;
 import com.example.eventplanner.clients.services.serviceproduct.ServiceProductService;
+import com.example.eventplanner.clients.services.chat.ChatService;
+import com.example.eventplanner.clients.services.chat.ChatMessageService;
+import com.example.eventplanner.clients.services.review.ReviewService;
+import com.example.eventplanner.model.review.Review;
 import com.example.eventplanner.model.serviceproduct.ServiceProduct;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonSerializer;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Interceptor;
@@ -64,7 +74,13 @@ public class ClientUtils {
 
     public static void init(Context context) {
         Gson gson = new GsonBuilder()
-//                .registerTypeAdapter(ServiceProduct.class, new ServiceProductDeserializer())
+                .registerTypeAdapter(Instant.class,
+                        (JsonDeserializer<Instant>) (json, type, context2) ->
+                                Instant.parse(json.getAsString()))
+                .registerTypeAdapter(Instant.class,
+                        (JsonSerializer<Instant>) (src, type, context2) ->
+                                new com.google.gson.JsonPrimitive(src.toString()))
+                .registerTypeAdapter(Review.class, new ReviewDeserializer())
                 .create();
 
         retrofit = new Retrofit.Builder()
@@ -91,6 +107,7 @@ public class ClientUtils {
 
         // User
         userService = retrofit.create(UserService.class);
+        userReportService = retrofit.create(UserReportService.class);
         profileService = retrofit.create(ProfileService.class);
 
         // Auth
@@ -98,6 +115,13 @@ public class ClientUtils {
 
         // Communication
         notificationService = retrofit.create(NotificationService.class);
+
+        // Chat
+        chatService = retrofit.create(ChatService.class);
+        chatMessageService = retrofit.create(ChatMessageService.class);
+
+        // Review
+        reviewService = retrofit.create(ReviewService.class);
     }
 
     // Event
@@ -118,6 +142,7 @@ public class ClientUtils {
 
     // User
     public static UserService userService;
+    public static UserReportService userReportService;
     public static ProfileService profileService;
 
     // Auth
@@ -125,4 +150,11 @@ public class ClientUtils {
 
     // Communication
     public static NotificationService notificationService;
+
+    // Chat
+    public static ChatService chatService;
+    public static ChatMessageService chatMessageService;
+
+    // Review
+    public static ReviewService reviewService;
 }

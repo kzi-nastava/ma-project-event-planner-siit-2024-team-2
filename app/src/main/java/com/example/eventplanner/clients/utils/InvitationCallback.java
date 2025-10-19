@@ -5,6 +5,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.example.eventplanner.dto.event.InvitationErrorDto;
+import com.example.eventplanner.utils.JsonLog;
 import com.google.gson.Gson;
 
 import java.util.function.Consumer;

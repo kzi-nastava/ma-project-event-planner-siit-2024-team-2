@@ -54,7 +54,7 @@ public class ProfileFragment extends Fragment {
     private LinearLayout layoutChangePassword;
 
     // Company fields
-    private EditText etCompanyName, etCompanyAddress;
+    private EditText etCompanyName, etCompanyDescription;
     private Button btnUpdateCompany;
 
     // Favorites lists
@@ -119,7 +119,7 @@ public class ProfileFragment extends Fragment {
 
         // company fields
         etCompanyName = view.findViewById(R.id.etCompanyName);
-        etCompanyAddress = view.findViewById(R.id.etCompanyAddress);
+        etCompanyDescription = view.findViewById(R.id.etCompanyDescription);
         btnUpdateCompany = view.findViewById(R.id.btnUpdateCompany);
 
         // recycler views
@@ -257,7 +257,7 @@ public class ProfileFragment extends Fragment {
         btnUpdateCompany.setOnClickListener(v -> {
             CompanyInfoDto dto = new CompanyInfoDto(
                     etCompanyName.getText().toString(),
-                    etCompanyAddress.getText().toString()
+                    etCompanyDescription.getText().toString()
             );
             if (userId != -1) profileViewModel.updateCompanyInfo(userId, dto);
             else Toast.makeText(getContext(), "User not logged in", Toast.LENGTH_SHORT).show();
@@ -300,8 +300,8 @@ public class ProfileFragment extends Fragment {
         // company
         if (etCompanyName != null)
             etCompanyName.setText(user.getCompanyName() == null ? "" : user.getCompanyName());
-        if (etCompanyAddress != null)
-            etCompanyAddress.setText(user.getCompanyAddress() == null ? "" : user.getCompanyAddress());
+        if (etCompanyDescription != null)
+            etCompanyDescription.setText(user.getCompanyDescription() == null ? "" : user.getCompanyDescription());
 
         // profile picture
         if (user.getImageEncodedName() != null && !user.getImageEncodedName().isEmpty()) {

@@ -120,7 +120,6 @@ public class SimpleCardView extends MaterialCardView {
             }
         }
         if (ellipsized) {
-            Log.d("SimpleCardView", "Set readMoreButton visibility to VISIBLE");
             readMoreButton.setVisibility(VISIBLE);
         } else {
             readMoreButton.setVisibility(GONE);
