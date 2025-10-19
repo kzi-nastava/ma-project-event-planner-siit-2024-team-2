@@ -1,0 +1,41 @@
+package com.example.eventplanner.clients.services.event;
+
+import com.example.eventplanner.dto.event.CreateEventTypeDto;
+import com.example.eventplanner.dto.event.EventDto;
+import com.example.eventplanner.dto.event.EventSummaryDto;
+import com.example.eventplanner.dto.event.EventTypeDto;
+import com.example.eventplanner.model.event.EventType;
+
+import java.util.List;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.http.Body;
+import retrofit2.http.DELETE;
+import retrofit2.http.GET;
+import retrofit2.http.Headers;
+import retrofit2.http.POST;
+import retrofit2.http.PUT;
+import retrofit2.http.Path;
+
+public interface EventTypeService {
+    @Headers({"Content-Type:application/json"})
+    @GET("event-types")
+    Call<List<EventType>> getAllEventTypes();
+
+    @Headers({"Content-Type:application/json"})
+    @GET("event-types/{id}")
+    Call<EventType> getEventTypeById(@Path("id") Long id);
+
+    @Headers({"Content-Type:application/json"})
+    @POST("event-types")
+    Call<EventType> createEventType(@Body CreateEventTypeDto eventTypeDto);
+
+    @Headers({"Content-Type:application/json"})
+    @PUT("event-types/{id}")
+    Call<EventType> updateEventType(@Path("id") Long id, @Body CreateEventTypeDto eventTypeDto);
+
+    @Headers({"Content-Type:application/json"})
+    @DELETE("event-types/{id}")
+    Call<ResponseBody> deleteEventType(@Path("id") Long id);
+}

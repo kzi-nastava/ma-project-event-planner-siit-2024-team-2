@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp">
+
+    <ImageView
+        android:id="@+id/image_event_picture"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        app:srcCompat="@drawable/profile_picture"
+        android:scaleType="centerCrop"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/text_event_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="Event name"
+        android:textSize="18sp"
+        app:layout_constraintStart_toEndOf="@id/image_event_picture"
+        app:layout_constraintTop_toTopOf="@id/image_event_picture"
+        app:layout_constraintEnd_toStartOf="@id/btn_event_heart" />
+
+    <ImageButton
+        android:id="@+id/btn_event_heart"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:background="@drawable/heart_filled"
+        app:layout_constraintTop_toTopOf="@id/text_event_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:contentDescription="Favorite button" />
+
+    <TextView
+        android:id="@+id/text_event_date"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="7th of February, 2025"
+        app:layout_constraintStart_toStartOf="@id/text_event_name"
+        app:layout_constraintTop_toBottomOf="@id/text_event_name"
+        app:layout_constraintEnd_toEndOf="@id/text_event_name" />
+
+    <Button
+        android:id="@+id/btn_event_more_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="More info"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="@id/text_event_name"
+        app:layout_constraintTop_toBottomOf="@id/text_event_date"/>
+</androidx.constraintlayout.widget.ConstraintLayout>
