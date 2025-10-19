@@ -264,6 +264,15 @@
                 android:layout_gravity="center"
                 android:orientation="horizontal"/>
         </LinearLayout>
+
+        <!-- Reviews Section -->
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/fragment_reviews_section"
+            android:name="com.example.eventplanner.fragments.review.ReviewsSectionFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp" />
+
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">

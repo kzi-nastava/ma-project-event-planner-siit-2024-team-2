@@ -91,6 +91,8 @@
             android:id="@+id/btnUpdatePersonalInfo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="16dp"
             android:text="Update Personal Info"
             android:layout_gravity="center_horizontal"/>
 
@@ -133,6 +135,8 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
             android:text="Favorite Events"
             style="@style/TextAppearance.AppCompat.Headline"/>
         <androidx.recyclerview.widget.RecyclerView
@@ -144,6 +148,8 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
             android:text="Favorite Service Products"
             style="@style/TextAppearance.AppCompat.Headline"/>
         <androidx.recyclerview.widget.RecyclerView
@@ -154,7 +160,7 @@
         <!-- Change Password -->
         <LinearLayout
             android:id="@+id/layoutChangePassword"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
@@ -191,6 +197,7 @@
             android:id="@+id/switchReceiveNotifications"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_marginTop="26dp"
             android:text="@string/receive_notifications"/>
 
         <!-- Deactivate Account -->

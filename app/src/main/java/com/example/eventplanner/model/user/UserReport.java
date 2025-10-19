@@ -101,9 +101,9 @@ public class UserReport extends SimpleCardElement implements Parcelable, Seriali
             } else if (firstName != null) {
                 return firstName + " (" + email + ")";
             } else {
-                return email != null ? email : "Unknown User";
+                return email != null ? email : "Deleted User";
             }
         }
-        return "Unknown User";
+        return "Deleted User";
     }
 }

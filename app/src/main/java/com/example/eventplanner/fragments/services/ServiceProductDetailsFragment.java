@@ -3,6 +3,7 @@ package com.example.eventplanner.fragments.services;
 import android.annotation.SuppressLint;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,9 +29,12 @@ import com.example.eventplanner.databinding.FragmentServiceProductDetailsBinding
 import com.example.eventplanner.dialogs.ReportUserDialog;
 import com.example.eventplanner.dto.serviceproduct.ServiceDto;
 import com.example.eventplanner.dto.serviceproduct.ServiceProductSummaryDto;
+import com.example.eventplanner.fragments.review.ReviewsSectionFragment;
+import com.example.eventplanner.model.review.ReviewType;
 import com.example.eventplanner.model.serviceproduct.Service;
 import com.example.eventplanner.model.serviceproduct.ServiceProduct;
 import com.example.eventplanner.model.user.ServiceProductProvider;
+import com.example.eventplanner.utils.JsonLog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 
@@ -60,6 +64,7 @@ public class ServiceProductDetailsFragment extends Fragment {
    private MaterialButton btnReportMenu;
    private MaterialButton btnChatProvider;
    private UserManagementRepository userManagementRepository;
+   private boolean initializedReviews = false;
 
    public ServiceProductDetailsFragment() {
       // Required empty constructor
@@ -157,6 +162,25 @@ public class ServiceProductDetailsFragment extends Fragment {
 
       progressIndicator.setVisibility(View.GONE);
       detailsLayout.setVisibility(View.VISIBLE);
+
+      Log.e("ServiceProductDetailsFragment", "SP ID: " + serviceProductId.toString());
+      if (!initializedReviews)
+         initializeReviewsSection();
+   }
+   
+   private void initializeReviewsSection() {
+      Log.e("ServiceProductDetailsFragment", "Initializing reviews section with:");
+      Log.e("ServiceProductDetailsFragment", serviceProductId.toString());
+       ReviewsSectionFragment reviewsFragment = ReviewsSectionFragment.newInstance(
+               serviceProductId,
+               serviceProduct.getName(),
+               ReviewType.SERVICE_PRODUCT
+       );
+
+       getChildFragmentManager().beginTransaction()
+               .replace(R.id.fragment_reviews_section, reviewsFragment)
+               .commit();
+       initializedReviews = true;
    }
 
    private void setupReportMenu() {

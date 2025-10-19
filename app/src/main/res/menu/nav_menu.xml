@@ -62,7 +62,11 @@
 
     <item
         android:id="@+id/nav_admin_user_reports"
-        android:title="User Reports" />
+        android:title="@string/user_reports" />
+
+    <item
+        android:id="@+id/nav_admin_reviews"
+        android:title="@string/reviews" />
 
     <item
         android:id="@+id/nav_logout"

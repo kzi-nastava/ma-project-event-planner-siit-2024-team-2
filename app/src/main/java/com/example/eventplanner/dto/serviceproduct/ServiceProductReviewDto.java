@@ -12,7 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ServiceProductReviewDto {
-    private int grade;
+    private double grade;
     private String comment;
     private long serviceProductId;
     private long userId;

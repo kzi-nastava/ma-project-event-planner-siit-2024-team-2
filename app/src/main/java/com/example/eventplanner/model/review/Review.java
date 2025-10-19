@@ -1,12 +1,10 @@
-package com.example.eventplanner.model.event;
+package com.example.eventplanner.model.review;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
-import com.example.eventplanner.model.review.Review;
-import com.example.eventplanner.model.review.ReviewStatus;
 import com.example.eventplanner.model.user.BaseUser;
 
 import java.io.Serializable;
@@ -21,10 +19,17 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class EventReview extends Review  implements Parcelable, Serializable {
-    private Event event;
+public class Review implements Parcelable, Serializable {
+    protected long id;
+    protected Double grade;
+    protected String comment;
+    protected BaseUser user;
+    protected ReviewStatus reviewStatus;
+    protected Date createdAt;
+    protected boolean hiding;
+    protected boolean hidden;
 
-    protected EventReview(Parcel in) {
+    protected Review(Parcel in) {
         id = in.readLong();
         if (in.readByte() == 0) {
             grade = null;
@@ -33,20 +38,22 @@ public class EventReview extends Review  implements Parcelable, Serializable {
         }
         comment = in.readString();
         user = in.readParcelable(BaseUser.class.getClassLoader());
+        reviewStatus = ReviewStatus.valueOf(in.readString());
+        long tmpCreatedAt = in.readLong();
+        createdAt = tmpCreatedAt == -1 ? null : new Date(tmpCreatedAt);
         hiding = in.readByte() != 0;
         hidden = in.readByte() != 0;
-        event = in.readParcelable(Event.class.getClassLoader());
     }
 
-    public static final Creator<EventReview> CREATOR = new Creator<EventReview>() {
+    public static final Creator<Review> CREATOR = new Creator<Review>() {
         @Override
-        public EventReview createFromParcel(Parcel in) {
-            return new EventReview(in);
+        public Review createFromParcel(Parcel in) {
+            return new Review(in);
         }
 
         @Override
-        public EventReview[] newArray(int size) {
-            return new EventReview[size];
+        public Review[] newArray(int size) {
+            return new Review[size];
         }
     };
 
@@ -66,8 +73,9 @@ public class EventReview extends Review  implements Parcelable, Serializable {
         }
         dest.writeString(comment);
         dest.writeParcelable(user, flags);
+        dest.writeString(reviewStatus.name());
+        dest.writeLong(createdAt != null ? createdAt.getTime() : -1);
         dest.writeByte((byte) (hiding ? 1 : 0));
         dest.writeByte((byte) (hidden ? 1 : 0));
-        dest.writeParcelable(event, flags);
     }
 }

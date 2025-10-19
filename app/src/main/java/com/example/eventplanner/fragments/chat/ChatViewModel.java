@@ -61,16 +61,13 @@ public class ChatViewModel extends ViewModel {
     }
 
     public void loadMyChats() {
-        tracker.observeOnce(chatRepository.getAllMyChats(0, -1), new MutableLiveData<PagedModel<Chat>>() {
-            @Override
-            public void setValue(PagedModel<Chat> pagedModel) {
-                if (pagedModel != null && pagedModel.getContent() != null) {
-                    myChats.setValue(pagedModel.getContent());
-                } else {
-                    myChats.setValue(new ArrayList<>());
-                }
+        tracker.observeOnce(chatRepository.getAllMyChats(0, -1), pagedModel -> {
+            if (pagedModel != null && pagedModel.getContent() != null) {
+                myChats.setValue(pagedModel.getContent());
+            } else {
+                myChats.setValue(new ArrayList<>());
             }
-        }, true);
+        });
     }
 
     public void loadChatWithUser(long user2Id) {

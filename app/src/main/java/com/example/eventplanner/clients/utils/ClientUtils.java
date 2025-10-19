@@ -3,6 +3,7 @@ package com.example.eventplanner.clients.utils;
 import android.content.Context;
 
 import com.example.eventplanner.BuildConfig;
+import com.example.eventplanner.clients.deserializers.ReviewDeserializer;
 import com.example.eventplanner.clients.deserializers.ServiceProductDeserializer;
 import com.example.eventplanner.clients.interceptors.JwtInterceptor;
 import com.example.eventplanner.clients.interceptors.UnauthorizedInterceptor;
@@ -21,6 +22,8 @@ import com.example.eventplanner.clients.services.serviceproduct.ServiceProductCa
 import com.example.eventplanner.clients.services.serviceproduct.ServiceProductService;
 import com.example.eventplanner.clients.services.chat.ChatService;
 import com.example.eventplanner.clients.services.chat.ChatMessageService;
+import com.example.eventplanner.clients.services.review.ReviewService;
+import com.example.eventplanner.model.review.Review;
 import com.example.eventplanner.model.serviceproduct.ServiceProduct;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -77,7 +80,7 @@ public class ClientUtils {
                 .registerTypeAdapter(Instant.class,
                         (JsonSerializer<Instant>) (src, type, context2) ->
                                 new com.google.gson.JsonPrimitive(src.toString()))
-
+                .registerTypeAdapter(Review.class, new ReviewDeserializer())
                 .create();
 
         retrofit = new Retrofit.Builder()
@@ -116,6 +119,9 @@ public class ClientUtils {
         // Chat
         chatService = retrofit.create(ChatService.class);
         chatMessageService = retrofit.create(ChatMessageService.class);
+
+        // Review
+        reviewService = retrofit.create(ReviewService.class);
     }
 
     // Event
@@ -148,4 +154,7 @@ public class ClientUtils {
     // Chat
     public static ChatService chatService;
     public static ChatMessageService chatMessageService;
+
+    // Review
+    public static ReviewService reviewService;
 }

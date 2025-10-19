@@ -212,6 +212,12 @@
         android:label="User Reports"
         tools:layout="@layout/fragment_admin_user_reports" />
 
+    <fragment
+        android:id="@+id/nav_admin_reviews"
+        android:name="com.example.eventplanner.fragments.admin.AdminReviewsFragment"
+        android:label="Reviews"
+        tools:layout="@layout/fragment_admin_reviews" />
+
     <activity
         android:id="@+id/accept_invitation_activity"
         android:name="com.example.eventplanner.activities.AcceptInvitationActivity"
