@@ -5,6 +5,10 @@
         android:title="@string/home" />
 
     <item
+        android:id="@+id/nav_chat"
+        android:title="Chat" />
+
+    <item
         android:id="@+id/nav_events"
         android:title="@string/events" />
 
@@ -53,13 +57,13 @@
         android:title="@string/my_products" />
 
     <item
-        android:id="@+id/nav_services"
-        android:title="@string/services" />
-
-    <item
         android:id="@+id/nav_edit_service"
         android:title="@string/new_service" />
 
+    <item
+        android:id="@+id/nav_services"
+        android:title="My services" />
+  
     <item
         android:id="@+id/nav_admin_user_reports"
         android:title="@string/user_reports" />

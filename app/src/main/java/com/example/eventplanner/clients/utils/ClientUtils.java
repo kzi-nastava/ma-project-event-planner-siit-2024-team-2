@@ -15,6 +15,7 @@ import com.example.eventplanner.clients.services.event.EventService;
 import com.example.eventplanner.clients.services.event.EventTypeService;
 import com.example.eventplanner.clients.services.order.BookingService;
 import com.example.eventplanner.clients.services.serviceproduct.ImageService;
+import com.example.eventplanner.clients.services.serviceproduct.PriceListService;
 import com.example.eventplanner.clients.services.serviceproduct.ProductService;
 import com.example.eventplanner.clients.services.serviceproduct.ServiceService;
 import com.example.eventplanner.clients.services.user.*;
@@ -104,6 +105,7 @@ public class ClientUtils {
         productService = retrofit.create(ProductService.class);
         serviceService = retrofit.create(ServiceService.class);
         imageService = retrofit.create(ImageService.class);
+        priceListService = retrofit.create(PriceListService.class);
 
         // User
         userService = retrofit.create(UserService.class);
@@ -139,6 +141,7 @@ public class ClientUtils {
     public static ProductService productService;
     public static ServiceService serviceService;
     public static ImageService imageService;
+    public static PriceListService priceListService;
 
     // User
     public static UserService userService;
