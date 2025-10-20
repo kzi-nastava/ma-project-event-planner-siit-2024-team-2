@@ -30,14 +30,12 @@ import org.osmdroid.views.overlay.Marker;
 import com.example.eventplanner.R;
 import com.example.eventplanner.clients.repositories.user.UserManagementRepository;
 import com.example.eventplanner.clients.utils.AuthUtils;
-import com.example.eventplanner.databinding.FragmentAllEventsPageBinding;
 import com.example.eventplanner.databinding.FragmentEventDetailsBinding;
 import com.example.eventplanner.dialogs.ReportUserDialog;
-import com.example.eventplanner.fragments.review.ReviewsSectionFragment;
+import com.example.eventplanner.fragments.order.ReviewsSectionFragment;
 import com.example.eventplanner.model.event.Event;
 import com.example.eventplanner.model.review.ReviewType;
 import com.example.eventplanner.model.user.BaseUser;
-import com.example.eventplanner.model.user.EventOrganizer;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 

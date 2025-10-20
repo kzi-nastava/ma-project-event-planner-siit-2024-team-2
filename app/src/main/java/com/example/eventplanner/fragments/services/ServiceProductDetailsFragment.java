@@ -1,7 +1,6 @@
 package com.example.eventplanner.fragments.services;
 
 import android.annotation.SuppressLint;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,27 +21,25 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.eventplanner.R;
 import com.example.eventplanner.adapters.ImageAdapter;
-import com.example.eventplanner.adapters.PhotosAdapter;
+import com.example.eventplanner.clients.repositories.serviceproduct.ServiceRepository;
 import com.example.eventplanner.clients.repositories.user.UserManagementRepository;
 import com.example.eventplanner.clients.utils.AuthUtils;
+import com.example.eventplanner.dto.order.OrderEligibilityDto;
 import com.example.eventplanner.databinding.FragmentServiceProductDetailsBinding;
+import com.example.eventplanner.dialogs.BookPurchaseDialog;
 import com.example.eventplanner.dialogs.ReportUserDialog;
-import com.example.eventplanner.dto.serviceproduct.ServiceDto;
 import com.example.eventplanner.dto.serviceproduct.ServiceProductSummaryDto;
-import com.example.eventplanner.fragments.review.ReviewsSectionFragment;
+import com.example.eventplanner.fragments.order.ReviewsSectionFragment;
 import com.example.eventplanner.model.review.ReviewType;
 import com.example.eventplanner.model.serviceproduct.Service;
 import com.example.eventplanner.model.serviceproduct.ServiceProduct;
 import com.example.eventplanner.model.user.ServiceProductProvider;
-import com.example.eventplanner.utils.JsonLog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-import lombok.Getter;
 
 public class ServiceProductDetailsFragment extends Fragment {
 
@@ -63,8 +60,12 @@ public class ServiceProductDetailsFragment extends Fragment {
    private LinearLayout serviceDetails;
    private MaterialButton btnReportMenu;
    private MaterialButton btnChatProvider;
+   private MaterialButton btnBookPurchase;
    private UserManagementRepository userManagementRepository;
+   private ServiceRepository serviceRepository;
    private boolean initializedReviews = false;
+   private boolean canOrder = false;
+   private String orderReason = "";
 
    public ServiceProductDetailsFragment() {
       // Required empty constructor
@@ -98,6 +99,7 @@ public class ServiceProductDetailsFragment extends Fragment {
       tvAvailable = binding.tvSpAvailable;
       btnReportMenu = binding.btnReportMenu;
       btnChatProvider = binding.btnChatProvider;
+      btnBookPurchase = binding.btnBookPurchase;
 
       tvSpecifics = binding.tvSpSpecifics;
       tvReservationDeadline = binding.tvSpReservationDeadline;
@@ -114,14 +116,18 @@ public class ServiceProductDetailsFragment extends Fragment {
       serviceDetails = binding.serviceDetails;
       serviceDetails.setVisibility(View.GONE);
 
-      // Initialize repository
+      // Initialize repositories
       userManagementRepository = new UserManagementRepository();
+      serviceRepository = new ServiceRepository();
 
       // Setup report menu
       setupReportMenu();
       
       // Setup chat button
       setupChatButton();
+      
+      // Setup booking button
+      setupBookingButton();
 
       recyclerView = binding.rvImages;
       recyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
@@ -162,6 +168,9 @@ public class ServiceProductDetailsFragment extends Fragment {
 
       progressIndicator.setVisibility(View.GONE);
       detailsLayout.setVisibility(View.VISIBLE);
+
+      // Check order eligibility
+      checkOrderEligibility();
 
       Log.e("ServiceProductDetailsFragment", "SP ID: " + serviceProductId.toString());
       if (!initializedReviews)
@@ -268,6 +277,55 @@ public class ServiceProductDetailsFragment extends Fragment {
          Bundle args = new Bundle();
          args.putLong("userId", serviceProduct.getServiceProductProvider().getId());
          navController.navigate(R.id.nav_chat, args);
+      });
+   }
+
+   private void checkOrderEligibility() {
+      if (serviceProductId == null) {
+         updateBookingButton(false, "Service product not available");
+         return;
+      }
+
+      serviceRepository.getOrderEligibility(serviceProductId).observe(getViewLifecycleOwner(), eligibility -> {
+         if (eligibility != null) {
+            canOrder = eligibility.isCanOrder();
+            orderReason = eligibility.getReason() != null ? eligibility.getReason() : 
+                         (serviceProduct instanceof Service ? "Can't book" : "Can't buy");
+         } else {
+            canOrder = false;
+            orderReason = "Unable to check eligibility";
+         }
+         updateBookingButton(canOrder, orderReason);
+      });
+   }
+
+   private void updateBookingButton(boolean canOrder, String reason) {
+      if (canOrder && serviceProduct != null && serviceProduct.isAvailable()) {
+         btnBookPurchase.setEnabled(true);
+         btnBookPurchase.setText(serviceProduct instanceof Service ? "Book Service" : "Purchase Product");
+      } else {
+         btnBookPurchase.setEnabled(false);
+         btnBookPurchase.setText(reason);
+      }
+   }
+
+   private void setupBookingButton() {
+      btnBookPurchase.setOnClickListener(v -> {
+         if (serviceProduct == null) {
+            Toast.makeText(getContext(), "Service product information not available", Toast.LENGTH_SHORT).show();
+            return;
+         }
+
+         if (!canOrder) {
+            Toast.makeText(getContext(), orderReason, Toast.LENGTH_SHORT).show();
+            return;
+         }
+
+         // Open booking/purchase dialog
+         BookPurchaseDialog dialog = BookPurchaseDialog.newInstance(serviceProduct);
+         dialog.setListener(success -> {
+         });
+         dialog.show(getParentFragmentManager(), "BookPurchaseDialog");
       });
    }
 }
