@@ -10,6 +10,7 @@ lombok = "1.18.36"
 material = "1.12.0"
 activity = "1.9.3"
 constraintlayout = "2.2.0"
+materialdatetimepicker = "4.2.3"
 navigationRuntime = "2.8.3"
 navigationUi = "2.8.3"
 navigationFragment = "2.8.3"
@@ -33,6 +34,7 @@ lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+materialdatetimepicker = { module = "com.wdullaer:materialdatetimepicker", version.ref = "materialdatetimepicker" }
 navigation-runtime = { group = "androidx.navigation", name = "navigation-runtime", version.ref = "navigationRuntime" }
 navigation-ui = { group = "androidx.navigation", name = "navigation-ui", version.ref = "navigationUi" }
 navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment", version.ref = "navigationFragment" }

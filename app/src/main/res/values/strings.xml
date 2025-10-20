@@ -105,4 +105,5 @@
     <string name="user_reports">User Reports</string>
     <string name="reviews">Reviews</string>
     <string name="bookings">Pending Bookings</string>
+    <string name="select_date">Select Date</string>
 </resources>

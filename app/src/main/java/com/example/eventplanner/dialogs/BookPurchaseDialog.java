@@ -4,7 +4,9 @@ import android.app.Dialog;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +22,7 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.util.Pair;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -29,6 +32,8 @@ import com.example.eventplanner.fragments.dialog.BookPurchaseViewModel;
 import com.example.eventplanner.model.event.Budget;
 import com.example.eventplanner.model.event.Event;
 import com.example.eventplanner.model.serviceproduct.ServiceProduct;
+import com.google.android.material.button.MaterialButton;
+import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -37,6 +42,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import lombok.Setter;
@@ -53,21 +59,26 @@ public class BookPurchaseDialog extends DialogFragment {
     @Setter
     private BookPurchaseDialogListener listener;
     private BookPurchaseViewModel viewModel;
+    private DateRangeDto selectedTimeWindow;
     
     // UI Components
     private Spinner eventSpinner, budgetSpinner, timeWindowSpinner;
-    private DatePicker datePicker;
+    private DatePickerDialog datePicker;
+    private MaterialButton datePickerButton;
     private TimePicker timePicker;
-     private EditText durationEditText;
-     private TextView priceTextView, discountTextView, totalPriceTextView, eventInfoTextView, timeInfoTextView;
-     private Button confirmButton, cancelButton;
-     private LinearLayout serviceTimeLayout;
+    private EditText durationEditText;
+    private TextView priceTextView, discountTextView, totalPriceTextView, eventInfoTextView, timeInfoTextView, startTimeInfoTextView, endTimeInfoTextView;
+    private Button confirmButton, cancelButton;
+    private LinearLayout serviceTimeLayout;
+
     
     private List<Event> events = new ArrayList<>();
     private List<Budget> budgets = new ArrayList<>();
+    private List<String> eventNames = new ArrayList<>();
+    private List<String> budgetNames = new ArrayList<>();
     private List<DateRangeDto> timeWindows = new ArrayList<>();
-    private ArrayAdapter<Event> eventAdapter;
-    private ArrayAdapter<Budget> budgetAdapter;
+    private ArrayAdapter<String> eventAdapter;
+    private ArrayAdapter<String> budgetAdapter;
     private ArrayAdapter<String> timeWindowAdapter;
 
     public static BookPurchaseDialog newInstance(ServiceProduct serviceProduct) {
@@ -137,17 +148,20 @@ public class BookPurchaseDialog extends DialogFragment {
         eventSpinner = view.findViewById(R.id.spinner_event);
         budgetSpinner = view.findViewById(R.id.spinner_budget);
         timeWindowSpinner = view.findViewById(R.id.spinner_time_window);
-        datePicker = view.findViewById(R.id.date_picker);
+        datePickerButton = view.findViewById(R.id.date_picker);
         timePicker = view.findViewById(R.id.time_picker);
-         durationEditText = view.findViewById(R.id.edit_duration);
-         priceTextView = view.findViewById(R.id.text_price);
-         discountTextView = view.findViewById(R.id.text_discount);
-         totalPriceTextView = view.findViewById(R.id.text_total_price);
-         eventInfoTextView = view.findViewById(R.id.text_event_info);
-         timeInfoTextView = view.findViewById(R.id.text_time_info);
-         serviceTimeLayout = view.findViewById(R.id.layout_service_time);
+        durationEditText = view.findViewById(R.id.edit_duration);
+        priceTextView = view.findViewById(R.id.text_price);
+        discountTextView = view.findViewById(R.id.text_discount);
+        totalPriceTextView = view.findViewById(R.id.text_total_price);
+        eventInfoTextView = view.findViewById(R.id.text_event_info);
+        timeInfoTextView = view.findViewById(R.id.text_time_info);
+        startTimeInfoTextView = view.findViewById(R.id.text_start_time_info);
+        endTimeInfoTextView = view.findViewById(R.id.text_end_time_info);
+        serviceTimeLayout = view.findViewById(R.id.layout_service_time);
         
         timePicker.setIs24HourView(true);
+        datePickerButton.setEnabled(false);
         
         if (viewModel.isProduct()) {
             serviceTimeLayout.setVisibility(View.GONE);
@@ -157,43 +171,29 @@ public class BookPurchaseDialog extends DialogFragment {
         }
     }
 
-    private void setupServiceTimeFields() {
-        if (viewModel.hasFixedDuration()) {
-            durationEditText.setVisibility(View.GONE);
-            durationEditText.setText(String.valueOf(viewModel.getFixedDuration()));
-            viewModel.setSelectedDuration(viewModel.getFixedDuration());
-        } else {
-            durationEditText.setVisibility(View.VISIBLE);
-            durationEditText.setHint("Duration [" + viewModel.getMinDuration() + "h - " + viewModel.getMaxDuration() + "h]");
-        }
-    }
+     private void setupServiceTimeFields() {
+         if (viewModel.hasFixedDuration() && viewModel.getFixedDuration() > 0) {
+             durationEditText.setVisibility(View.VISIBLE);
+             durationEditText.setText(String.valueOf(viewModel.getFixedDuration()));
+             durationEditText.setEnabled(false);
+             viewModel.setSelectedDuration(viewModel.getFixedDuration());
+         } else {
+             durationEditText.setVisibility(View.VISIBLE);
+             durationEditText.setHint("Duration [" + viewModel.getMinDuration() + "h - " + viewModel.getMaxDuration() + "h]");
+             durationEditText.setText("");
+         }
+     }
 
     private void setupAdapters() {
-        eventAdapter = new ArrayAdapter<Event>(requireContext(), android.R.layout.simple_spinner_item, events) {
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                TextView textView = (TextView) view.findViewById(android.R.id.text1);
-                if (position < events.size()) {
-                    textView.setText(events.get(position).getName());
-                }
-                return view;
-            }
-        };
+        eventNames = new ArrayList<>();
+        
+        eventAdapter = new ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item, eventNames);
         eventAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         eventSpinner.setAdapter(eventAdapter);
 
-        budgetAdapter = new ArrayAdapter<Budget>(requireContext(), android.R.layout.simple_spinner_item, budgets) {
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                TextView textView = (TextView) view.findViewById(android.R.id.text1);
-                if (position < budgets.size()) {
-                    textView.setText(budgets.get(position).getName());
-                }
-                return view;
-            }
-        };
+        budgetNames = new ArrayList<>();
+        
+        budgetAdapter = new ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item, budgetNames);
         budgetAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         budgetSpinner.setAdapter(budgetAdapter);
 
@@ -213,6 +213,7 @@ public class BookPurchaseDialog extends DialogFragment {
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
                 viewModel.setSelectedEventIndex(-1);
+                datePickerButton.setEnabled(false);
             }
         });
 
@@ -231,6 +232,7 @@ public class BookPurchaseDialog extends DialogFragment {
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
                 viewModel.setSelectedBudgetId(-1L);
+                datePickerButton.setEnabled(false);
             }
         });
 
@@ -238,7 +240,7 @@ public class BookPurchaseDialog extends DialogFragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position < timeWindows.size()) {
-                    DateRangeDto timeWindow = timeWindows.get(position);
+                    selectedTimeWindow = timeWindows.get(position);
                     timePicker.setEnabled(true);
                 }
             }
@@ -249,22 +251,55 @@ public class BookPurchaseDialog extends DialogFragment {
             }
         });
 
-        datePicker.setOnDateChangedListener((view, year, monthOfYear, dayOfMonth) -> {
-            viewModel.setSelectedDate(LocalDate.of(year, monthOfYear + 1, dayOfMonth));
-            updateTimeWindows();
+        datePickerButton.setOnClickListener(v -> {
+            datePicker = DatePickerDialog.newInstance(
+                    (view, year, monthOfYear, dayOfMonth) -> {
+                        viewModel.setSelectedDate(LocalDate.of(year, monthOfYear + 1, dayOfMonth));
+                        datePickerButton.setText(viewModel.getSelectedDate().toString());
+                        updateTimeWindows();
+                    });
+            updateDatePicker();
+            datePicker.show(getChildFragmentManager(), "DatePickerDialog");
         });
 
         timePicker.setOnTimeChangedListener((view, hourOfDay, minute) -> {
+            if (selectedTimeWindow != null) {
+                LocalTime startTime, endTime;
+                Pair<LocalTime, LocalTime> times = getStartTimeAndEndTime(selectedTimeWindow);
+                startTime = times.first;
+                endTime = times.second;
+                if (endTime == LocalTime.MIN)
+                    endTime = LocalTime.MAX;
+                else
+                    endTime = endTime.minusSeconds(Math.round(viewModel.getSelectedDuration() * 3600));
+                if (LocalTime.of(hourOfDay, minute).isBefore(startTime) || LocalTime.of(hourOfDay, minute).isAfter(endTime)) {
+                    Toast.makeText(getContext(), "Selected time is not within the time window", Toast.LENGTH_SHORT).show();
+                    confirmButton.setEnabled(false);
+                } else
+                    confirmButton.setEnabled(true);
+            }
             viewModel.setSelectedTime(LocalTime.of(hourOfDay, minute));
+            updateTimeSummary();
         });
 
-        durationEditText.setOnFocusChangeListener((v, hasFocus) -> {
-            if (!hasFocus) {
+        durationEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
                 try {
-                    double duration = Double.parseDouble(durationEditText.getText().toString());
+                    double duration = Double.parseDouble(s.toString());
                     if (duration >= viewModel.getMinDuration() && duration <= viewModel.getMaxDuration()) {
                         viewModel.setSelectedDuration(duration);
                         updateTimeWindows();
+                        updateTimeSummary();
                     } else {
                         Toast.makeText(getContext(), "Duration must be between " + viewModel.getMinDuration() + " and " + viewModel.getMaxDuration() + " hours", Toast.LENGTH_SHORT).show();
                     }
@@ -280,6 +315,11 @@ public class BookPurchaseDialog extends DialogFragment {
             if (eventList != null) {
                 events.clear();
                 events.addAll(eventList);
+
+                eventNames.clear();
+                for (Event event : events) {
+                    eventNames.add(event.getName());
+                }
                 eventAdapter.notifyDataSetChanged();
             }
         });
@@ -288,39 +328,54 @@ public class BookPurchaseDialog extends DialogFragment {
             if (budgetList != null) {
                 budgets.clear();
                 budgets.addAll(budgetList);
+
+                budgetNames.clear();
+                for (Budget budget : budgets) {
+                    budgetNames.add(budget.getName());
+                }
                 budgetAdapter.notifyDataSetChanged();
             }
         });
 
         viewModel.getAvailableDates().observe(this, dateList -> {
-            if (dateList != null) {
-                updateTimeWindows();
+            if (dateList == null || dateList.isEmpty()){
+                return;
             }
+            if (dateList.get(0).getEnd() < dateList.get(0).getStart())
+                return;
+
+            datePickerButton.setEnabled(true);
         });
 
         viewModel.getBookingSuccess().observe(this, success -> {
-            if (success != null && success) {
-                Toast.makeText(getContext(), "Booking created successfully", Toast.LENGTH_SHORT).show();
-                if (listener != null) {
-                    listener.onBookingPurchaseCompleted(true);
+            if (success != null) {
+                if (success) {
+                    Toast.makeText(getContext(), "Booking created successfully", Toast.LENGTH_SHORT).show();
+                    if (listener != null) {
+                        listener.onBookingPurchaseCompleted(true);
+                    }
+                    dismiss();
                 }
-                dismiss();
             }
         });
 
         viewModel.getPurchaseSuccess().observe(this, success -> {
-            if (success != null && success) {
-                Toast.makeText(getContext(), "Purchase created successfully", Toast.LENGTH_SHORT).show();
-                if (listener != null) {
-                    listener.onBookingPurchaseCompleted(true);
+            if (success != null) {
+                if (success) {
+                    Toast.makeText(getContext(), "Purchase created successfully", Toast.LENGTH_SHORT).show();
+                    if (listener != null) {
+                        listener.onBookingPurchaseCompleted(true);
+                    }
+                    dismiss();
                 }
-                dismiss();
             }
         });
 
         viewModel.getErrorMessage().observe(this, error -> {
-            if (error != null) {
+            if (error != null && !error.isEmpty()) {
                 Toast.makeText(getContext(), error, Toast.LENGTH_LONG).show();
+                confirmButton.setEnabled(true);
+                confirmButton.setText("Confirm");
             }
         });
     }
@@ -330,27 +385,10 @@ public class BookPurchaseDialog extends DialogFragment {
         List<String> timeWindowStrings = new ArrayList<>();
         
         for (DateRangeDto timeWindow : timeWindows) {
-            LocalTime startTime = null, endTime = null;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                startTime = LocalTime.ofInstant(Instant.ofEpochMilli(timeWindow.getStart()), ZoneId.systemDefault());
-                endTime = LocalTime.ofInstant(java.time.Instant.ofEpochMilli(timeWindow.getEnd()), ZoneId.systemDefault());
-            } else {
-                Calendar calendar = Calendar.getInstance();
-
-                calendar.setTimeInMillis(timeWindow.getStart());
-                startTime = LocalTime.of(
-                        calendar.get(Calendar.HOUR_OF_DAY),
-                        calendar.get(Calendar.MINUTE),
-                        calendar.get(Calendar.SECOND)
-                );
-
-                calendar.setTimeInMillis(timeWindow.getEnd());
-                endTime = LocalTime.of(
-                        calendar.get(Calendar.HOUR_OF_DAY),
-                        calendar.get(Calendar.MINUTE),
-                        calendar.get(Calendar.SECOND)
-                );
-            }
+            LocalTime startTime, endTime;
+            Pair<LocalTime, LocalTime> times = getStartTimeAndEndTime(timeWindow);
+            startTime = times.first;
+            endTime = times.second;
 
             String endTimeStr = endTime.format(DateTimeFormatter.ofPattern("HH:mm"));
             if ("00:00".equals(endTimeStr)) {
@@ -363,6 +401,38 @@ public class BookPurchaseDialog extends DialogFragment {
         timeWindowAdapter.clear();
         timeWindowAdapter.addAll(timeWindowStrings);
         timeWindowAdapter.notifyDataSetChanged();
+        
+        // Enable/disable time window spinner based on availability
+        timeWindowSpinner.setEnabled(!timeWindowStrings.isEmpty());
+    }
+
+    private void updateTimeSummary() {
+        if (viewModel.getSelectedDate() != null) {
+            timeInfoTextView.setText("Date: " + viewModel.getSelectedDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+            timeInfoTextView.setVisibility(View.VISIBLE);
+        } else {
+            timeInfoTextView.setVisibility(View.GONE);
+        }
+
+        if (viewModel.getSelectedTime() != null) {
+            startTimeInfoTextView.setText("Start time: " + viewModel.getSelectedTime().format(DateTimeFormatter.ofPattern("HH:mm")));
+            startTimeInfoTextView.setVisibility(View.VISIBLE);
+
+            if (viewModel.getSelectedDuration() > 0) {
+                LocalTime endTime = viewModel.getSelectedTime().plusHours((long) viewModel.getSelectedDuration());
+                String endTimeStr = endTime.format(DateTimeFormatter.ofPattern("HH:mm"));
+                if ("00:00".equals(endTimeStr)) {
+                    endTimeStr = "24:00";
+                }
+                endTimeInfoTextView.setText("End time: " + endTimeStr);
+                endTimeInfoTextView.setVisibility(View.VISIBLE);
+            } else {
+                endTimeInfoTextView.setVisibility(View.GONE);
+            }
+        } else {
+            startTimeInfoTextView.setVisibility(View.GONE);
+            endTimeInfoTextView.setVisibility(View.GONE);
+        }
     }
 
      private void calculateTotalPrice() {
@@ -378,6 +448,8 @@ public class BookPurchaseDialog extends DialogFragment {
          }
      }
 
+
+
     private void confirmBookingPurchase() {
         if (!viewModel.canConfirm()) {
             Toast.makeText(getContext(), "Please fill in all required fields", Toast.LENGTH_SHORT).show();
@@ -389,14 +461,70 @@ public class BookPurchaseDialog extends DialogFragment {
             return;
         }
 
+        confirmButton.setEnabled(false);
+        confirmButton.setText("Processing...");
+
         if (viewModel.isProduct()) {
             viewModel.createPurchase(viewModel.getSelectedBudgetId());
         } else {
             if (viewModel.getSelectedDate() == null || viewModel.getSelectedTime() == null) {
                 Toast.makeText(getContext(), "Please select date and time", Toast.LENGTH_SHORT).show();
+                confirmButton.setEnabled(true);
+                confirmButton.setText("Confirm");
                 return;
             }
             viewModel.createBooking(viewModel.getSelectedBudgetId());
         }
+    }
+
+    private Pair<LocalTime, LocalTime> getStartTimeAndEndTime(DateRangeDto timeWindow) {
+        LocalTime startTime, endTime;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            startTime = LocalTime.ofInstant(Instant.ofEpochMilli(timeWindow.getStart()), ZoneId.systemDefault());
+            endTime = LocalTime.ofInstant(Instant.ofEpochMilli(timeWindow.getEnd()), ZoneId.systemDefault());
+        } else {
+            Calendar calendar = Calendar.getInstance();
+
+            calendar.setTimeInMillis(timeWindow.getStart());
+            startTime = LocalTime.of(
+                    calendar.get(Calendar.HOUR_OF_DAY),
+                    calendar.get(Calendar.MINUTE),
+                    calendar.get(Calendar.SECOND)
+            );
+
+            calendar.setTimeInMillis(timeWindow.getEnd());
+            endTime = LocalTime.of(
+                    calendar.get(Calendar.HOUR_OF_DAY),
+                    calendar.get(Calendar.MINUTE),
+                    calendar.get(Calendar.SECOND)
+            );
+        }
+        return Pair.create(startTime, endTime);
+    }
+    private void updateDatePicker() {
+        if (viewModel.getAvailableDates().getValue() == null || datePicker == null)
+            return;
+        Calendar[] days = calculateSelectableDays();
+        datePicker.setSelectableDays(days);
+    }
+    public Calendar[] calculateSelectableDays() {
+
+        if (viewModel.getAvailableDates().getValue() == null)
+            return null;
+        List<Calendar> selectableDays = new ArrayList<>();
+        for (DateRangeDto dateRange : viewModel.getAvailableDates().getValue()) {
+            if (dateRange.getStart() == null || dateRange.getEnd() == null)
+                continue;
+            if (dateRange.getEnd() < dateRange.getStart())
+                continue;
+            long current = dateRange.getStart();
+            while (current <= dateRange.getEnd()) {
+                current += 60 * 60 * 24 * 1000;
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(current);
+                selectableDays.add(calendar);
+            }
+        }
+        return selectableDays.toArray(new Calendar[0]);
     }
 }

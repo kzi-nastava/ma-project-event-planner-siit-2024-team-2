@@ -2,6 +2,7 @@ package com.example.eventplanner.clients.services.serviceproduct;
 
 import com.example.eventplanner.dto.event.DateRangeDto;
 import com.example.eventplanner.dto.order.BookingDto;
+import com.example.eventplanner.dto.order.OrderEligibilityDto;
 import com.example.eventplanner.dto.order.PurchaseDto;
 import com.example.eventplanner.dto.serviceproduct.ProductDto;
 import com.example.eventplanner.dto.serviceproduct.ServiceDto;
@@ -50,4 +51,8 @@ public interface ServiceService {
     @Headers({"Content-Type:application/json"})
     @POST("budgets/{budgetId}/purchases")
     Call<Void> createPurchase(@Path("budgetId") long budgetId, @Body PurchaseDto purchaseDto);
+
+    @Headers({"Content-Type:application/json"})
+    @GET("service-products/{id}/order-eligibility")
+    Call<OrderEligibilityDto> getOrderEligibility(@Path("id") long id);
 }
