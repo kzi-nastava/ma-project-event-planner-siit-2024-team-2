@@ -69,7 +69,7 @@
     <string name="full_name">Full Name</string>
     <string name="first_name">First Name</string>
     <string name="last_name">Last Name</string>
-    
+
     <string name="upgrade_account">Upgrade Account</string>
     <string name="upgrade_account_description">Complete your registration to access all features</string>
     <string name="upgrade_to_event_organizer">Upgrade to Event Organizer</string>
@@ -81,7 +81,7 @@
     <string name="upgrade_now">Upgrade Now</string>
     <string name="company_description">Company Description</string>
     <string name="company_description_hint">Describe your company and services</string>
-    
+
     <string name="report_user">Report User</string>
     <string name="report_reason">Enter reason</string>
     <string name="report_reason_hint">Please provide details about the issue</string>
@@ -94,7 +94,7 @@
     <string name="suspend_user">Suspend User</string>
     <string name="suspend_success">User suspended successfully</string>
     <string name="suspend_failed">Failed to suspend user</string>
-    
+
     <string name="account_suspended">Account Suspended</string>
     <string name="suspension_message">Your account has been temporarily suspended due to a violation of our community guidelines.</string>
     <string name="suspension_duration">The suspension will be lifted %1$s.</string>
@@ -105,4 +105,5 @@
     <string name="user_reports">User Reports</string>
     <string name="reviews">Reviews</string>
     <string name="bookings">Pending Bookings</string>
+    <string name="select_date">Select Date</string>
 </resources>

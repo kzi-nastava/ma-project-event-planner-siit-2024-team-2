@@ -116,7 +116,14 @@ public class BookPurchaseViewModel extends ViewModel {
         );
 
         tracker.observeOnce(serviceRepository.createBooking(budgetId, bookingDto),
-                bookingSuccess, true);
+                result -> {
+                    if (result.first != null)
+                        bookingSuccess.setValue(result.first);
+                    else {
+                        bookingSuccess.setValue(false);
+                        errorMessage.setValue(result.second);
+                    }
+                });
     }
 
     public void createPurchase(long budgetId) {
@@ -131,7 +138,14 @@ public class BookPurchaseViewModel extends ViewModel {
         );
 
         tracker.observeOnce(serviceRepository.createPurchase(budgetId, purchaseDto),
-                purchaseSuccess, true);
+                result -> {
+                    if (result.first != null)
+                        purchaseSuccess.setValue(result.first);
+                    else {
+                        purchaseSuccess.setValue(false);
+                        errorMessage.setValue(result.second);
+                    }
+                });
     }
 
     public boolean isProduct() {
@@ -187,6 +201,10 @@ public class BookPurchaseViewModel extends ViewModel {
     }
 
     public boolean canConfirm() {
+        if (selectedEventIndex == -1) {
+            return false;
+        }
+
         if (selectedBudgetId == null || selectedBudgetId == -1) {
             return false;
         }

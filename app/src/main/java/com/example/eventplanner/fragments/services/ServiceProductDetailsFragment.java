@@ -21,8 +21,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.eventplanner.R;
 import com.example.eventplanner.adapters.ImageAdapter;
+import com.example.eventplanner.clients.repositories.serviceproduct.ServiceRepository;
 import com.example.eventplanner.clients.repositories.user.UserManagementRepository;
 import com.example.eventplanner.clients.utils.AuthUtils;
+import com.example.eventplanner.dto.order.OrderEligibilityDto;
 import com.example.eventplanner.databinding.FragmentServiceProductDetailsBinding;
 import com.example.eventplanner.dialogs.BookPurchaseDialog;
 import com.example.eventplanner.dialogs.ReportUserDialog;
@@ -60,7 +62,10 @@ public class ServiceProductDetailsFragment extends Fragment {
    private MaterialButton btnChatProvider;
    private MaterialButton btnBookPurchase;
    private UserManagementRepository userManagementRepository;
+   private ServiceRepository serviceRepository;
    private boolean initializedReviews = false;
+   private boolean canOrder = false;
+   private String orderReason = "";
 
    public ServiceProductDetailsFragment() {
       // Required empty constructor
@@ -111,8 +116,9 @@ public class ServiceProductDetailsFragment extends Fragment {
       serviceDetails = binding.serviceDetails;
       serviceDetails.setVisibility(View.GONE);
 
-      // Initialize repository
+      // Initialize repositories
       userManagementRepository = new UserManagementRepository();
+      serviceRepository = new ServiceRepository();
 
       // Setup report menu
       setupReportMenu();
@@ -163,13 +169,8 @@ public class ServiceProductDetailsFragment extends Fragment {
       progressIndicator.setVisibility(View.GONE);
       detailsLayout.setVisibility(View.VISIBLE);
 
-      if (dto.isAvailable()) {
-         btnBookPurchase.setEnabled(true);
-         btnBookPurchase.setText(dto instanceof Service ? "Book Service" : "Purchase Product");
-      } else {
-         btnBookPurchase.setEnabled(false);
-         btnBookPurchase.setText("Not Available");
-      }
+      // Check order eligibility
+      checkOrderEligibility();
 
       Log.e("ServiceProductDetailsFragment", "SP ID: " + serviceProductId.toString());
       if (!initializedReviews)
@@ -279,6 +280,35 @@ public class ServiceProductDetailsFragment extends Fragment {
       });
    }
 
+   private void checkOrderEligibility() {
+      if (serviceProductId == null) {
+         updateBookingButton(false, "Service product not available");
+         return;
+      }
+
+      serviceRepository.getOrderEligibility(serviceProductId).observe(getViewLifecycleOwner(), eligibility -> {
+         if (eligibility != null) {
+            canOrder = eligibility.isCanOrder();
+            orderReason = eligibility.getReason() != null ? eligibility.getReason() : 
+                         (serviceProduct instanceof Service ? "Can't book" : "Can't buy");
+         } else {
+            canOrder = false;
+            orderReason = "Unable to check eligibility";
+         }
+         updateBookingButton(canOrder, orderReason);
+      });
+   }
+
+   private void updateBookingButton(boolean canOrder, String reason) {
+      if (canOrder && serviceProduct != null && serviceProduct.isAvailable()) {
+         btnBookPurchase.setEnabled(true);
+         btnBookPurchase.setText(serviceProduct instanceof Service ? "Book Service" : "Purchase Product");
+      } else {
+         btnBookPurchase.setEnabled(false);
+         btnBookPurchase.setText(reason);
+      }
+   }
+
    private void setupBookingButton() {
       btnBookPurchase.setOnClickListener(v -> {
          if (serviceProduct == null) {
@@ -286,17 +316,14 @@ public class ServiceProductDetailsFragment extends Fragment {
             return;
          }
 
-         if (!serviceProduct.isAvailable()) {
-            Toast.makeText(getContext(), "This service/product is not available", Toast.LENGTH_SHORT).show();
+         if (!canOrder) {
+            Toast.makeText(getContext(), orderReason, Toast.LENGTH_SHORT).show();
             return;
          }
 
          // Open booking/purchase dialog
          BookPurchaseDialog dialog = BookPurchaseDialog.newInstance(serviceProduct);
          dialog.setListener(success -> {
-            if (success) {
-               Toast.makeText(getContext(), "Booking/Purchase completed successfully", Toast.LENGTH_SHORT).show();
-            }
          });
          dialog.show(getParentFragmentManager(), "BookPurchaseDialog");
       });

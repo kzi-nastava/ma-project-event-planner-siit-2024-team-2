@@ -1,10 +1,13 @@
 package com.example.eventplanner.fragments.services;
 
 import android.app.AlertDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -20,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.eventplanner.R;
 import com.example.eventplanner.adapters.ServiceAdapter;
 import com.example.eventplanner.clients.repositories.serviceproduct.ServiceRepository;
+import com.example.eventplanner.clients.utils.UserIdUtils;
 import com.example.eventplanner.dto.serviceproduct.ServiceDto;
 
 import java.util.ArrayList;
@@ -30,6 +34,7 @@ public class ServicesPageFragment extends Fragment {
     private ServiceAdapter adapter;
     private ServicesViewModel viewModel;
     private SearchView searchView;
+    private Button btnPriceList;
 
     @Nullable
     @Override
@@ -40,6 +45,7 @@ public class ServicesPageFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recycler_view_services);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         searchView = view.findViewById(R.id.search_view);
+        btnPriceList = view.findViewById(R.id.btnPrices);
 
         adapter = new ServiceAdapter(new ArrayList<>(), new ServiceAdapter.OnServiceClickListener() {
             @Override
@@ -79,6 +85,14 @@ public class ServicesPageFragment extends Fragment {
                 adapter.filter(newText);
                 return true;
             }
+        });
+
+        btnPriceList.setOnClickListener(v -> {
+            Bundle args = new Bundle();
+            long id = UserIdUtils.getUserId(getContext());
+            args.putLong("sppId", id);
+            NavController navController = Navigation.findNavController(requireActivity(), R.id.fragment_nav_content_main);
+            navController.navigate(R.id.nav_price_list, args);
         });
 
         return view;

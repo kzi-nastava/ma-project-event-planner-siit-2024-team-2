@@ -20,4 +20,6 @@
     <color name="teal_200">#03DAC5</color>
     <color name="teal_700">#018786</color>
     <color name="light_red">#FFE57373</color>
+    <color name="mdtp_accent_color">#FF7C96FF</color>
+    <color name="mdtp_accent_color_dark">#425283</color>
 </resources>
