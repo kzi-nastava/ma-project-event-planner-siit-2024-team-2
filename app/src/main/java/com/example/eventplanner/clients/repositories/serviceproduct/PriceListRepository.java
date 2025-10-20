@@ -11,11 +11,14 @@ import com.example.eventplanner.utils.SimpleCallback;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+
 public class PriceListRepository {
     private final PriceListService priceListService;
     public PriceListRepository() { this.priceListService = ClientUtils.priceListService; }
 
-    public LiveData<List<PriceListDto>> getMyProducts(long sppId) {
+    public LiveData<List<PriceListDto>> getBySppId(long sppId) {
         MutableLiveData<List<PriceListDto>> liveData = new MutableLiveData<>();
         priceListService.getBySppId(sppId).enqueue(new SimpleCallback<>(
                 response -> liveData.setValue(response != null ? response.body() : new ArrayList<>()),
@@ -24,7 +27,7 @@ public class PriceListRepository {
         return liveData;
     }
 
-    public LiveData<PriceListDto> updateProduct(Long id, double price, double discount) {
+    public LiveData<PriceListDto> updateItem(Long id, double price, double discount) {
         MutableLiveData<PriceListDto> liveData = new MutableLiveData<>();
         priceListService.update(id, price, discount).enqueue(new SimpleCallback<>(
                 response -> liveData.setValue(response != null ? response.body() : null),
@@ -33,5 +36,8 @@ public class PriceListRepository {
         return liveData;
     }
 
+    public Call<ResponseBody> downloadPdf(long sppId) {
+        return priceListService.downloadPdf(sppId);
+    }
 
 }
