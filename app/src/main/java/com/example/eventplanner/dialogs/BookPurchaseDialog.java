@@ -2,6 +2,7 @@ package com.example.eventplanner.dialogs;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
@@ -22,6 +23,7 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.core.util.Pair;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -258,6 +260,7 @@ public class BookPurchaseDialog extends DialogFragment {
                         datePickerButton.setText(viewModel.getSelectedDate().toString());
                         updateTimeWindows();
                     });
+            datePicker.setAccentColor(Color.parseColor("#" + Integer.toHexString(ContextCompat.getColor(requireContext(), R.color.primary))));
             updateDatePicker();
             datePicker.show(getChildFragmentManager(), "DatePickerDialog");
         });
